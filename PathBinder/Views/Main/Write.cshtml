@@ -108,6 +108,13 @@
 
     initialiseResize();
 
+    let displayArea = document.getElementById('displayArea');
+    let shadow = displayArea.attachShadow({ mode: 'closed' });
+
+    function displayHtml() {
+        let htmlContent = document.getElementById('writeArea').value;
+        shadow.innerHTML = htmlContent;
+    }
 </script>
 
 
