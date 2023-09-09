@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PathBinder</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PathBinder.styles.css" asp-append-version="true" />
+    <link href="https://www.dafontfree.net/embed/bmV4dXNzZXJpZi1yZWd1bGFyLXJlZ3VsYXImZGF0YS82Ni9uLzE2MDM1Ni9OZXh1c1NlcmlmLVJlZ3VsYXIub3Rm" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <header>
+        <nav>
+                <a class="navbar-brand" asp-area="" asp-controller="Main" asp-action="Home" id="title">PathBinder</a>
+                    <ul>
+                        <li>
+                            <a asp-area="" asp-controller="Main" asp-action="Write">Write</a>
+                        </li>
+                        <li>
+                            <a asp-area="" asp-controller="Main" asp-action="Library">Library</a>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+        </nav>
+    </header>
+    <main role="main" class="pb-3 col h-100">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
