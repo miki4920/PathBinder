@@ -11,19 +11,19 @@
 <body>
     <header>
         <nav>
-                <a class="navbar-brand" asp-area="" asp-controller="Main" asp-action="Home" id="title">PathBinder</a>
-                    <ul>
-                        <li>
-                            <a asp-area="" asp-controller="Main" asp-action="Write">Write</a>
-                        </li>
-                        <li>
-                            <a asp-area="" asp-controller="Main" asp-action="Library">Library</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+            <a class="navbar-brand" asp-area="" asp-controller="Main" asp-action="Home" id="title">PathBinder</a>
+            <ul>
+                <li>
+                    <a asp-area="" asp-controller="Main" asp-action="Write">Write</a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="Main" asp-action="Library">Library</a>
+                </li>
+            </ul>
+            <partial name="_LoginPartial" />
         </nav>
     </header>
-    <main role="main" class="pb-3 col h-100">
+    <main role="main">
         @RenderBody()
     </main>
 
