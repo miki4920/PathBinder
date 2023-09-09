@@ -7,15 +7,19 @@
         display: grid;
         grid-template-columns: 1fr 10px 1fr;
         flex-basis: 100%;
+        background-color: rgb(249, 241, 223);
     }
 
     section article {
-        display: flex;
         padding: 0px;
-        overflow: auto;
     }
-    
-    section article textarea {
+
+    #writeAreaHolder {
+        display: flex;
+    }
+
+    #writeArea {
+        background-color: rgb(249, 241, 223);
         flex-grow: 1;
         resize: none;
         padding: 2px;
@@ -26,17 +30,42 @@
         background-color: rgb(18, 24, 32);
         width: 10px;
     }
-</style>
 
+    #displayAreaHolder {
+        display:flex;
+        flex-direction: column;
+        align-items:center;
+        margin: 10px;
+        overflow-x: hidden;
+    }
+
+    #displayArea {
+        display: flex;
+        flex-direction: column;
+        width: 210mm;
+        background-image: url("../assets/page.jpg");
+        height: 297mm;
+        flex-wrap: wrap;
+        flex-direction: row;
+        flex-basis: 100%;
+        flex-grow: 0;
+    }
+
+</style>
 <section>
-    <article>
+    <article id="writeAreaHolder">
         <textarea autofocus id="writeArea" oninput="displayHtml()"></textarea>
     </article>
     <div class="resizer"></div>
-    <article id="displayArea">
-    </article>
+    <div id="displayAreaHolder">
+        <article id="displayArea">
+
+        </article>
+    </div>
 </section>
 
+
+<script type="text/javascript" src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
     const config = {
         minColumnWidth: 200,
@@ -109,12 +138,65 @@
     initialiseResize();
 
     let displayArea = document.getElementById('displayArea');
-    let shadow = displayArea.attachShadow({ mode: 'closed' });
+    let converter = new showdown.Converter();
+    let shadow = displayArea.attachShadow({ mode: 'open' });
+    let style = document.createElement("style");
+    style.textContent = `
+                    .page {
+            max-width: 50%;
+            display: flex;
+            height: 297mm;
+            flex-direction: column;
+        }
+
+        .page * {
+            overflow-wrap: anywhere;
+            flex-grow: 0;
+        }
+        `;
 
     function displayHtml() {
-        let htmlContent = document.getElementById('writeArea').value;
-        shadow.innerHTML = htmlContent;
+        let writeArea = document.getElementById('writeArea');
+        let htmlContent = writeArea.value;
+        shadow.innerHTML = "";
+        shadow.appendChild(style);
+
+        let page = document.createElement("div");
+        page.classList.add("page");
+        page.innerHTML = converter.makeHtml(htmlContent);
+        shadow.appendChild(page);
+
+        function getPageHeight(page) {
+            return Array.from(page.children).reduce((height, element) => {
+                return height + element.offsetHeight;
+            }, 0);
+        }
+
+        let height = getPageHeight(page);
+
+        while (height > page.getBoundingClientRect().height) {
+            let secondPage = document.createElement("div");
+            secondPage.classList.add("page");
+            shadow.appendChild(secondPage);
+
+            while (height > page.getBoundingClientRect().height && page.children.length > 0) {
+                let lastElement = page.children[page.children.length - 1];
+                page.removeChild(lastElement);
+                secondPage.prepend(lastElement);
+                height = getPageHeight(page);
+            }
+
+            page = secondPage;
+            height = getPageHeight(page);
+        }
+        
     }
+
+
+
+
+
+        
 </script>
 
 
