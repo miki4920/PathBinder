@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Write";
+}
+
+<style>
+    section {
+        display: grid;
+        grid-template-columns: 1fr 10px 1fr;
+        flex-basis: 100%;
+    }
+
+    section article {
+        display: flex;
+        padding: 0px;
+        overflow: auto;
+    }
+    
+    section article textarea {
+        flex-grow: 1;
+        resize: none;
+        padding: 2px;
+    }
+
+    .resizer {
+        cursor: ew-resize;
+        background-color: rgb(18, 24, 32);
+        width: 10px;
+    }
+</style>
+
+<section>
+    <article>
+        <textarea autofocus id="writeArea" oninput="displayHtml()"></textarea>
+    </article>
+    <div class="resizer"></div>
+    <article id="displayArea">
+    </article>
+</section>
+
+<script>
+    const config = {
+        minColumnWidth: 200,
+        resizerSelector: '.resizer',
+        mainSectionSelector: 'section'
+    };
+
+    const state = {
+        isResizing: false,
+        initialX: null,
+        initialWidths: null
+    };
+
+    const elements = {
+        resizer: document.querySelector(config.resizerSelector),
+        main: document.querySelector(config.mainSectionSelector)
+    };
+
+    function initialiseResize() {
+        elements.resizer.addEventListener('mousedown', onMouseDown);
+    }
+
+    function onMouseDown(e) {
+        state.isResizing = true;
+        state.initialX = e.clientX;
+        state.initialWidths = getInitialWidths();
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function getInitialWidths() {
+        const styles = getComputedStyle(elements.main);
+        const columns = styles.gridTemplateColumns.split(' ');
+        return [parseInt(columns[0]), parseInt(columns[2])];
+    }
+
+    function onMouseMove(e) {
+        if (!state.isResizing) return;
+
+        let deltaX = e.clientX - state.initialX;
+
+        let [newLeftWidth, newRightWidth] = updateWidths(deltaX);
+
+        elements.main.style.gridTemplateColumns = `${newLeftWidth}px 10px ${newRightWidth}px`;
+    }
+
+    function updateWidths(deltaX) {
+        let newLeftWidth = state.initialWidths[0] + deltaX;
+        let newRightWidth = state.initialWidths[1] - deltaX;
+
+        if (newLeftWidth < config.minColumnWidth) {
+            newLeftWidth = config.minColumnWidth;
+            newRightWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
+        } else if (newRightWidth < config.minColumnWidth) {
+            newRightWidth = config.minColumnWidth;
+            newLeftWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
+        }
+
+        return [newLeftWidth, newRightWidth];
+    }
+
+    function onMouseUp() {
+        state.isResizing = false;
+
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    initialiseResize();
+
+</script>
+
+
