@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'nexusserif-regular-regular', sans-serif;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  * {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html, body, nav, main {
+    display: flex;
+    flex-basis: 100%;
+}
+
+body {
+    flex-direction: column;
+}
+
+nav {
+    background-color: rgb(18, 24, 32);
+    padding: 20px;
+}
+
+nav ul
+{
+    flex-grow: 1;
+    align-self: center;
+}
+
+nav * {
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none;
+}
+
+nav li {
+    padding: 0 0 0 20px;
+}
+
+#title {
+    font-size: 20px;
+}
+
+#login {
+    flex-direction: row-reverse;
+}
+
+main *{
+    flex-direction: column;
+    background-color: rgb(249, 241, 223);
+}
+
+main * {
+    color: rgb(70, 20, 19);
+}
