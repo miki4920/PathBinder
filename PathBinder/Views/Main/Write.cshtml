@@ -101,7 +101,41 @@
         return false;
     }
 
-    
+    function updateDisplay() {
+        let htmlContent = editor.getValue();
+        let page = document.createElement("div");
+        page.classList.add("page");
+        let columnWrapper = document.createElement("div");
+        columnWrapper.classList.add("columnWrapper");
+        columnWrapper.innerHTML = converter.makeHtml(htmlContent);
+        shadow.innerHTML = "";
+        page.appendChild(columnWrapper);
+        shadow.appendChild(page);
+        shadow.appendChild(style);
+
+        setTimeout(() => {
+            while (isOverflowing(page)) {
+                const elements = Array.from(columnWrapper.children);
+                const newPage = document.createElement("div");
+                newPage.classList.add("page");
+                const newColumnWrapper = document.createElement("div");
+                newColumnWrapper.classList.add("columnWrapper");
+                newPage.appendChild(newColumnWrapper);
+
+                const colWrapperRect = columnWrapper.getBoundingClientRect();
+                let elementsMoved = false;
+
+                for (let element of elements) {
+                    const elemRect = element.getBoundingClientRect();
+                    if (elemRect.x > colWrapperRect.x + colWrapperRect.width) {
+                        newColumnWrapper.appendChild(element);
+                    }
+                }
+                shadow.appendChild(newPage);
+                page = newPage;
+            }
+        }, 0);
+    }
 
     editor.on("change", () => {
         updateDisplay();
