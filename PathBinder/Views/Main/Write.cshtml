@@ -88,20 +88,7 @@
             }
         `;
 
-    function isOverflowing(page) {
-        let wrapper = page.firstChild;
-        let elements = wrapper.children;
-        const wrapperRectangle = wrapper.getBoundingClientRect();
-        for (let element of elements) {
-            const elemRect = element.getBoundingClientRect();
-            if (elemRect.x > wrapperRectangle.x + wrapperRectangle.width) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
+    
 
     editor.on("change", () => {
         updateDisplay();
