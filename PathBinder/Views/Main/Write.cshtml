@@ -88,19 +88,6 @@
             }
         `;
 
-    function isOverflowing(page) {
-        const wrapperRectangle = page.firstChild.getBoundingClientRect();
-        const elements = page.firstChild.children;
-
-        for (let element of elements) {
-            const elemRect = element.getBoundingClientRect();
-            if (elemRect.x > wrapperRectangle.x + wrapperRectangle.width) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     function createElementWithClass(tagName, className) {
         const element = document.createElement(tagName);
         element.classList.add(className);
@@ -111,30 +98,32 @@
         let htmlContent = editor.getValue();
         let page = createElementWithClass("div", "page");
         let columnWrapper = createElementWithClass("div", "columnWrapper");
-
         columnWrapper.innerHTML = converter.makeHtml(htmlContent);
         shadow.innerHTML = "";
         page.appendChild(columnWrapper);
         shadow.appendChild(page);
         shadow.appendChild(style);
 
+        const columnWrapperRect = columnWrapper.getBoundingClientRect()
+
         setTimeout(() => {
-            while (isOverflowing(page)) {
-                const elements = Array.from(page.firstChild.children);
+            while (true) {
+                let elements = Array.from(page.firstChild.children);
                 let newPage = createElementWithClass("div", "page");
                 let newColumnWrapper = createElementWithClass("div", "columnWrapper");
-
                 newPage.appendChild(newColumnWrapper);
-                const colWrapperRect = page.firstChild.getBoundingClientRect();
+                let hasOverflowingElement = false;
 
                 for (let element of elements) {
                     const elemRect = element.getBoundingClientRect();
-                    if (elemRect.x > colWrapperRect.x + colWrapperRect.width) {
+                    if (elemRect.x > columnWrapperRect.x + columnWrapperRect.width) {
                         newColumnWrapper.appendChild(element);
+                        hasOverflowingElement = true;
                     }
                 }
-
+                if (!hasOverflowingElement) break;
                 shadow.appendChild(newPage);
+                elements = Array.from(page.firstChild.children);
                 page = newPage;
             }
         }, 0);
