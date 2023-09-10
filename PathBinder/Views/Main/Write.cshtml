@@ -89,9 +89,9 @@
         `;
 
     function isOverflowing(page) {
-        let wrapper = page.firstChild;
-        let elements = wrapper.children;
-        const wrapperRectangle = wrapper.getBoundingClientRect();
+        const wrapperRectangle = page.firstChild.getBoundingClientRect();
+        const elements = page.firstChild.children;
+
         for (let element of elements) {
             const elemRect = element.getBoundingClientRect();
             if (elemRect.x > wrapperRectangle.x + wrapperRectangle.width) {
@@ -101,12 +101,17 @@
         return false;
     }
 
+    function createElementWithClass(tagName, className) {
+        const element = document.createElement(tagName);
+        element.classList.add(className);
+        return element;
+    }
+
     function updateDisplay() {
         let htmlContent = editor.getValue();
-        let page = document.createElement("div");
-        page.classList.add("page");
-        let columnWrapper = document.createElement("div");
-        columnWrapper.classList.add("columnWrapper");
+        let page = createElementWithClass("div", "page");
+        let columnWrapper = createElementWithClass("div", "columnWrapper");
+
         columnWrapper.innerHTML = converter.makeHtml(htmlContent);
         shadow.innerHTML = "";
         page.appendChild(columnWrapper);
@@ -115,15 +120,12 @@
 
         setTimeout(() => {
             while (isOverflowing(page)) {
-                const elements = Array.from(columnWrapper.children);
-                const newPage = document.createElement("div");
-                newPage.classList.add("page");
-                const newColumnWrapper = document.createElement("div");
-                newColumnWrapper.classList.add("columnWrapper");
-                newPage.appendChild(newColumnWrapper);
+                const elements = Array.from(page.firstChild.children);
+                let newPage = createElementWithClass("div", "page");
+                let newColumnWrapper = createElementWithClass("div", "columnWrapper");
 
-                const colWrapperRect = columnWrapper.getBoundingClientRect();
-                let elementsMoved = false;
+                newPage.appendChild(newColumnWrapper);
+                const colWrapperRect = page.firstChild.getBoundingClientRect();
 
                 for (let element of elements) {
                     const elemRect = element.getBoundingClientRect();
@@ -131,6 +133,7 @@
                         newColumnWrapper.appendChild(element);
                     }
                 }
+
                 shadow.appendChild(newPage);
                 page = newPage;
             }
