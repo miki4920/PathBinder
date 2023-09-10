@@ -1,31 +1,29 @@
 ﻿@{
     ViewData["Title"] = "Write";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
 <style>
     section {
         display: grid;
-        grid-template-columns: 1fr 10px 1fr;
         flex-basis: 100%;
+        grid-template-columns: 1fr 10px 1fr;
         background-color: rgb(249, 241, 223);
+    }
+
+    #writeAreaHolder, #displayAreaHolder {
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 0 10px;
     }
 
     #writeAreaHolder {
-        display: inline-flex;
-        flex-direction: column;
-        gap: 10px;
         font-family: monospace;
         line-height: 21px;
-        border-radius: 2px;
-        padding: 0 10px;
-        overflow-y: auto;
     }
 
     .CodeMirror {
+        height: 100%;
         background-color: rgb(249, 241, 223);
-        flex-grow: 1;
-        height: 9999px;
-        
     }
 
     .resizer {
@@ -33,91 +31,17 @@
         background-color: rgb(18, 24, 32);
         width: 10px;
     }
-
-    #displayAreaHolder {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 10px;
-        overflow-x: hidden;
-    }
-
-    #displayArea {
-        display: flex;
-        flex-wrap: wrap;
-        width: 210mm;
-        background-image: url("../assets/page.jpg");
-        height: 297mm;
-    }
-
 </style>
 <section>
-    <article id="writeAreaHolder">
-    </article>
+    <div id="writeAreaHolder"></div>
     <div class="resizer"></div>
-    <div id="displayAreaHolder">
-        <article id="displayArea"></article>
-    </div>
+    <div id="displayAreaHolder"></div>
 </section>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js" integrity="sha512-8RnEqURPUc5aqFEN04aQEiPlSAdE0jlFS/9iGgUyNtwFnSKCXhmB6ZTNl7LnDtDWKabJIASzXrzD0K+LYexU9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script type="text/javascript" src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
-    let displayArea = document.getElementById('displayArea');
-    let converter = new showdown.Converter();
-    let shadow = displayArea.attachShadow({ mode: 'open' });
-    let style = document.createElement("style");
-    style.textContent = `
-            .page {
-                padding: 1.4cm 1.9cm 1.7cm;
-                display: flex;
-                height: 297mm;
-                flex-direction: column;
-            }
-
-            .page * {
-                overflow-wrap: anywhere;
-            }
-        `;
-    
-
-    function displayHtml() {
-        let htmlContent = editor.getValue();
-        console.log(htmlContent);
-        let page = document.createElement("div");
-        page.classList.add("page");
-        page.innerHTML = converter.makeHtml(htmlContent);
-        shadow.innerHTML = "";
-        shadow.appendChild(page);
-        shadow.appendChild(style);
-
-        function getPageHeight(page) {
-            return Array.from(page.children).reduce((height, element) => {
-                return height + element.offsetHeight;
-            }, 0);
-        }
-
-        let height = getPageHeight(page);
-
-        while (height > page.getBoundingClientRect().height) {
-            let secondPage = document.createElement("div");
-            secondPage.classList.add("page");
-            shadow.appendChild(secondPage);
-
-            while (height > page.getBoundingClientRect().height && page.children.length > 0) {
-                let lastElement = page.children[page.children.length - 1];
-                page.removeChild(lastElement);
-                secondPage.prepend(lastElement);
-                height = getPageHeight(page);
-            }
-
-            page = secondPage;
-            height = getPageHeight(page);
-        }
-    }
-
-    let editor = CodeMirror(document.getElementById('writeAreaHolder'), {
+    const editor = CodeMirror(document.getElementById('writeAreaHolder'), {
         lineNumbers: true,
         lineWrapping: true,
         styleActiveLine: true,
@@ -126,39 +50,79 @@
         mode: 'markdown',
         scrollbarStyle: "native"
     });
-    editor.on("change", function() {
-        displayHtml()
-    })
 
-    const config = {
-        minColumnWidth: 200,
-        resizerSelector: '.resizer',
-        mainSectionSelector: 'section'
-    };
+    const displayArea = document.getElementById('displayAreaHolder');
+    const converter = new showdown.Converter();
+    const shadow = displayArea.attachShadow({ mode: 'open' });
+    const style = document.createElement("style");
+    style.textContent = `
+            .page {
+                margin-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 40px;
+                background-image: url(../assets/page.jpg)
+            }
 
-    const state = {
-        isResizing: false,
-        initialX: null,
-        initialWidths: null
-    };
+            .page, .columnWrapper {
+                column-count: 2;
+                column-fill: auto;
+                height: 279.4mm;
+                width: 215.9mm;
+                overflow: hidden;
+            }
 
+            .page h1 {
+                column-span: all;
+            }
+
+            .page p {
+                margin: 0;
+            }
+
+            .columnWrapper {
+                height: 279.4mm;
+                column-count: inherit;
+                column-span: all;
+
+            }
+        `;
+
+    function isOverflowing(page) {
+        let wrapper = page.firstChild;
+        let elements = wrapper.children;
+        const wrapperRectangle = wrapper.getBoundingClientRect();
+        for (let element of elements) {
+            const elemRect = element.getBoundingClientRect();
+            if (elemRect.x > wrapperRectangle.x + wrapperRectangle.width) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    editor.on("change", () => {
+        updateDisplay();
+    });
+
+    updateDisplay();
+
+    const config = { minColumnWidth: 200, resizerSelector: '.resizer', mainSectionSelector: 'section' };
+    const state = { isResizing: false, initialX: null, initialWidths: null };
     const elements = {
         resizer: document.querySelector(config.resizerSelector),
         main: document.querySelector(config.mainSectionSelector)
     };
 
-    function initialiseResize() {
-        elements.resizer.addEventListener('mousedown', onMouseDown);
-    }
-
-    function onMouseDown(e) {
+    elements.resizer.addEventListener('mousedown', e => {
         state.isResizing = true;
         state.initialX = e.clientX;
         state.initialWidths = getInitialWidths();
-
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
-    }
+    });
 
     function getInitialWidths() {
         const styles = getComputedStyle(elements.main);
@@ -168,18 +132,14 @@
 
     function onMouseMove(e) {
         if (!state.isResizing) return;
-
-        let deltaX = e.clientX - state.initialX;
-
-        let [newLeftWidth, newRightWidth] = updateWidths(deltaX);
-
+        const deltaX = e.clientX - state.initialX;
+        const [newLeftWidth, newRightWidth] = updateWidths(deltaX);
         elements.main.style.gridTemplateColumns = `${newLeftWidth}px 10px ${newRightWidth}px`;
     }
 
     function updateWidths(deltaX) {
         let newLeftWidth = state.initialWidths[0] + deltaX;
         let newRightWidth = state.initialWidths[1] - deltaX;
-
         if (newLeftWidth < config.minColumnWidth) {
             newLeftWidth = config.minColumnWidth;
             newRightWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
@@ -187,26 +147,12 @@
             newRightWidth = config.minColumnWidth;
             newLeftWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
         }
-
         return [newLeftWidth, newRightWidth];
     }
 
     function onMouseUp() {
         state.isResizing = false;
-
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
     }
-
-    initialiseResize();
-
-    
-
-
-
-
-
-        
 </script>
-
-
