@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PathBinder.Models;
 
 namespace PathBinder.Data
 {
@@ -9,5 +10,6 @@ namespace PathBinder.Data
             : base(options)
         {
         }
+        public DbSet<PathBinder.Models.Document> Document { get; set; } = default!;
     }
 }
