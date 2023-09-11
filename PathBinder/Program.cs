@@ -37,7 +37,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Main}/{action=Home}");
+    pattern: "{controller=Main}/{action=Write}");
 
 app.MapControllerRoute(
     name: "documents",

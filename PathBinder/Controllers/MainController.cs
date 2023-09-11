@@ -13,11 +13,6 @@ namespace PathBinder.Controllers
             _logger = logger;
         }
 
-        public IActionResult Home()
-        {
-            return View();
-        }
-
         public IActionResult Write()
         {
             return View();
