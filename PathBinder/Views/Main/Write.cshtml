@@ -10,16 +10,43 @@
         background-color: rgb(249, 241, 223);
     }
 
-    #writeAreaHolder, #displayAreaHolder {
+    #writeAreaHolder {
+        display: flex;
+        overflow-y: auto;
+    }
+
+    #writeAreaHolder nav {
+        flex-grow: 0;
+        flex-basis: auto;
+        background-color: rgb(255, 255, 255);
+        flex-direction: row;
+        padding: 0;
+
+    }
+
+    button {
+        cursor: pointer; 
+        border: none;
+        text-decoration: none;
+        padding: 6px;
+    }
+
+    #writeArea, #displayAreaHolder {
         flex-direction: column;
         overflow-x: hidden;
         overflow-y: auto;
+        color: rgb(70, 20, 19);
+        flex-grow: 1;
+    }
+
+    #displayAreaHolder {
         padding: 0 10px;
     }
 
-    #writeAreaHolder {
+    #writeArea {
         font-family: monospace;
         line-height: 21px;
+        overflow-y: auto;
     }
 
     .CodeMirror {
@@ -30,11 +57,16 @@
     .resizer {
         cursor: ew-resize;
         background-color: rgb(18, 24, 32);
-        width: 10px;
     }
 </style>
 <section>
-    <div id="writeAreaHolder"></div>
+    <div id="writeAreaHolder">
+        <nav>
+            <button>Save</button>
+        </nav>
+        <div id="writeArea">
+    </div>
+    </div>
     <div class="resizer"></div>
     <div id="displayAreaHolder"></div>
 </section>
@@ -42,7 +74,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
-    const editor = CodeMirror(document.getElementById('writeAreaHolder'), {
+    const editor = CodeMirror(document.getElementById('writeArea'), {
         lineNumbers: true,
         lineWrapping: true,
         styleActiveLine: true,
