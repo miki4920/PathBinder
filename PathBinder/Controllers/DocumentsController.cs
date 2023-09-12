@@ -45,12 +45,6 @@ namespace PathBinder.Controllers
             return View(document);
         }
 
-        // GET: Documents/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Documents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -67,25 +61,6 @@ namespace PathBinder.Controllers
             return View(document);
         }
 
-        // GET: Documents/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Document == null)
-            {
-                return NotFound();
-            }
-
-            var document = await _context.Document.FindAsync(id);
-            if (document == null)
-            {
-                return NotFound();
-            }
-            return View(document);
-        }
-
-        // POST: Documents/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,documentText")] Document document)
@@ -115,24 +90,6 @@ namespace PathBinder.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(document);
-        }
-
-        // GET: Documents/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Document == null)
-            {
-                return NotFound();
-            }
-
-            var document = await _context.Document
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (document == null)
-            {
-                return NotFound();
-            }
-
             return View(document);
         }
 
