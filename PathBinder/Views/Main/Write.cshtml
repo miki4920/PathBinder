@@ -16,12 +16,10 @@
     }
 
     #writeAreaHolder nav {
-        flex-grow: 0;
-        flex-basis: auto;
+        flex: 1 1 auto;
         background-color: rgb(255, 255, 255);
         flex-direction: row;
         padding: 0;
-
     }
 
     button {
@@ -29,6 +27,7 @@
         border: none;
         text-decoration: none;
         padding: 6px;
+        flex-grow:0;
     }
 
     #writeArea, #displayAreaHolder {
@@ -47,6 +46,7 @@
         font-family: monospace;
         line-height: 21px;
         overflow-y: auto;
+        flex-basis: 100%;
     }
 
     .CodeMirror {
@@ -71,9 +71,14 @@
     <div id="displayAreaHolder"></div>
 </section>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
+    $("#displayAreaHolder").on("scroll", function () {
+        localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
+    });
+
     const editor = CodeMirror(document.getElementById('writeArea'), {
         lineNumbers: true,
         lineWrapping: true,
@@ -138,32 +143,32 @@
         shadow.appendChild(style);
 
         const columnWrapperRect = columnWrapper.getBoundingClientRect()
+        while (true) {
+            let elements = Array.from(page.firstChild.children);
+            let newPage = createElementWithClass("div", "page");
+            let newColumnWrapper = createElementWithClass("div", "columnWrapper");
+            newPage.appendChild(newColumnWrapper);
+            let hasOverflowingElement = false;
 
-        setTimeout(() => {
-            while (true) {
-                let elements = Array.from(page.firstChild.children);
-                let newPage = createElementWithClass("div", "page");
-                let newColumnWrapper = createElementWithClass("div", "columnWrapper");
-                newPage.appendChild(newColumnWrapper);
-                let hasOverflowingElement = false;
-
-                for (let element of elements) {
-                    const elemRect = element.getBoundingClientRect();
-                    if (elemRect.x > columnWrapperRect.x + columnWrapperRect.width) {
-                        newColumnWrapper.appendChild(element);
-                        hasOverflowingElement = true;
-                    }
+            for (let element of elements) {
+                const elemRect = element.getBoundingClientRect();
+                if (elemRect.x > columnWrapperRect.x + columnWrapperRect.width) {
+                    newColumnWrapper.appendChild(element);
+                    hasOverflowingElement = true;
                 }
-                if (!hasOverflowingElement) break;
-                shadow.appendChild(newPage);
-                elements = Array.from(page.firstChild.children);
-                page = newPage;
             }
-        }, 0);
+            if (!hasOverflowingElement) break;
+            shadow.appendChild(newPage);
+            elements = Array.from(page.firstChild.children);
+            page = newPage;
+        }
     }
 
     editor.on("change", () => {
         updateDisplay();
+        if (localStorage.getItem("PathBinder-Scroll") != null) {
+            $("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
+        }
     });
 
     updateDisplay();
