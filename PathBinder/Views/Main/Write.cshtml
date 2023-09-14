@@ -70,13 +70,10 @@
     <div class="resizer"></div>
     <div id="displayAreaHolder"></div>
 </section>
-
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
-    
-
     $("#displayAreaHolder").on("scroll", function () {
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
@@ -180,7 +177,7 @@
     async function postDocument() {
         try {
 
-            const response = await fetch(window.location.href + "api/Document", {
+            const response = await fetch("@Url.Action("GetDocument", "Document")", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -201,7 +198,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch(window.location.href + "api/Document/1");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/1");
 
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
