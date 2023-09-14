@@ -62,7 +62,7 @@
 <section>
     <div id="writeAreaHolder">
         <nav>
-            <button>Save</button>
+            <button onclick="saveDocument()">Save</button>
         </nav>
         <div id="writeArea">
     </div>
@@ -75,6 +75,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
+    
+
     $("#displayAreaHolder").on("scroll", function () {
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
@@ -175,6 +177,28 @@
 
     updateDisplay();
 
+    async function saveDocument() {
+        try {
+
+            const response = await fetch(window.location.href + "api/Document", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "Name": "miki4920", "Content": editor.getValue() }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+
+            const jsonResponse = await response.json();
+            console.log('Success:', jsonResponse);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     const config = { minColumnWidth: 200, resizerSelector: '.resizer', mainSectionSelector: 'section' };
     const state = { isResizing: false, initialX: null, initialWidths: null };
     const elements = {
@@ -222,3 +246,8 @@
         document.removeEventListener('mouseup', onMouseUp);
     }
 </script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
