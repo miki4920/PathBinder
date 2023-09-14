@@ -62,7 +62,7 @@
 <section>
     <div id="writeAreaHolder">
         <nav>
-            <button onclick="saveDocument()">Save</button>
+            <button onclick="postDocument()">Save</button>
         </nav>
         <div id="writeArea">
     </div>
@@ -177,7 +177,7 @@
 
     updateDisplay();
 
-    async function saveDocument() {
+    async function postDocument() {
         try {
 
             const response = await fetch(window.location.href + "api/Document", {
@@ -185,7 +185,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ "Name": "miki4920", "Content": editor.getValue() }),
+                body: JSON.stringify({ "name": "miki4920", "content": editor.getValue() }),
             });
 
             if (!response.ok) {
@@ -196,6 +196,21 @@
             console.log('Success:', jsonResponse);
         } catch (error) {
             console.error('Error:', error);
+        }
+    }
+
+    async function getDocument() {
+        try {
+            const response = await fetch(window.location.href + "api/Document/1");
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+
+            const documentData = await response.json();
+            editor.setValue(documentData.content);
+        } catch (error) {
+            console.error('Error fetching document:', error);
         }
     }
 
@@ -245,6 +260,10 @@
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
     }
+
+    window.onload = (event) => {
+        getDocument();
+    };
 </script>
 @section Scripts {
     @{
