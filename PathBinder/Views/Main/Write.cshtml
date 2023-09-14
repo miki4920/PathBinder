@@ -78,19 +78,19 @@
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
 
-    const editor = CodeMirror(document.getElementById('writeArea'), {
+    const editor = CodeMirror(document.getElementById("writeArea"), {
         lineNumbers: true,
         lineWrapping: true,
         styleActiveLine: true,
         matchBrackets: true,
-        theme: 'default',
-        mode: 'markdown',
+        theme: "default",
+        mode: "markdown",
         scrollbarStyle: "native"
     });
 
-    const displayArea = document.getElementById('displayAreaHolder');
+    const displayArea = document.getElementById("displayAreaHolder");
     const converter = new showdown.Converter();
-    const shadow = displayArea.attachShadow({ mode: 'open' });
+    const shadow = displayArea.attachShadow({ mode: "open" });
     const style = document.createElement("style");
     style.textContent = `
             .page {
@@ -178,21 +178,21 @@
         try {
 
             const response = await fetch("@Url.Action("GetDocument", "Document")", {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ "name": "miki4920", "content": editor.getValue() }),
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
+                throw new Error("Network response was not ok " + response.statusText);
             }
 
             const jsonResponse = await response.json();
-            console.log('Success:', jsonResponse);
+            console.log("Success:", jsonResponse);
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
     }
 
@@ -201,34 +201,34 @@
             const response = await fetch("@Url.Action("GetDocument", "Document")" + "/1");
 
             if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
+                throw new Error("Network response was not ok " + response.statusText);
             }
 
             const documentData = await response.json();
             editor.setValue(documentData.content);
         } catch (error) {
-            console.error('Error fetching document:', error);
+            console.error("Error fetching document:", error);
         }
     }
 
-    const config = { minColumnWidth: 200, resizerSelector: '.resizer', mainSectionSelector: 'section' };
+    const config = { minColumnWidth: 200, resizerSelector: ".resizer", mainSectionSelector: "section" };
     const state = { isResizing: false, initialX: null, initialWidths: null };
     const elements = {
         resizer: document.querySelector(config.resizerSelector),
         main: document.querySelector(config.mainSectionSelector)
     };
 
-    elements.resizer.addEventListener('mousedown', e => {
+    elements.resizer.addEventListener("mousedown", e => {
         state.isResizing = true;
         state.initialX = e.clientX;
         state.initialWidths = getInitialWidths();
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
     });
 
     function getInitialWidths() {
         const styles = getComputedStyle(elements.main);
-        const columns = styles.gridTemplateColumns.split(' ');
+        const columns = styles.gridTemplateColumns.split(" ");
         return [parseInt(columns[0]), parseInt(columns[2])];
     }
 
@@ -254,8 +254,8 @@
 
     function onMouseUp() {
         state.isResizing = false;
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
     }
 
     window.onload = (event) => {
