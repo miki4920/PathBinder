@@ -10,6 +10,6 @@ namespace PathBinder.Models
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        public string documentText { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
     }
 }
