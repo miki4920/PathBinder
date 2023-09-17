@@ -1,6 +1,43 @@
 ﻿@{
     ViewData["Title"] = "Library";
 }
-<h1>@ViewData["Title"]</h1>
+@model IEnumerable<PathBinder.Models.Document> 
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabletop Documents</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 10px;
+        }
+        .grid-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .grid-item h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-container">
+    @foreach (var document in Model)
+    {
+        <div class="grid-item">
+            <h2>@document.Title</h2>
+            <p>@document.Description</p>
+        </div>
+    }
+</div>
+
+</body>
+</html>
