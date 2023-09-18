@@ -111,30 +111,65 @@
                 overflow: hidden;
             }
 
-            .page h1 {
+            .columnWrapper {
                 column-span: all;
+                }
+
+            .wide {
+                column-span: all;
+                text-align: center;
+            }
+
+            .subtitle {
+                color: #5E0000;
+                margin-top: -30px;
+            }
+
+            h1 {
                 font-size: 5em;
                 margin-top:0;
                 margin-bottom:30px;
                 font-family: 'Eczar', sans-serif;
                 -webkit-text-stroke-width: 1.2px;
             }
-            .page h2 {
+            h2 {
                 color:#02256E;
                 font-size: 2.25em;
             }
 
-            .page p {
+            p {
                 margin: 0;
             }
-
-            .columnWrapper {
-                height: 279.4mm;
-                column-count: inherit;
-                column-span: all;
-
-            }
         `;
+
+    function replacePlaceholders(container) {
+        let elements = {
+            "header": {"html": "header", "classes": ["wide", "subtitle"]} 
+        }
+        let htmlContent = container.innerHTML;
+        const regex = /{{([A-Za-z]+) (.+)}}/g;
+        htmlContent = htmlContent.replace(regex, (match, element, content) => {
+            if (elements[element] === undefined) {
+                return match;
+            }
+            const newElement = document.createElement(elements[element]["html"]);
+            newElement.innerHTML = content;
+            elements[element]["classes"].forEach(className => {
+                newElement.classList.add(className);
+            })
+            return newElement.outerHTML;
+        });
+        container.innerHTML = htmlContent;
+    }    
+
+    function applyClasses(content, selectors, className) {
+        selectors.forEach(selector => {
+            content.querySelectorAll(selector).forEach(element => {
+                element.classList.add(className);
+            });
+        });
+       
+    }
 
     function createElementWithClass(tagName, className) {
         const element = document.createElement(tagName);
@@ -142,47 +177,27 @@
         return element;
     }
 
-    function updateDisplay() {
-        let htmlContent = editor.getValue();
-        let page = createElementWithClass("div", "page");
-        let columnWrapper = createElementWithClass("div", "columnWrapper");
-        columnWrapper.innerHTML = converter.makeHtml(htmlContent);
+    function displayChange() {
         shadow.innerHTML = "";
-        page.appendChild(columnWrapper);
-        shadow.appendChild(page);
+        let htmlContent = editor.getValue();
+        console.log(htmlContent);
+        htmlContent = htmlContent.split("page");
+        console.log(htmlContent);
+        for (let element of htmlContent) {
+            let page = createElementWithClass("div", "page");
+            let columnWrapper = createElementWithClass("div", "columnWrapper");
+            columnWrapper.innerHTML = converter.makeHtml(element);
+            page.appendChild(columnWrapper);
+            shadow.appendChild(page);
+        }
         shadow.appendChild(style);
 
-        const columnWrapperRect = columnWrapper.getBoundingClientRect()
-        while (true) {
-            let elements = Array.from(page.firstChild.children);
-            let newPage = createElementWithClass("div", "page");
-            let newColumnWrapper = createElementWithClass("div", "columnWrapper");
-            newPage.appendChild(newColumnWrapper);
-            let hasOverflowingElement = false;
-
-            for (let element of elements) {
-                const elemRect = element.getBoundingClientRect();
-                if (elemRect.x > columnWrapperRect.x + columnWrapperRect.width) {
-                    newColumnWrapper.appendChild(element);
-                    hasOverflowingElement = true;
-                }
-            }
-            if (!hasOverflowingElement) break;
-            shadow.appendChild(newPage);
-            elements = Array.from(page.firstChild.children);
-            page = newPage;
-        }
     }
 
     editor.on("change", () => {
-        updateDisplay();
-        if (localStorage.getItem("PathBinder-Scroll") != null) {
-            $("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
-        }
+        displayChange();
     });
-
-    updateDisplay();
-
+    
     async function postDocument() {
         try {
 
