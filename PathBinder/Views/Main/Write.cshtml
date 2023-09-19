@@ -94,26 +94,23 @@
     const style = document.createElement("style");
     style.textContent = `
             .page {
-                margin-top: 28px;
-                margin-bottom: 28px;
-                margin-left: auto;
-                margin-right: auto;
-                padding: 1.4cm 1.9cm 1.7cm;
-                background-image: url(../assets/page.png);
+                margin: 30px auto;
                 box-shadow: 1px 4px 14px #000;
+                padding-left: 75px;
+                padding-right: 1.5cm;
+                padding-bottom: 0.5cm;
+                padding-top: 1cm;
             }
 
             .page, .columnWrapper {
-                column-count: 2;
-                column-fill: auto;
-                height: 279.4mm;
-                width: 215.9mm;
-                overflow: hidden;
+                
             }
 
             .columnWrapper {
                 column-span: all;
-                }
+                    background-image: url(../assets/page.png);
+                    background-size: 822px;
+            }
 
             .wide {
                 column-span: all;
@@ -125,16 +122,22 @@
                 margin-top: -30px;
             }
 
-            h1 {
-                font-size: 5em;
-                margin-top:0;
-                margin-bottom:30px;
+            h1, h2 {
+                
                 font-family: 'Eczar', sans-serif;
                 -webkit-text-stroke-width: 1.2px;
             }
+
+            h1 {
+                font-size: 5em;
+            }
+
             h2 {
                 color:#02256E;
                 font-size: 2.25em;
+                margin-top: 0.2em;
+                margin-bottom: 0.2em;
+                line-height: 1.1;
             }
 
             p {
@@ -144,17 +147,19 @@
 
     function replacePlaceholders(container) {
         let elements = {
-            "header": {"html": "header", "classes": ["wide", "subtitle"]} 
+            "header": {"html": "header", "classes": ["wide", "subtitle"]},
+            "title": {"html": "h1", "classes": ["wide", "title"]}
         }
         let htmlContent = container.innerHTML;
         const regex = /{{([A-Za-z]+) (.+)}}/g;
         htmlContent = htmlContent.replace(regex, (match, element, content) => {
-            if (elements[element] === undefined) {
+            element = elements[element.toLowerCase()]
+            if (element === undefined) {
                 return match;
             }
-            const newElement = document.createElement(elements[element]["html"]);
+            const newElement = document.createElement(element["html"]);
             newElement.innerHTML = content;
-            elements[element]["classes"].forEach(className => {
+            element["classes"].forEach(className => {
                 newElement.classList.add(className);
             })
             return newElement.outerHTML;
@@ -180,9 +185,7 @@
     function displayChange() {
         shadow.innerHTML = "";
         let htmlContent = editor.getValue();
-        console.log(htmlContent);
         htmlContent = htmlContent.split("\\page");
-        console.log(htmlContent);
         for (let element of htmlContent) {
             let page = createElementWithClass("div", "page");
             let columnWrapper = createElementWithClass("div", "columnWrapper");
@@ -224,7 +227,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/1");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/3");
 
             if (!response.ok) {
                 throw new Error("Network response was not ok " + response.statusText);
