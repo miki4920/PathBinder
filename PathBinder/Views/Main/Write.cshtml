@@ -95,6 +95,7 @@
     style.textContent = `
             .page {
                 margin: 30px auto;
+                background-image: url(../assets/page.png);
                 box-shadow: 1px 4px 14px #000;
                 padding-left: 75px;
                 padding-right: 1.5cm;
@@ -103,13 +104,15 @@
             }
 
             .page, .columnWrapper {
-                
+                column-count: 2;
+                column-fill: auto;
+                height: 279.4mm;
+                width: 215.9mm;
+                overflow: hidden;
             }
 
             .columnWrapper {
                 column-span: all;
-                    background-image: url(../assets/page.png);
-                    background-size: 822px;
             }
 
             .wide {
@@ -123,7 +126,6 @@
             }
 
             h1, h2 {
-                
                 font-family: 'Eczar', sans-serif;
                 -webkit-text-stroke-width: 1.2px;
             }
@@ -141,7 +143,10 @@
             }
 
             p {
+                font-family: 'Gelasio', sans-serif;
                 margin: 0;
+                line-height: 1.4;
+                text-align: justify;
             }
         `;
 
