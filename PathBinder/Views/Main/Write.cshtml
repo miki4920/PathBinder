@@ -143,6 +143,27 @@
                 -webkit-column-break-after: always;
             }
 
+            .page .action {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                margin-right: -1px;
+                margin-left: -1px;
+            }
+
+            .page .oneaction {
+                width: 14px;
+            }
+
+            .page .twoaction {
+                height: 22px;
+                width: 24px;
+            }
+
+            .page .threeaction {
+                height: 28px;
+                width: 32px;
+            }
+
             .page h1, .page h2 {
                 font-family: 'Eczar', sans-serif;
 
@@ -212,24 +233,37 @@
                 text-align: justify;
                 margin: 0 0 10.5px;
             }
+
+            .page img {
+                vertical-align: middle;
+            }
         `;
 
     function replacePlaceholders(container) {
         let elements = {
             "header": {"html": "header", "classes": ["wide", "subtitle"]},
             "title": {"html": "h1", "classes": ["wide", "title"]},
-            "columnbreak": {"html": "div", "classes": ["break"]}
+            "columnbreak": {"html": "div", "classes": ["break"]},
+            "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
+            "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
+            "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
+            "twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
+            "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
+            "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] }
         }
         let htmlContent = container.innerHTML;
-        const regex = /{{([A-Za-z]+)(.*)}}/g;
+        const regex = /{{([A-Za-z]+)(.*?)}}/g;
         htmlContent = htmlContent.replace(regex, (match, element, content) => {
             element = elements[element.toLowerCase()]
             if (element === undefined) {
                 return match;
             }
             const newElement = document.createElement(element["html"]);
+            if (element["src"] !== undefined) {
+                newElement.src = element["src"];
+            }
             newElement.innerHTML = content.trim();
-            element["classes"].forEach(className => {
+            element["classes"]?.forEach(className => {
                 newElement.classList.add(className);
             })
             return newElement.outerHTML;
@@ -297,7 +331,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/4");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/5");
 
             if (!response.ok) {
                 throw new Error("Network response was not ok " + response.statusText);
