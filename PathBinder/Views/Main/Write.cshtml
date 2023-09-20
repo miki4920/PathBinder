@@ -139,9 +139,13 @@
                 margin-top: -30px;
             }
 
+            .page .break {
+                -webkit-column-break-after: always;
+            }
+
             .page h1, .page h2 {
                 font-family: 'Eczar', sans-serif;
-                -webkit-text-stroke-width: 1.2px;
+
             }
 
             .page h1, .page h2, .page h3, .page h4, .page h5 {
@@ -151,12 +155,14 @@
 
             .page h1 {
                 font-size: 5em;
+                -webkit-text-stroke-width: 1.2px;
             }
 
             .page h2 {
                 color:#02256E;
                 font-size: 2.25em;
                 line-height: 1.1;
+                -webkit-text-stroke-width: 0.9px;
             }
 
             .page h3 {
@@ -185,6 +191,21 @@
                 color: #000000;
             }
 
+            .page h6 {
+                background-color: #002664;
+                color: #EDE3C8;
+                border-bottom: 1px solid #002664;
+                margin-bottom: 5px;
+                padding-left: 8px;
+                padding-top: 5px;
+                padding-bottom: 3px;
+                font-size: 1.25em;
+                font-family: 'Tauri', sans-serif;
+                text-transform: uppercase;
+                border-radius: 12px 12px 0px 0px;
+                font-weight: 500;
+            }
+
             .page p {
                 font-family: 'Gelasio', sans-serif;
                 line-height: 1.4;
@@ -196,17 +217,18 @@
     function replacePlaceholders(container) {
         let elements = {
             "header": {"html": "header", "classes": ["wide", "subtitle"]},
-            "title": {"html": "h1", "classes": ["wide", "title"]}
+            "title": {"html": "h1", "classes": ["wide", "title"]},
+            "columnbreak": {"html": "div", "classes": ["break"]}
         }
         let htmlContent = container.innerHTML;
-        const regex = /{{([A-Za-z]+) (.+)}}/g;
+        const regex = /{{([A-Za-z]+)(.*)}}/g;
         htmlContent = htmlContent.replace(regex, (match, element, content) => {
             element = elements[element.toLowerCase()]
             if (element === undefined) {
                 return match;
             }
             const newElement = document.createElement(element["html"]);
-            newElement.innerHTML = content;
+            newElement.innerHTML = content.trim();
             element["classes"].forEach(className => {
                 newElement.classList.add(className);
             })
@@ -233,7 +255,7 @@
     function displayChange() {
         shadow.innerHTML = "";
         let htmlContent = editor.getValue();
-        htmlContent = htmlContent.split("\\page");
+        htmlContent = htmlContent.split("\{\{pagebreak\}\}");
         for (let element of htmlContent) {
             let page = createElementWithClass("div", "page");
             let columnWrapper = createElementWithClass("div", "columnWrapper");
@@ -275,7 +297,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/3");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/4");
 
             if (!response.ok) {
                 throw new Error("Network response was not ok " + response.statusText);
