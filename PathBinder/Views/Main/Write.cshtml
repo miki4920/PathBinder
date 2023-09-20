@@ -34,7 +34,7 @@
         flex-direction: column;
         overflow-x: hidden;
         overflow-y: auto;
-        color: rgb(70, 20, 19);
+        color: #58180D;
         flex-grow: 1;
     }
 
@@ -111,16 +111,20 @@
                 overflow: hidden;
             }
 
-            .columnWrapper {
+            .page * {
+                font-size: .317cm;
+            }
+
+            .page .columnWrapper {
                 column-span: all;
             }
 
-            .wide {
+            .page .wide {
                 column-span: all;
                 text-align: center;
             }
 
-            .title {
+            .page .title {
                     text-shadow: 1px 1px 0 #EFCD98, -1px 1px 0 #EFCD98, 1px -1px 0 #EFCD98,
                     -1px -1px 0 #EFCD98, 0px 1px 0 #EFCD98, 0px -1px 0 #EFCD98, -1px 0px 0 #EFCD98,
                     1px 0px 0 #EFCD98, 2px 2px 0 #EFCD98, -2px 2px 0 #EFCD98, 2px -2px 0 #EFCD98,
@@ -130,41 +134,62 @@
                     -2px -1px 0 #EFCD98;
             }
 
-            .subtitle {
+            .page .subtitle {
                 color: #5E0000;
                 margin-top: -30px;
             }
 
-            h1, h2 {
+            .page h1, .page h2 {
                 font-family: 'Eczar', sans-serif;
                 -webkit-text-stroke-width: 1.2px;
             }
 
-            h1, h2, h3 {
+            .page h1, .page h2, .page h3, .page h4, .page h5 {
                 margin-top: 0.2em;
                 margin-bottom: 0.2em;
             }
 
-            h1 {
+            .page h1 {
                 font-size: 5em;
             }
 
-            h2 {
+            .page h2 {
                 color:#02256E;
                 font-size: 2.25em;
                 line-height: 1.1;
             }
 
-            h3 {
+            .page h3 {
                 font-family: 'Teko', sans-serif;
                 font-size: 2em;
+                -webkit-text-stroke-width: 0.6px;
+                font-weight:normal;
             }
 
-            p {
+            .page h4 {
+                font-family: 'Tauri', sans-serif;
+                margin-bottom: 0;
+                border-bottom: 1px solid;
+                font-size: .458cm;
+                font-weight: normal;
+                -webkit-text-stroke-width: 0.5px;
+                color: #000000;
+            }
+
+            .page h5 {
+                font-family: 'Tauri', sans-serif;
+                font-size: .423cm;
+                font-weight: 900;
+                text-transform: uppercase;
+                margin-top: 10.5px;
+                color: #000000;
+            }
+
+            .page p {
                 font-family: 'Gelasio', sans-serif;
-                margin: 0;
                 line-height: 1.4;
                 text-align: justify;
+                margin: 0 0 10.5px;
             }
         `;
 
