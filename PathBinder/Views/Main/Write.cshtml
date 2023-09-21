@@ -279,6 +279,28 @@
             }
         `;
 
+    function replaceBrackets(text, fn) {
+        let index = 0;  
+
+        function processSegment() {
+            let content = '';
+            while (index < text.length) {
+                if (text[index] === '{' && text[index + 1] === '{') {
+                    index += 2;  
+                    content += processSegment(); 
+                } else if (text[index] === '}' && text[index + 1] === '}') {
+                    index += 2;  
+                    return fn(content);  
+                } else {
+                    content += text[index++];
+                }
+            }
+            return content;  
+        }
+
+        return processSegment();
+    }
+
     function replacePlaceholders(container) {
         let elements = {
             "header": {"html": "header", "classes": ["wide", "subtitle"]},
@@ -293,10 +315,11 @@
             "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
             "tag": { "html": "div", "classes": ["tag"] },
             "label": {"html": "div", "classes": ["label"]},
-            "line": {"html": "p", "classes": ["line"]},
+            "line": {"html": "div", "classes": ["line"]},
         }
         let htmlContent = container.innerHTML;
-        const regex = /{{([A-Za-z]+)(.*?)}}/gs;
+        console.log(replaceBrackets(htmlContent, (segment) => 'Hi'));
+        const regex = /\{\{([A-Za-z]+)(.*?)(?=\{\{|\}\})/gs;
         htmlContent = htmlContent.replace(regex, (match, element, content) => {
             element = elements[element.toLowerCase()]
             if (element === undefined) {
@@ -340,7 +363,7 @@
             columnWrapper.innerHTML = converter.makeHtml(element);
             replacePlaceholders(columnWrapper);
             applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
-            columnWrapper.innerHTML = columnWrapper.innerHTML.split("<p></p>").join("");
+            columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
             page.appendChild(columnWrapper);
             shadow.appendChild(page); 
         }
@@ -376,7 +399,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/8");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/10");
 
             if (!response.ok) {
                 throw new Error("Network response was not ok " + response.statusText);
