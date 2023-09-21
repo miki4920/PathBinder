@@ -34,7 +34,7 @@
         flex-direction: column;
         overflow-x: hidden;
         overflow-y: auto;
-        color: #58180D;
+        color: #000000;
         flex-grow: 1;
     }
 
@@ -135,12 +135,24 @@
             }
 
             .page .subtitle {
-                color: #5E0000;
                 margin-top: -30px;
+                font-size: 1.4em;
+                color: #5E0000;
+                background-image: url(../assets/subtitle.png);
+                background-position: bottom;
+                background-repeat: no-repeat;
+                padding: 0 40px 40px 40px;
+                background-size: 800px;
+                font-family: 'DM Serif Text', serif;
+                text-align: justify;
             }
 
             .page .break {
                 -webkit-column-break-after: always;
+            }
+
+            .page .linebreak {
+                   border-bottom: 1px solid;
             }
 
             .page .action {
@@ -181,12 +193,11 @@
                 text-align: center;
                 padding: 2px 4px;
                 text-transform: uppercase;
-    }
             }
 
-            .page h1, .page h2 {
-                font-family: 'Eczar', sans-serif;
-
+            .page .line {
+                margin-left: 1em;
+                text-indent: -1em;
             }
 
             .page h1, .page h2, .page h3, .page h4, .page h5 {
@@ -197,6 +208,8 @@
             .page h1 {
                 font-size: 5em;
                 -webkit-text-stroke-width: 1.2px;
+                font-family: 'Eczar', sans-serif;
+                color: #58180D;
             }
 
             .page h2 {
@@ -204,6 +217,7 @@
                 font-size: 2.25em;
                 line-height: 1.1;
                 -webkit-text-stroke-width: 0.9px;
+                    font-family: 'Eczar', sans-serif;
             }
 
             .page h3 {
@@ -211,6 +225,7 @@
                 font-size: 2em;
                 -webkit-text-stroke-width: 0.6px;
                 font-weight:normal;
+                color: #58180D;
             }
 
             .page h4 {
@@ -252,7 +267,11 @@
                 font-family: 'Gelasio', sans-serif;
                 line-height: 1.4;
                 text-align: justify;
-                margin: 0 0 10.5px;
+                margin: 0;
+            }
+
+            .page p+p {
+                text-indent: 1em;
             }
 
             .page img {
@@ -265,14 +284,16 @@
             "header": {"html": "header", "classes": ["wide", "subtitle"]},
             "title": {"html": "h1", "classes": ["wide", "title"]},
             "columnbreak": {"html": "div", "classes": ["break"]},
+            "linebreak": {"html": "div", "classes": ["linebreak"]},
             "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
             "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
             "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
             "twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
             "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
             "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
-            "tag": { "html": "p", "classes": ["tag"] },
-            "label": {"html": "div", "classes": ["label"]}
+            "tag": { "html": "div", "classes": ["tag"] },
+            "label": {"html": "div", "classes": ["label"]},
+            "line": {"html": "p", "classes": ["line"]},
         }
         let htmlContent = container.innerHTML;
         const regex = /{{([A-Za-z]+)(.*?)}}/gs;
@@ -355,7 +376,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/7");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/8");
 
             if (!response.ok) {
                 throw new Error("Network response was not ok " + response.statusText);
