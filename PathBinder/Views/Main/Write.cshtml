@@ -279,34 +279,12 @@
             }
         `;
 
-    function replaceBrackets(text, fn) {
-        let index = 0;  
-
-        function processSegment() {
-            let content = '';
-            while (index < text.length) {
-                if (text[index] === '{' && text[index + 1] === '{') {
-                    index += 2;  
-                    content += processSegment(); 
-                } else if (text[index] === '}' && text[index + 1] === '}') {
-                    index += 2;  
-                    return fn(content);  
-                } else {
-                    content += text[index++];
-                }
-            }
-            return content;  
-        }
-
-        return processSegment();
-    }
-
-    function replacePlaceholders(container) {
-        let elements = {
-            "header": {"html": "header", "classes": ["wide", "subtitle"]},
-            "title": {"html": "h1", "classes": ["wide", "title"]},
-            "columnbreak": {"html": "div", "classes": ["break"]},
-            "linebreak": {"html": "div", "classes": ["linebreak"]},
+    function replacePlaceholders(placeholder) {
+        const elements = {
+            "header": { "html": "header", "classes": ["wide", "subtitle"] },
+            "title": { "html": "h1", "classes": ["wide", "title"] },
+            "columnbreak": { "html": "div", "classes": ["break"] },
+            "linebreak": { "html": "div", "classes": ["linebreak"] },
             "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
             "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
             "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
@@ -314,13 +292,12 @@
             "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
             "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
             "tag": { "html": "div", "classes": ["tag"] },
-            "label": {"html": "div", "classes": ["label"]},
-            "line": {"html": "div", "classes": ["line"]},
+            "label": { "html": "div", "classes": ["label"] },
+            "line": { "html": "div", "classes": ["line"] },
         }
-        let htmlContent = container.innerHTML;
-        console.log(replaceBrackets(htmlContent, (segment) => 'Hi'));
-        const regex = /\{\{([A-Za-z]+)(.*?)(?=\{\{|\}\})/gs;
-        htmlContent = htmlContent.replace(regex, (match, element, content) => {
+        const regex = /([a-zA-Z]+)(.*)/mg;
+        
+        placeholder = placeholder.replace(regex, (match, element, content) => {
             element = elements[element.toLowerCase()]
             if (element === undefined) {
                 return match;
@@ -334,9 +311,31 @@
                 newElement.classList.add(className);
             })
             return newElement.outerHTML;
-        });
-        container.innerHTML = htmlContent;
-    }    
+        })
+        return placeholder;
+    }
+
+    function replaceBrackets(text, fn) {
+        let index = 0;
+        function processSegment() {
+            let content = '';
+            while (index < text.length) {
+                if (text[index] === '{' && text[index + 1] === '{') {
+                    index += 2;
+                    content += processSegment();
+                } else if (text[index] === '}' && text[index + 1] === '}') {
+                    index += 2;
+                    console.log(content);
+                    return fn(content);
+                } else {
+                    content += text[index++];
+                }
+            }
+            return content;
+        }
+
+        return processSegment();
+    }
 
     function applyClasses(content, selectors, className) {
         selectors.forEach(selector => {
@@ -360,8 +359,7 @@
         for (let element of htmlContent) {
             let page = createElementWithClass("div", "page");
             let columnWrapper = createElementWithClass("div", "columnWrapper");
-            columnWrapper.innerHTML = converter.makeHtml(element);
-            replacePlaceholders(columnWrapper);
+            columnWrapper.innerHTML = replaceBrackets(converter.makeHtml(element), replacePlaceholders);
             applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
             columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
             page.appendChild(columnWrapper);
