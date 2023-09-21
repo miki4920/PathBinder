@@ -164,6 +164,26 @@
                 width: 32px;
             }
 
+            .page .label {
+                float: right;
+                font-size: .458cm;
+            }
+
+            .page .tag {
+                margin: 0;
+                margin-right: -4px;
+                display: inline-block;
+                font-family: 'Roboto Condensed', sans-serif;
+                border: 2px solid #DAC68A;
+                border-radius: 2px;
+                background-color: #58180D;
+                color: white;
+                text-align: center;
+                padding: 2px 4px;
+                text-transform: uppercase;
+    }
+            }
+
             .page h1, .page h2 {
                 font-family: 'Eczar', sans-serif;
 
@@ -225,6 +245,7 @@
                 text-transform: uppercase;
                 border-radius: 12px 12px 0px 0px;
                 font-weight: 500;
+                margin-top: 10.5px;
             }
 
             .page p {
@@ -249,10 +270,12 @@
             "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
             "twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
             "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
-            "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] }
+            "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
+            "tag": { "html": "p", "classes": ["tag"] },
+            "label": {"html": "div", "classes": ["label"]}
         }
         let htmlContent = container.innerHTML;
-        const regex = /{{([A-Za-z]+)(.*?)}}/g;
+        const regex = /{{([A-Za-z]+)(.*?)}}/gs;
         htmlContent = htmlContent.replace(regex, (match, element, content) => {
             element = elements[element.toLowerCase()]
             if (element === undefined) {
@@ -296,11 +319,12 @@
             columnWrapper.innerHTML = converter.makeHtml(element);
             replacePlaceholders(columnWrapper);
             applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
+            columnWrapper.innerHTML = columnWrapper.innerHTML.split("<p></p>").join("");
             page.appendChild(columnWrapper);
-            shadow.appendChild(page);
+            shadow.appendChild(page); 
         }
         shadow.appendChild(style);
-
+        let selectors = $('p');
     }
 
     editor.on("change", () => {
@@ -331,7 +355,7 @@
 
     async function getDocument() {
         try {
-            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/5");
+            const response = await fetch("@Url.Action("GetDocument", "Document")" + "/7");
 
             if (!response.ok) {
                 throw new Error("Network response was not ok " + response.statusText);
