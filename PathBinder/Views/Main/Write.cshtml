@@ -112,9 +112,11 @@
             .page, .columnWrapper {
                 column-count: 2;
                 column-fill: auto;
-                height: 279.4mm;
-                width: 215.9mm;
                 overflow: hidden;
+            }
+
+            .columnWrapper {
+                height: 297mm;
             }
 
             .page * {
@@ -123,11 +125,18 @@
 
             .page .columnWrapper {
                 column-span: all;
+                position: relative;
             }
 
             .page .wide {
                 column-span: all;
                 text-align: center;
+            }
+
+            .page .cover {
+                position: absolute;
+                top: 0;
+                width: 100%;
             }
 
             .page .title {
@@ -138,6 +147,11 @@
                     2px 0px 0 #EFCD98, 1px 2px 0 #EFCD98, -1px 2px 0 #EFCD98, 1px -2px 0 #EFCD98,
                     -1px -2px 0 #EFCD98, 2px 1px 0 #EFCD98, -2px 1px 0 #EFCD98, 2px -1px 0 #EFCD98,
                     -2px -1px 0 #EFCD98;
+                    font-size: 7em;
+                    position: absolute;
+                    bottom: 60px;
+                    width: 100%;
+                    text-align: center;
             }
 
             .page .subtitle {
