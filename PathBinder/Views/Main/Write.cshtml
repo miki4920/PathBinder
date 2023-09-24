@@ -94,11 +94,16 @@
     const shadow = displayArea.attachShadow({ mode: "open" });
     const style = document.createElement("style");
     style.textContent = `
+            * {
+                box-sizing: border-box;
+            }
             .page {
+                width: 210mm;
+                height: 297mm;
                 margin: 30px auto;
                 background-image: url(../assets/page.png);
                 box-shadow: 1px 4px 14px #000;
-                padding-left: 75px;
+                padding-left: 1.5cm;
                 padding-right: 1.5cm;
                 padding-bottom: 0.5cm;
                 padding-top: 1cm;
