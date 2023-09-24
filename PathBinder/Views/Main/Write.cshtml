@@ -109,6 +109,10 @@
                 padding-top: 1cm;
             }
 
+            @@media print {
+                .page {margin: 0;}
+            }
+
             .page, .columnWrapper {
                 column-count: 2;
                 column-fill: auto;
@@ -116,7 +120,7 @@
             }
 
             .columnWrapper {
-                height: 297mm;
+                height: 282mm;
             }
 
             .page * {
