@@ -300,9 +300,11 @@
         `;
 
     function replacePlaceholders(placeholder) {
+        // Remember that classes need to be in a list, even if only one element
         const elements = {
-            "header": { "html": "header", "classes": ["wide", "subtitle"] },
+            "cover": { "html": "img", "classes": ["cover", "wide"], "isImage": true },
             "title": { "html": "h1", "classes": ["wide", "title"] },
+            "header": { "html": "header", "classes": ["wide", "subtitle"] },
             "columnbreak": { "html": "div", "classes": ["break"] },
             "linebreak": { "html": "div", "classes": ["linebreak"] },
             "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
@@ -326,7 +328,12 @@
             if (element["src"] !== undefined) {
                 newElement.src = element["src"];
             }
-            newElement.innerHTML = content.trim();
+            if (element["isImage"] !== undefined) {
+                newElement.src = content.trim();
+            }
+            else {
+                newElement.innerHTML = content.trim();
+            }
             element["classes"]?.forEach(className => {
                 newElement.classList.add(className);
             })
