@@ -297,8 +297,122 @@
                 vertical-align: middle;
             }
         `;
+    function cleanContent(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
 
-    function replacePlaceholders(placeholder) {
+        // Remove hyperlinks
+        const anchors = doc.querySelectorAll('a');
+        anchors.forEach(anchor => {
+            const text = document.createTextNode(anchor.textContent);
+            anchor.parentNode.replaceChild(text, anchor);
+        });
+
+        const breaks = doc.querySelectorAll('br');
+        breaks.forEach(breakElement => {
+            breakElement.remove();
+        });
+            
+        // Remove class attributes
+        const elementsWithClass = doc.querySelectorAll('[class]');
+        elementsWithClass.forEach(el => {
+            el.removeAttribute('class');
+        });
+
+        const spans = doc.querySelectorAll('span');
+        spans.forEach(span => {
+            const div = document.createElement('div');
+            div.className = 'line';
+            div.innerHTML = span.innerHTML;
+            span.parentNode.replaceChild(div, span);
+        });
+
+        const h1s = doc.querySelectorAll('h1');
+        h1s.forEach(h1 => {
+            const h4 = document.createElement('h4');
+            h4.innerHTML = h1.innerHTML;
+            h1.parentNode.replaceChild(h4, h1);
+        });
+        
+        const h4s = doc.querySelectorAll('h4');
+        h4s.forEach(h4 => {
+            const secondChild = h4.children[0];
+            if (secondChild) {
+                const div = document.createElement('div');
+                div.className = 'label';
+                div.innerHTML = secondChild.innerHTML;
+                h4.replaceChild(div, secondChild);
+            }
+        });
+
+        const divs = doc.querySelectorAll('div');
+        for (let i = 0; i < divs.length; i++) {
+            const div = divs[i];
+            if (div.querySelector('b')) {
+                break;
+            }
+            if (div.className === 'line') {
+                div.className = 'tag';
+            }
+            if (!div.textContent.trim()) {
+                div.remove();
+            }
+        }
+
+        return doc.body.innerHTML;
+    }
+
+    async function extractContent(content) {
+        const titleElements = content.querySelectorAll('.title');
+        const secondTitle = titleElements[1];
+        let currentNode = secondTitle.nextSibling;
+        let extractedContent = cleanContent(secondTitle.outerHTML);
+        while (currentNode) {
+            if (["H1", "H2", "H3", "H4", "H5", "H6"].includes(currentNode.tagName) || !currentNode.nextSibling) {
+                break;
+            }
+            extractedContent += currentNode.outerHTML ? cleanContent(currentNode.outerHTML) : currentNode.textContent;
+            currentNode = currentNode.nextSibling;
+        }
+
+        return extractedContent;
+    }
+
+    async function importFromArchives(url) {
+        const serverEndpoint = '@Url.Action("PostImport", "Import")';
+        const localStorageKey = `archive-${url}`;
+        const parser = new DOMParser();
+        
+        let cachedData = localStorage.getItem(localStorageKey);
+        if (cachedData) {
+            cachedData = parser.parseFromString(cachedData, 'text/html');
+            return await extractContent(cachedData);
+        }
+
+        try {
+            const response = await fetch(serverEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ Url: url })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            let data = await response.text();
+            data = parser.parseFromString(data, 'text/html');
+            let element = data.getElementById('ctl00_RadDrawer1_Content_MainContent_DetailedOutput');
+            localStorage.setItem(localStorageKey, element.innerHTML);
+            return element.innerHTML;
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error.message);
+        }
+    }
+
+    async function replacePlaceholders(placeholder) {
         // Remember that classes need to be in a list, even if only one element
         const elements = {
             "cover": { "html": "img", "classes": ["cover", "wide"], "isImage": true },
