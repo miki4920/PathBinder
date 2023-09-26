@@ -429,43 +429,65 @@
             "tag": { "html": "div", "classes": ["tag"] },
             "label": { "html": "div", "classes": ["label"] },
             "line": { "html": "div", "classes": ["line"] },
+            "import": {"import": true}
         }
         const regex = /([a-zA-Z]+)(.*)/mg;
-        
-        placeholder = placeholder.replace(regex, (match, element, content) => {
-            element = elements[element.toLowerCase()]
-            if (element === undefined) {
-                return match;
+
+        const asyncActions = [];
+
+        placeholder = placeholder.replace(regex, function (match, element, content) {
+
+                element = elements[element.toLowerCase()]
+                if (element === undefined) {
+                    return match;
+                }
+                if (element["import"] !== undefined) {
+                    asyncActions.push({
+                        type: 'import',
+                        match: match,
+                        content: content
+                    });
+                    return match; 
+                }
+                const newElement = document.createElement(element["html"]);
+                if (element["src"] !== undefined) {
+                    newElement.src = element["src"];
+                }
+                if (element["isImage"] !== undefined) {
+                    newElement.src = content.trim();
+                }
+                else {
+                    newElement.innerHTML = content.trim();
+                }
+                element["classes"]?.forEach(className => {
+                    newElement.classList.add(className);
+                });
+                return newElement.outerHTML;
+        });
+        const asyncResults = await Promise.all(asyncActions.map(async (action) => {
+            if (action.type === 'import') {
+                return await importFromArchives(action.content);
             }
-            const newElement = document.createElement(element["html"]);
-            if (element["src"] !== undefined) {
-                newElement.src = element["src"];
-            }
-            if (element["isImage"] !== undefined) {
-                newElement.src = content.trim();
-            }
-            else {
-                newElement.innerHTML = content.trim();
-            }
-            element["classes"]?.forEach(className => {
-                newElement.classList.add(className);
-            })
-            return newElement.outerHTML;
-        })
+        }));
+
+        for (let i = 0; i < asyncActions.length; i++) {
+            placeholder = placeholder.replace(asyncActions[i].match, asyncResults[i]);
+        }
+
         return placeholder;
     }
 
-    function replaceBrackets(text, fn) {
+    async function replaceBrackets(text) {
         let index = 0;
-        function processSegment() {
+        async function processSegment() {
             let content = '';
             while (index < text.length) {
                 if (text[index] === '{' && text[index + 1] === '{') {
                     index += 2;
-                    content += processSegment();
+                    content += await processSegment();
                 } else if (text[index] === '}' && text[index + 1] === '}') {
                     index += 2;
-                    return fn(content);
+                    return await replacePlaceholders(content);
                 } else {
                     content += text[index++];
                 }
