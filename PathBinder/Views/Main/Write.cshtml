@@ -329,17 +329,6 @@
             h1.parentNode.replaceChild(h4, h1);
         });
         
-        const h4s = doc.querySelectorAll('h4');
-        h4s.forEach(h4 => {
-            const secondChild = h4.children[0];
-            if (secondChild) {
-                const div = document.createElement('div');
-                div.className = 'label';
-                div.innerHTML = secondChild.innerHTML;
-                h4.replaceChild(div, secondChild);
-            }
-        });
-
         const divs = doc.querySelectorAll('div');
         for (let i = 0; i < divs.length; i++) {
             const div = divs[i];
@@ -358,6 +347,17 @@
                 break;
             }
         }
+
+        const h4s = doc.querySelectorAll('h4');
+        h4s.forEach(h4 => {
+            const secondChild = h4.children[0];
+            if (secondChild) {
+                const div = document.createElement('div');
+                div.className = 'label';
+                div.innerHTML = secondChild.innerHTML;
+                h4.replaceChild(div, secondChild);
+            }
+        });
 
         return doc.body.innerHTML;
     }
