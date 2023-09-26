@@ -495,7 +495,7 @@
             return content;
         }
 
-        return processSegment();
+        return await processSegment();
     }
 
     function applyClasses(content, selectors, className) {
@@ -513,25 +513,25 @@
         return element;
     }
 
-    function displayChange() {
+    async function displayChange() {
         shadow.innerHTML = "";
         let htmlContent = editor.getValue();
         htmlContent = htmlContent.split("\{\{pagebreak\}\}");
         for (let element of htmlContent) {
             let page = createElementWithClass("div", "page");
             let columnWrapper = createElementWithClass("div", "columnWrapper");
-            columnWrapper.innerHTML = replaceBrackets(converter.makeHtml(element), replacePlaceholders);
+            columnWrapper.innerHTML = await replaceBrackets(converter.makeHtml(element));
             applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
             columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
             page.appendChild(columnWrapper);
             shadow.appendChild(page); 
         }
         shadow.appendChild(style);
-        let selectors = $('p');
     }
 
-    editor.on("change", () => {
-        displayChange();
+    editor.on("change", async function() {
+        await displayChange(); 
+        $("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
     });
 
     function postDocument() {
