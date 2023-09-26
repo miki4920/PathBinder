@@ -6,13 +6,6 @@ namespace PathBinder.Controllers
 {
     public class MainController : Controller
     {
-        private readonly ILogger<MainController> _logger;
-
-        public MainController(ILogger<MainController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Write()
         {
             return View();

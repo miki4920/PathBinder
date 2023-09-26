@@ -42,6 +42,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "documents",
     pattern: "{controller=Document}/{action=Index}");
+
+app.MapControllerRoute(
+    name: "import",
+    pattern: "{controller=Import}/{action=Index}");
 app.MapRazorPages();
 
 app.Run();
