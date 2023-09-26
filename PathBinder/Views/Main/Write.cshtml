@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -88,7 +88,6 @@
         mode: "markdown",
         scrollbarStyle: "native"
     });
-
     const displayArea = document.getElementById("displayAreaHolder");
     const converter = new showdown.Converter();
     const shadow = displayArea.attachShadow({ mode: "open" });
@@ -107,12 +106,6 @@
                 padding-right: 1.5cm;
                 padding-bottom: 0.5cm;
                 padding-top: 1cm;
-            }
-
-            @@media print {
-                html {margin: 0;},
-                body {margin: 0;},
-                .page {margin: 0;}
             }
 
             .page, .columnWrapper {
