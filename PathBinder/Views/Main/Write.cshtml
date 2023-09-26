@@ -343,9 +343,8 @@
         const divs = doc.querySelectorAll('div');
         for (let i = 0; i < divs.length; i++) {
             const div = divs[i];
-            if (div.querySelector('b')) {
-                break;
-            }
+            let nextElement = div.nextElementSibling;
+            
             if (div.className === 'line') {
                 div.className = 'tag';
                 // Insert a space after the div to ensure consistent spacing
@@ -355,6 +354,9 @@
             if (!div.textContent.trim()) {
                 div.remove();
             }
+            if (nextElement && nextElement.tagName.toLowerCase() !== 'div') {
+                break;
+            }
         }
 
         return doc.body.innerHTML;
@@ -362,18 +364,18 @@
 
     async function extractContent(content) {
         const titleElements = content.querySelectorAll('.title');
-        const secondTitle = titleElements[1];
+        const secondTitle = titleElements[1] === undefined ? titleElements[0] : titleElements[1];
         let currentNode = secondTitle.nextSibling;
-        let extractedContent = cleanContent(secondTitle.outerHTML);
+        let extractedContent = secondTitle.outerHTML;
         while (currentNode) {
             if (["H1", "H2", "H3", "H4", "H5", "H6"].includes(currentNode.tagName) || !currentNode.nextSibling) {
                 break;
             }
-            extractedContent += currentNode.outerHTML ? cleanContent(currentNode.outerHTML) : currentNode.textContent;
+            extractedContent += currentNode.outerHTML ? currentNode.outerHTML : currentNode.textContent;
             currentNode = currentNode.nextSibling;
         }
 
-        return extractedContent;
+        return cleanContent(extractedContent);
     }
 
     async function importFromArchives(url) {
