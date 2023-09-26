@@ -110,6 +110,8 @@
             }
 
             @@media print {
+                html {margin: 0;},
+                body {margin: 0;},
                 .page {margin: 0;}
             }
 
@@ -402,7 +404,21 @@
     editor.on("change", () => {
         displayChange();
     });
-    
+
+    function postDocument() {
+        localStorage.setItem('pathbinderEditorValue', editor.getValue());
+    }
+
+    function getDocument() {
+        let storage = localStorage.getItem('pathbinderEditorValue');
+        if (storage !== undefined) {
+            editor.setValue(storage);
+        }
+        
+    }
+
+
+    /* Commenting out the database so that it can work on local
     async function postDocument() {
         try {
 
@@ -424,7 +440,7 @@
             console.error("Error:", error);
         }
     }
-
+        
     async function getDocument() {
         try {
             const response = await fetch("@Url.Action("GetDocument", "Document")" + "/15");
@@ -439,7 +455,7 @@
             console.error("Error fetching document:", error);
         }
     }
-
+    */
     function printDocument() {
         document.querySelectorAll('head link[rel="stylesheet"]').forEach((link) => {
             if (!link.href.endsWith('/css/site.css')) {
