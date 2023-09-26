@@ -307,11 +307,6 @@
             const text = document.createTextNode(anchor.textContent);
             anchor.parentNode.replaceChild(text, anchor);
         });
-
-        const breaks = doc.querySelectorAll('br');
-        breaks.forEach(breakElement => {
-            breakElement.remove();
-        });
             
         // Remove class attributes
         const elementsWithClass = doc.querySelectorAll('[class]');
@@ -353,6 +348,9 @@
             }
             if (div.className === 'line') {
                 div.className = 'tag';
+                // Insert a space after the div to ensure consistent spacing
+                const space = document.createTextNode(' ');
+                div.parentNode.insertBefore(space, div.nextSibling);
             }
             if (!div.textContent.trim()) {
                 div.remove();
