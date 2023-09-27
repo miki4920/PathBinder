@@ -301,69 +301,94 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        // Remove hyperlinks
+        const allElements = doc.querySelectorAll('*');
+        allElements.forEach(element => {
+            const firstChild = element.firstChild;
+            if (firstChild && firstChild.nodeType === Node.TEXT_NODE && !firstChild.textContent.trim()) {
+                element.remove();
+            }
+        });
+
         const anchors = doc.querySelectorAll('a');
         anchors.forEach(anchor => {
             const text = document.createTextNode(anchor.textContent);
             anchor.parentNode.replaceChild(text, anchor);
+        })
+
+        const h1Elements = doc.querySelectorAll('h1');
+        h1Elements.forEach(h1 => {
+            const firstChildContent = h1.childNodes[0] ? h1.childNodes[0].textContent.trim() : '';
+            const secondChildContent = h1.childNodes[1] ? h1.childNodes[1].textContent.trim() : '';
+
+            const replacementText = `#### ${firstChildContent} {{label ${secondChildContent}}}\n`;
+
+            const textNode = document.createTextNode(replacementText);
+            h1.parentNode.replaceChild(textNode, h1);
         });
-            
-        // Remove class attributes
-        const elementsWithClass = doc.querySelectorAll('[class]');
-        elementsWithClass.forEach(el => {
-            el.removeAttribute('class');
+
+        const spanWithTagClass = doc.querySelectorAll('span[class*="trait"]');
+        spanWithTagClass.forEach(span => {
+            const content = span.textContent.trim();
+
+            const replacementText = `{{tag ${content}}}`;
+
+            const textNode = document.createTextNode(replacementText);
+            span.parentNode.replaceChild(textNode, span);
         });
 
         const spans = doc.querySelectorAll('span');
         spans.forEach(span => {
-            const div = document.createElement('div');
-            div.className = 'line';
-            div.innerHTML = span.innerHTML;
-            span.parentNode.replaceChild(div, span);
+            const content = span.textContent;
+            const textNode = document.createTextNode(content);
+            span.parentNode.replaceChild(textNode, span);
         });
 
-        const h1s = doc.querySelectorAll('h1');
-        h1s.forEach(h1 => {
-            const h4 = document.createElement('h4');
-            h4.innerHTML = h1.innerHTML;
-            h1.parentNode.replaceChild(h4, h1);
+        const bElements = doc.querySelectorAll('b');
+        bElements.forEach(b => {
+            const content = b.textContent.trim();
+
+            const replacementText = `**${content}** `;
+
+            const textNode = document.createTextNode(replacementText);
+            b.parentNode.replaceChild(textNode, b);
         });
-        
-        const divs = doc.querySelectorAll('div');
-        for (let i = 0; i < divs.length; i++) {
-            const div = divs[i];
-            let nextElement = div.nextElementSibling;
-            
-            if (div.className === 'line') {
-                div.className = 'tag';
-                // Insert a space after the div to ensure consistent spacing
-                const space = document.createTextNode(' ');
-                div.parentNode.insertBefore(space, div.nextSibling);
+
+        const brTags = doc.querySelectorAll('br');
+        for (let i = 0; i < brTags.length - 1; i++) {
+            const startBr = brTags[i];
+            const endBr = brTags[i + 1];
+
+            let contentBetween = '';
+            let currentNode = startBr.nextSibling;
+
+            while (currentNode && currentNode !== endBr) {
+                contentBetween += currentNode.outerHTML || currentNode.textContent;
+                currentNode = currentNode.nextSibling;
             }
-            if (!div.textContent.trim()) {
-                div.remove();
-            }
-            if (nextElement && nextElement.tagName.toLowerCase() !== 'div') {
-                break;
+
+            const replacementText = `{{line ${contentBetween.trim()}}}`;
+            const textNode = document.createTextNode(replacementText);
+            startBr.parentNode.insertBefore(textNode, startBr.nextSibling);
+
+            currentNode = startBr.nextSibling.nextSibling; 
+            while (currentNode && currentNode !== endBr) {
+                const next = currentNode.nextSibling;
+                currentNode.remove();
+                currentNode = next;
             }
         }
 
-        const h4s = doc.querySelectorAll('h4');
-        h4s.forEach(h4 => {
-            const secondChild = h4.children[0];
-            if (secondChild) {
-                const div = document.createElement('div');
-                div.className = 'label';
-                div.innerHTML = secondChild.innerHTML;
-                h4.replaceChild(div, secondChild);
-            }
+        brTags.forEach(br => {
+            br.remove();
         });
+        
+        
 
         return doc.body.innerHTML;
     }
 
     async function extractContent(content) {
-        const titleElements = content.querySelectorAll('.title');
+        const titleElements = content.querySelectorAll('h1');
         const secondTitle = titleElements[1] === undefined ? titleElements[0] : titleElements[1];
         let currentNode = secondTitle.nextSibling;
         let extractedContent = secondTitle.outerHTML;
@@ -466,7 +491,9 @@
         });
         const asyncResults = await Promise.all(asyncActions.map(async (action) => {
             if (action.type === 'import') {
-                return await importFromArchives(action.content);
+                let importedContent = await importFromArchives(action.content);
+                console.log(importedContent)
+                return ""
             }
         }));
 
