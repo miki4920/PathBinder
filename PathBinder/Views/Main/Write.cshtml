@@ -322,11 +322,35 @@
             }
         });
 
+        const actionSpans = doc.querySelectorAll('span[class*="action"]');
+        actionSpans.forEach(span => {
+            let content = span.textContent.trim();
+            content = content.replace(/[-\[\]]/g, '');
+
+            if (content.endsWith('s')) {
+                content = content.slice(0, -1);
+            }
+            const replacementText = `{{${content}}}`;
+
+            const textNode = document.createTextNode(replacementText);
+            span.parentNode.replaceChild(textNode, span);
+        });
+
         const anchors = doc.querySelectorAll('a');
         anchors.forEach(anchor => {
             const text = document.createTextNode(anchor.textContent);
             anchor.parentNode.replaceChild(text, anchor);
         })
+
+        const bElements = doc.querySelectorAll('b');
+        bElements.forEach(b => {
+            const content = b.textContent.trim();
+
+            const replacementText = `**${content}** `;
+
+            const textNode = document.createTextNode(replacementText);
+            b.parentNode.replaceChild(textNode, b);
+        });
 
         const h1Elements = doc.querySelectorAll('h1');
         h1Elements.forEach(h1 => {
