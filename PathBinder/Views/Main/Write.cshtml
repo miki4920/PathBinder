@@ -377,56 +377,50 @@
 
         const spans = doc.querySelectorAll('span');
         spans.forEach(span => {
-            const content = span.textContent;
-            const textNode = document.createTextNode(content);
-            span.parentNode.replaceChild(textNode, span);
+            const content = span.innerHTML.trim();
+            const replacementHTML = `<br>${content}`;
+            span.outerHTML = replacementHTML;
         });
 
-        const bElements = doc.querySelectorAll('b');
-        bElements.forEach(b => {
-            const content = b.textContent.trim();
-
-            const replacementText = `**${content}** `;
-
-            const textNode = document.createTextNode(replacementText);
-            b.parentNode.replaceChild(textNode, b);
+        const hrElements = doc.querySelectorAll('hr');
+        hrElements.forEach(hr => {
+            const replacementHTML = '<br>{{linebreak}}<br>';
+            hr.outerHTML = replacementHTML;
         });
 
-        const brTags = doc.querySelectorAll('br');
-        for (let i = 0; i < brTags.length - 1; i++) {
-            const startBr = brTags[i];
-            const endBr = brTags[i + 1];
+        const brElements = Array.from(doc.querySelectorAll('br'));
 
-            let contentBetween = '';
-            let currentNode = startBr.nextSibling;
-
-            while (currentNode && currentNode !== endBr) {
-                contentBetween += currentNode.outerHTML || currentNode.textContent;
-                currentNode = currentNode.nextSibling;
+        brElements.forEach((br, index) => {
+            if (index < brElements.length) { 
+                const nextBr = brElements[index + 1];
+                let contentNodes = [];
+                let currentNode = br.nextSibling;
+                while (currentNode && currentNode !== nextBr) {
+                    contentNodes.push(currentNode);
+                    currentNode = currentNode.nextSibling;
+                }
+                const content = contentNodes.map(node => node.textContent).join('').trim();
+                if (content) {
+                    const replacement = document.createTextNode(`{{line ${content}}}\n`);
+                    doc.body.insertBefore(replacement, br);
+                    contentNodes.forEach(node => node.remove());
+                }
             }
-
-            const replacementText = `{{line ${contentBetween.trim()}}}`;
-            const textNode = document.createTextNode(replacementText);
-            startBr.parentNode.insertBefore(textNode, startBr.nextSibling);
-
-            currentNode = startBr.nextSibling.nextSibling; 
-            while (currentNode && currentNode !== endBr) {
-                const next = currentNode.nextSibling;
-                currentNode.remove();
-                currentNode = next;
-            }
-        }
-
-        brTags.forEach(br => {
             br.remove();
         });
-        
-        
+
+        let content = doc.body.innerHTML;
+
+        while (content.includes('{{line {{linebreak}}}}')) {
+            content = content.replace('{{line {{linebreak}}}}', '{{linebreak}}');
+        }
+
+        doc.body.innerHTML = content;
 
         return doc.body.innerHTML;
     }
 
-    async function extractContent(content) {
+    function extractContent(content) {
         const titleElements = content.querySelectorAll('h1');
         const secondTitle = titleElements[1] === undefined ? titleElements[0] : titleElements[1];
         let currentNode = secondTitle.nextSibling;
