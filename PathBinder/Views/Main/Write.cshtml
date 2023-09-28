@@ -363,11 +363,13 @@
             h1.parentNode.replaceChild(textNode, h1);
         });
 
+
+
         const spanWithTagClass = doc.querySelectorAll('span[class*="trait"]');
         spanWithTagClass.forEach(span => {
             const content = span.textContent.trim();
 
-            const replacementText = `{{tag ${content}}}`;
+            const replacementText = `{{tag ${content}}}\n`;
 
             const textNode = document.createTextNode(replacementText);
             span.parentNode.replaceChild(textNode, span);
