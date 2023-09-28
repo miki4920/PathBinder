@@ -492,26 +492,15 @@
             "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
             "tag": { "html": "div", "classes": ["tag"] },
             "label": { "html": "div", "classes": ["label"] },
-            "line": { "html": "div", "classes": ["line"] },
-            "import": {"import": true}
+            "line": { "html": "div", "classes": ["line"] }
         }
         const regex = /([a-zA-Z]+)(.*)/mg;
-
-        const asyncActions = [];
 
         placeholder = placeholder.replace(regex, function (match, element, content) {
 
                 element = elements[element.toLowerCase()]
                 if (element === undefined) {
                     return match;
-                }
-                if (element["import"] !== undefined) {
-                    asyncActions.push({
-                        type: 'import',
-                        match: match,
-                        content: content
-                    });
-                    return match; 
                 }
                 const newElement = document.createElement(element["html"]);
                 if (element["src"] !== undefined) {
