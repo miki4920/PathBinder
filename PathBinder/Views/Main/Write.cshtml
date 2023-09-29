@@ -74,12 +74,35 @@
 </section>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
+    
     $("#displayAreaHolder").on("scroll", function () {
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
+    CodeMirror.defineMode("mustacheHighlight", function (config, parserConfig) {
+        return {
+            token: function (stream, state) {
+                if (stream.match("{{")) {
+                    return "mustache-brackets";
+                }
 
+                if (stream.match("}}")) {
+                    return "mustache-brackets";
+                }
+
+                if (stream.string.charAt(stream.start - 2) === '{' || stream.string.charAt(stream.start - 4) === '{') {
+                    if (stream.match(/^[^\s{}]+/)) {
+                        return "mustache-firstWord";
+                    }
+                }
+
+                stream.next();
+                return null;  // use default styling for everything else
+            }
+        };
+    });
     const editor = CodeMirror(document.getElementById("writeArea"), {
         lineNumbers: true,
         lineWrapping: true,
