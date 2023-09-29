@@ -54,6 +54,16 @@
         background-color: rgb(249, 241, 223);
     }
 
+    .cm-mustache-brackets {
+        color: #ab00f7;
+        font-weight: bold;
+    }
+
+    .cm-mustache-firstWord {
+        color: #006244;
+        font-weight: bold;
+    }
+
     .resizer {
         cursor: ew-resize;
         background-color: rgb(18, 24, 32);
@@ -112,6 +122,7 @@
         mode: "markdown",
         scrollbarStyle: "native"
     });
+    editor.addOverlay({ name: "mustacheHighlight" });
     const displayArea = document.getElementById("displayAreaHolder");
     const converter = new showdown.Converter();
     const shadow = displayArea.attachShadow({ mode: "open" });
