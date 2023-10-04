@@ -10,7 +10,8 @@ namespace PathBinder.Controllers
     {
         public class UrlRequest
         {
-            public string Url { get; set; }
+            public string 
+                Url { get; set; }
         }
 
         [HttpPost("import")]
