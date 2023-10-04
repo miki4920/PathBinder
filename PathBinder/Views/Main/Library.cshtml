@@ -1,46 +1,62 @@
-﻿@{
+@{
     ViewData["Title"] = "Library";
 }
-@model IEnumerable<PathBinder.Models.Document>
-
+<link rel="stylesheet" href="~/css/library.css" />
 <!DOCTYPE html>
 <html>
 <head>
     <title>Tabletop Documents</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            padding: 10px;
-        }
-
-        .grid-item {
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
-
-            .grid-item h2 {
-                margin-top: 0;
-            }
-    </style>
 </head>
 <body>
 
-    <div class="grid-container">
-        @foreach (var document in Model)
-        {
-            <div class="grid-item">
-                <h2>@document.Name</h2>
-                <p>@document.Content</p>
-            </div>
-        }
-    </div>
+    <section>
+        <article id="tiles">
+            <button class="floatingButton" onclick="postDocument()">+</button>
+        </article>
+    </section>
+    <script>
+        window.onload = getDocument()
+        function getDocument() {
+            let tiles = document.getElementById("tiles");
 
+            for (let key in localStorage) {
+                if (key.startsWith("doc")) {
+                    let wrapper = document.createElement("div");
+                    wrapper.className = "wrapper";
+
+                    let tile = document.createElement("div");
+                    tile.className = "tile";
+
+                    let docData = JSON.parse(localStorage.getItem(key));
+                    let name = docData["name"];
+                    tile.textContent = name;
+
+                    tile.addEventListener("click", function () {
+                        localStorage.setItem('currentlyOpen', key);
+                        window.location.href = '/Main/Write';
+                    });
+
+                    wrapper.appendChild(tile);
+                    tiles.appendChild(wrapper);
+                }
+            }
+        }
+
+        function generateUID() {
+            return 'doc_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+        }
+
+        function postDocument() {
+            let name = prompt("Enter document name: ");
+            if (name === null || name.trim() === "") {
+                alert("Invalid document name!");
+                return;
+            }
+            let uid = generateUID();
+            localStorage.setItem(uid, JSON.stringify({ name: name, content: '' }));
+            localStorage.setItem('currentlyOpen', uid);
+            window.location.href = '/Main/Write';
+        }
+    </script>
 </body>
 </html>
