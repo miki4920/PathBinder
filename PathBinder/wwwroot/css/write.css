@@ -1,0 +1,65 @@
+﻿section {
+    display: grid;
+    flex-basis: 100%;
+    grid-template-columns: 1fr 10px 1fr;
+    background-color: rgb(249, 241, 223);
+}
+
+#writeAreaHolder {
+    display: flex;
+    overflow-y: auto;
+}
+
+#writeAreaHolder nav {
+    flex: 1 1 auto;
+    background-color: rgb(255, 255, 255);
+    flex-direction: row;
+    padding: 0;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    padding: 6px;
+    flex-grow: 0;
+}
+
+#writeArea, #displayAreaHolder {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: #000000;
+    flex-grow: 1;
+}
+
+#displayAreaHolder {
+    padding: 0 10px;
+}
+
+#writeArea {
+    font-family: monospace;
+    line-height: 21px;
+    overflow-y: auto;
+    flex-basis: 100%;
+}
+
+.CodeMirror {
+    height: 100%;
+    background-color: rgb(249, 241, 223);
+}
+
+.cm-mustache-brackets {
+    color: #ab00f7;
+    font-weight: bold;
+}
+
+.cm-mustache-firstWord {
+    color: #006244;
+    font-weight: bold;
+}
+
+.resizer {
+    cursor: ew-resize;
+    background-color: rgb(18, 24, 32);
+}
