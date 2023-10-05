@@ -8,7 +8,7 @@
         <nav>
             <button onclick="postDocument()">Save</button>
             <button onclick="promptForURL()">Import</button>
-            <button onclick="setBackgroundImage()">Cover</button>
+            <button onclick="askBackgroundImage()">Cover</button>
             <button onclick="printDocument()">Print</button>
         </nav>
         <div id="writeArea">
@@ -77,11 +77,20 @@
         .catch(error => {
             console.error('Fetch error: ', error);
         });
-    function setBackgroundImage() {
+    function askBackgroundImage() {
         const url = prompt("Please enter a URL from Archives of Nethys:");
+        setBackgroundImage(url);
+        
+    }
+
+    function setBackgroundImage(url) {
         if (url) {
             shadow.childNodes[0].removeAttribute('style');
             shadow.childNodes[0].style.backgroundImage = `url(${url})`
+            let currentlyOpenUid = localStorage.getItem('currentlyOpen');
+            let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
+            existingDocumentData.cover = url;
+            localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
         }
     }
 
@@ -378,6 +387,7 @@
             if (doc !== null) {
                 doc = JSON.parse(doc);
                 editor.setValue(doc.content);
+                setBackgroundImage(doc.cover);
             } else {
                 alert("Document not found!");
             }
