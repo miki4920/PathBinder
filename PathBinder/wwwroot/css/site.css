@@ -68,19 +68,44 @@ a {
     text-decoration: none;
 }
 
-nav li {
-    padding: 0 0 0 20px;
-}
-
 #title {
     font-size: 20px;
+    padding: 10px;
+    font-family: 'Tauri', sans-serif;
+    font-weight: normal;
 }
 
-#login {
-    flex-direction: row-reverse;
+#title:hover {
+    background-color: var(--surface-2);
+}
+
+#title:active {
+    background-color: var(--surface-3);
 }
 
 main * {
     flex-direction: column;
-    color: #58180D;
+}
+
+::-webkit-scrollbar {
+    width: 12px; 
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--surface-1); 
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--surface-3);
+    border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--surface-4);
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-3) var(--surface-1);
 }
