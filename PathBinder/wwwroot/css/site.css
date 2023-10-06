@@ -1,11 +1,24 @@
-
+:root {
+    --background: #1f1f1f;
+    --text: #e3e3e3;
+    --surface-1: #28292a;
+    --surface-2: #2d2f31;
+    --surface-3: #333438;
+    --surface-4: #34363a;
+    --primary: #a1c9ff;
+    --secondary: #ffb4a6;
+    --secondary-container: #7d2c1e;
+    --outline: #8d9199;
+    --tertiary: #eac248;
+}
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: rgb(255, 255, 255);
     font-size: 14px;
+    color: var(--text);
+    background-color: var(--background)
 }
 
 html {
