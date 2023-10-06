@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -28,16 +28,27 @@
                     tile.className = "tile";
 
                     let docData = JSON.parse(localStorage.getItem(key));
-                    let name = docData["name"];
-                    tile.textContent = name;
+                    tile.textContent = docData["name"];
 
                     tile.addEventListener("click", function () {
                         localStorage.setItem('currentlyOpen', key);
                         window.location.href = '/Main/Write';
                     });
 
+                    let deleteButton = document.createElement("button");
+                    deleteButton.className = "deleteButton";
+                    deleteButton.innerHTML = 'Delete';
+                    deleteButton.addEventListener("click", function (event) {
+                        event.stopPropagation(); // Stop the tile click event from firing
+                        if (confirm(`Are you sure you want to delete ${docData["name"]}?`)) {
+                            localStorage.removeItem(key);
+                            tiles.removeChild(wrapper);
+                        }
+                    });
+                    wrapper.appendChild(deleteButton);
                     wrapper.appendChild(tile);
                     tiles.appendChild(wrapper);
+
                 }
             }
         }
