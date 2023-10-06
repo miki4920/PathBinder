@@ -88,6 +88,10 @@
             static removeChild(parent, child) {
                 parent.removeChild(child);
             }
+
+            static updateTextContent(element, newTextContent) {
+                element.textContent = newTextContent;
+            }
         }
 
         const storageManager = new LocalStorageManager();
@@ -103,17 +107,34 @@
                     window.location.href = '/Main/Write';
                 });
 
-                let deleteButton = DOMManager.createElement("button", "deleteButton", 'Delete');
+                let buttonContainer = DOMManager.createElement("div", "buttonContainer");
+
+                let deleteButton = DOMManager.createElement("button", "tileButton", 'Delete');
                 deleteButton.addEventListener("click", function (event) {
-                    event.stopPropagation(); // Stop the tile click event from firing
+                    event.stopPropagation(); 
                     if (confirm(`Are you sure you want to delete ${data["name"]}?`)) {
                         docManager.removeDocument(key);
                         DOMManager.removeChild(tiles, wrapper);
                     }
                 });
 
-                DOMManager.appendChild(wrapper, deleteButton);
+                let editButton = DOMManager.createElement("button", "tileButton", 'Edit Name');
+                editButton.addEventListener("click", function (event) {
+                    event.stopPropagation(); 
+                    let newName = prompt("Enter new document name: ", data["name"]);
+                    if (newName === null || newName.trim() === "") {
+                        alert("Invalid document name!");
+                        return;
+                    }
+                    data["name"] = newName;
+                    docManager.storageManager.setKey(key, data);  
+                    DOMManager.updateTextContent(tile, newName);
+                });
+                
                 DOMManager.appendChild(wrapper, tile);
+                DOMManager.appendChild(buttonContainer, editButton);
+                DOMManager.appendChild(buttonContainer, deleteButton);
+                DOMManager.appendChild(wrapper, buttonContainer);
                 DOMManager.appendChild(tiles, wrapper);
             }
         }
