@@ -48,14 +48,8 @@ body {
 }
 
 nav {
-    background-color: rgb(18, 24, 32);
-    padding: 5px;
-}
-
-nav ul
-{
-    flex-grow: 1;
-    align-self: center;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--outline);
 }
 
 nav * {
