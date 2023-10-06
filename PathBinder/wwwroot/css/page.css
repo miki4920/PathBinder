@@ -68,10 +68,6 @@
     text-align: justify;
 }
 
-.page .break {
-    -webkit-column-break-after: always;
-}
-
 .page .linebreak {
     border-bottom: 1px solid;
 }
@@ -203,9 +199,9 @@
     margin: 0;
 }
 
-    .page p + p {
-        text-indent: 1em;
-    }
+.page p + p {
+    text-indent: 1em;
+}
 
 .page img {
     vertical-align: middle;
