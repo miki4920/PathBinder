@@ -438,7 +438,7 @@
         if (!state.isResizing) return;
         const deltaX = e.clientX - state.initialX;
         const [newLeftWidth, newRightWidth] = updateWidths(deltaX);
-        elements.main.style.gridTemplateColumns = `${newLeftWidth}px 10px ${newRightWidth}px`;
+        elements.main.style.gridTemplateColumns = `${newLeftWidth}px 20px ${newRightWidth}px`;
     }
 
     function updateWidths(deltaX) {
