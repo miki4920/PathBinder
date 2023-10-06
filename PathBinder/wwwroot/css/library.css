@@ -1,9 +1,10 @@
-section {
+﻿section {
     display: flex;
     flex-basis: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: var(--background)
 }
 
 article {
@@ -20,12 +21,12 @@ article {
 }
 
 .wrapper {
-    position:relative;
+    position: relative;
     width: 20%;
     height: 33%;
     margin: 10px;
     background-color: var(--surface-2);
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
 .tile {
@@ -41,7 +42,7 @@ article {
     background-size: cover;
     background-position: center;
     opacity: 0.75;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
 .wrapper:hover .tile{
@@ -71,27 +72,40 @@ article {
     background-color: var(--secondary);
 }
 
-.deleteButton {
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
     position: absolute;
     width: 100%;
     bottom: 0;
-    background-color: var(--surface-2);
-    color: var(--text);
-    border: 1px solid var(--outline);
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
+    background-color: var(--surface-1);
     opacity: 0;
-    display: flex;
-    align-items: center;
     z-index: 1;
     transition: opacity 0.5s;
+    border: 1px solid var(--outline);
+    border-radius: 4px;
 }
 
-.wrapper:hover .deleteButton {
+.wrapper:hover .buttonContainer {
     opacity: 1;
 }
 
-.deleteButton:hover {
+.tileButton {
+    flex: 1;
+    color: var(--text);
+    border: none;
+    background-color: var(--surface-1);
+    padding: 5px 10px;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid var(--outline);
+    cursor: pointer;
+}
+
+.tileButton:hover {
+    background-color: var(--surface-3);
+}
+
+.tileButton:active {
     background-color: var(--surface-4);
 }
