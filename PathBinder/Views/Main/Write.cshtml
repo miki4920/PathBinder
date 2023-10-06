@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -6,10 +6,10 @@
 <section>
     <div id="writeAreaHolder">
         <nav>
-            <button onclick="postDocument()">Save</button>
-            <button onclick="promptForURL()">Import</button>
-            <button onclick="askBackgroundImage()">Cover</button>
-            <button onclick="printDocument()">Print</button>
+            <button onclick="postDocument()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
+            <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Import</button>
+            <button onclick="askBackgroundImage()"><i class="fa-solid fa-image"></i>Cover</button>
+            <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
         </nav>
         <div id="writeArea">
     </div>
@@ -17,6 +17,7 @@
     <div class="resizer"></div>
     <div id="displayAreaHolder"></div>
 </section>
+<script src="https://kit.fontawesome.com/719dd23465.js" crossorigin="anonymous"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
