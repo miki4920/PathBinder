@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -15,59 +15,121 @@
         </article>
     </section>
     <script>
-        window.onload = getDocument()
-        function getDocument() {
-            let tiles = document.getElementById("tiles");
+        class LocalStorageManager {
+            getKey(key) {
+                key = JSON.parse(localStorage.getItem(key))
+                return key ? key : null;
+            }
 
-            for (let key in localStorage) {
-                if (key.startsWith("doc")) {
-                    let wrapper = document.createElement("div");
-                    wrapper.className = "wrapper";
+            getKeys() {
+                let keys = Object.keys(localStorage)
+                if (keys) return keys;
+                return [];
+            }
 
-                    let tile = document.createElement("div");
-                    tile.className = "tile";
+            setKey(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
 
-                    let docData = JSON.parse(localStorage.getItem(key));
-                    tile.textContent = docData["name"];
-
-                    tile.addEventListener("click", function () {
-                        localStorage.setItem('currentlyOpen', key);
-                        window.location.href = '/Main/Write';
-                    });
-
-                    let deleteButton = document.createElement("button");
-                    deleteButton.className = "deleteButton";
-                    deleteButton.innerHTML = 'Delete';
-                    deleteButton.addEventListener("click", function (event) {
-                        event.stopPropagation(); // Stop the tile click event from firing
-                        if (confirm(`Are you sure you want to delete ${docData["name"]}?`)) {
-                            localStorage.removeItem(key);
-                            tiles.removeChild(wrapper);
-                        }
-                    });
-                    wrapper.appendChild(deleteButton);
-                    wrapper.appendChild(tile);
-                    tiles.appendChild(wrapper);
-
-                }
+            removeKey(key) {
+                localStorage.removeItem(key);
             }
         }
 
-        function generateUID() {
-            return 'doc_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+        class DocumentManager {
+            constructor(storageManager) {
+                this.storageManager = storageManager;
+            }
+
+            getAllDocuments() {
+                let docs = [];
+                for (let key of this.storageManager.getKeys()) {
+                    if (key.startsWith("doc")) {
+                        docs.push({
+                            key: key,
+                            data: this.storageManager.getKey(key)
+                        });
+                    }
+                }
+                return docs;
+            }
+
+            removeDocument(key) {
+                this.storageManager.remove(key);
+            }
+
+            addDocument(name) {
+                let uid = this._generateUID();
+                this.storageManager.set(uid, { name: name, content: '' });
+                this.storageManager.set('currentlyOpen', uid);
+            }
+
+            _generateUID() {
+                return 'doc_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+            }
         }
 
-        function postDocument() {
+        class DOMManager {
+            static createElement(type, className, content = '') {
+                let element = document.createElement(type);
+                if (className) {
+                    element.className = className;
+                }
+                if (content) {
+                    element.textContent = content;
+                }
+                return element;
+            }
+
+            static appendChild(parent, child) {
+                parent.appendChild(child);
+            }
+
+            static removeChild(parent, child) {
+                parent.removeChild(child);
+            }
+        }
+
+        const storageManager = new LocalStorageManager();
+        const docManager = new DocumentManager(storageManager);
+
+        function displayDocuments() {
+            let tiles = document.getElementById("tiles");
+            for (let { key, data } of docManager.getAllDocuments()) {
+                let wrapper = DOMManager.createElement("div", "wrapper");
+                let tile = DOMManager.createElement("div", "tile", data["name"]);
+
+                tile.addEventListener("click", function () {
+                    window.location.href = '/Main/Write';
+                });
+
+                let deleteButton = DOMManager.createElement("button", "deleteButton", 'Delete');
+                deleteButton.addEventListener("click", function (event) {
+                    event.stopPropagation(); // Stop the tile click event from firing
+                    if (confirm(`Are you sure you want to delete ${data["name"]}?`)) {
+                        docManager.removeDocument(key);
+                        DOMManager.removeChild(tiles, wrapper);
+                    }
+                });
+
+                DOMManager.appendChild(wrapper, deleteButton);
+                DOMManager.appendChild(wrapper, tile);
+                DOMManager.appendChild(tiles, wrapper);
+            }
+        }
+
+        // For adding a new document
+        function addDocument() {
             let name = prompt("Enter document name: ");
             if (name === null || name.trim() === "") {
                 alert("Invalid document name!");
                 return;
             }
-            let uid = generateUID();
-            localStorage.setItem(uid, JSON.stringify({ name: name, content: '' }));
-            localStorage.setItem('currentlyOpen', uid);
+            docManager.addDocument(name);
             window.location.href = '/Main/Write';
         }
+
+        window.onload = displayDocuments();
     </script>
 </body>
 </html>
