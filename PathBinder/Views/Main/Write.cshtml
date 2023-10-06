@@ -30,12 +30,12 @@
     CodeMirror.defineMode("mustacheHighlight", function (config, parserConfig) {
         return {
             token: function (stream, state) {
-                if (stream.match("{{")) {
+                if (stream.match("{{") || stream.match("}}")) {
                     return "mustache-brackets";
                 }
 
-                if (stream.match("}}")) {
-                    return "mustache-brackets";
+                if (stream.match(/^#/) || stream.match(/^\*/)) {
+                    return "mustache-markdown";
                 }
 
                 if (stream.string.charAt(stream.start - 2) === '{' || stream.string.charAt(stream.start - 4) === '{') {
@@ -45,7 +45,7 @@
                 }
 
                 stream.next();
-                return null;  // use default styling for everything else
+                return null;
             }
         };
     });
@@ -55,7 +55,7 @@
         styleActiveLine: true,
         matchBrackets: true,
         theme: "default",
-        mode: "markdown",
+        mode: "mustacheHighlight",
         scrollbarStyle: "native"
     });
     editor.addOverlay({ name: "mustacheHighlight" });
