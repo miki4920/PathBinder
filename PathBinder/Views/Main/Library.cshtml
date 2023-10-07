@@ -59,8 +59,11 @@
                 this.storageManager.remove(key);
             }
 
-            addDocument(name) {
-                let uid = this._generateUID();
+            addDocument(parameters) {
+                let uid = (parameters["key"] !== undefined) ? (parameters["key"]) : this._generateUID();
+                let name = (parameters["name"] !== undefined) ? (parameters["name"]) : "";
+                let content = (parameters["content"] !== undefined) ? (parameters["content"]) : "";
+                let cover = (parameters["cover"] !== undefined) ? (parameters["cover"]) : "";
                 this.storageManager.setKey(uid, { name: name, content: '', cover: '' });
                 this.storageManager.setKey('currentlyOpen', uid);
             }
