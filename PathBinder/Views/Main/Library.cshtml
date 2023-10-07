@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -11,7 +11,7 @@
 
     <section>
         <article id="tiles">
-            <button class="floatingButton" onclick="postDocument()">+</button>
+            <button class="floatingButton" onclick="addDocument()">+</button>
         </article>
     </section>
     <script>
@@ -60,8 +60,8 @@
 
             addDocument(name) {
                 let uid = this._generateUID();
-                this.storageManager.set(uid, { name: name, content: '' });
-                this.storageManager.set('currentlyOpen', uid);
+                this.storageManager.setKey(uid, { name: name, content: '', cover: '' });
+                this.storageManager.setKey('currentlyOpen', uid);
             }
 
             _generateUID() {
