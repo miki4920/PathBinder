@@ -102,8 +102,13 @@
             for (let { key, data } of docManager.getAllDocuments()) {
                 let wrapper = DOMManager.createElement("div", "wrapper");
                 let tile = DOMManager.createElement("div", "tile", data["name"]);
-
+                
+                if (data["cover"]) {
+                    console.log(data["cover"])
+                    tile.style.backgroundImage = `url(${data["cover"]})`;
+                }
                 tile.addEventListener("click", function () {
+                    storageManager.setKey('currentlyOpen', key.trim());
                     window.location.href = '/Main/Write';
                 });
 
