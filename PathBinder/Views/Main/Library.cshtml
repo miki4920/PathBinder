@@ -146,6 +146,12 @@
 
                 let buttonContainer = DOMManager.createElement("div", "buttonContainer");
 
+                let exportButton = DOMManager.createElement("button", "tileButton", 'Download');
+                exportButton.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    docManager.exportDocument(key);
+                });
+
                 let deleteButton = DOMManager.createElement("button", "tileButton", 'Delete');
                 deleteButton.addEventListener("click", function (event) {
                     event.stopPropagation(); 
@@ -169,6 +175,7 @@
                 });
                 
                 DOMManager.appendChild(wrapper, tile);
+                DOMManager.appendChild(buttonContainer, exportButton);
                 DOMManager.appendChild(buttonContainer, editButton);
                 DOMManager.appendChild(buttonContainer, deleteButton);
                 DOMManager.appendChild(wrapper, buttonContainer);
