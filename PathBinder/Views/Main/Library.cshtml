@@ -56,16 +56,42 @@
             }
 
             removeDocument(key) {
-                this.storageManager.remove(key);
+                this.storageManager.removeKey(key);
             }
 
             addDocument(parameters) {
-                let uid = (parameters["key"] !== undefined) ? (parameters["key"]) : this._generateUID();
-                let name = (parameters["name"] !== undefined) ? (parameters["name"]) : "";
-                let content = (parameters["content"] !== undefined) ? (parameters["content"]) : "";
-                let cover = (parameters["cover"] !== undefined) ? (parameters["cover"]) : "";
-                this.storageManager.setKey(uid, { name: name, content: '', cover: '' });
+                const uid = this._generateUID();
+                const name = (parameters["name"] !== undefined) ? (parameters["name"]) : "";
+                const content = (parameters["content"] !== undefined) ? (parameters["content"]) : "";
+                const cover = (parameters["cover"] !== undefined) ? (parameters["cover"]) : "";
+                this.storageManager.setKey(uid, { name: name, content: content, cover: cover });
                 this.storageManager.setKey('currentlyOpen', uid);
+            }
+
+            exportDocument(key) {
+                const document = this.storageManager.getKey(key); 
+                const jsonContent = 
+                {
+                    "name": document["name"],
+                    "content": document["content"],
+                    "cover": document["cover"]
+                };
+                const fileName = `${document["name"]}.json`
+                const file = new Blob([JSON.stringify(jsonContent)], {
+                    type: 'application/json'
+                });
+                const link = DOMManager.createElement("a");
+                link.download = fileName;
+                link.href = window.URL.createObjectURL(file);
+                link.dataset.downloadurl = ["text/json", link.download, link.href].join(":");
+                const evt = new MouseEvent("click", {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                });
+
+                link.dispatchEvent(evt);
+                link.remove()
             }
 
             _generateUID() {
