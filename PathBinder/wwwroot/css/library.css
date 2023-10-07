@@ -61,7 +61,6 @@ article {
     height: 60px;
     width: 60px;
     position: absolute;
-    bottom: 20px;
     right: 20px;
     border: none;
     border-radius: 50%;
@@ -69,8 +68,16 @@ article {
     cursor: pointer;
     justify-content: space-around;
     align-items: center;
-    transition: background-color 0.5s;
+}
+
+#addDocumentButton {
+    bottom: 20px;
     background-color: var(--primary-container);
+}
+
+#importDocumentButton {
+    bottom: 100px;
+    background-color: var(--secondary-container);
 }
 
 .buttonContainer {

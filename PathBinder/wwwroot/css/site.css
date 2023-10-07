@@ -8,6 +8,7 @@
     --primary: #1160a4;
     --primary-container: #d3e4ff;
     --secondary: #9c4233;
+    --secondary-container: #ffdad3;
     --outline: #73777f;
     --tertiary: #745b00;
     --tertiary-container: #ffe08b;
@@ -23,6 +24,7 @@
     --primary: #a1c9ff;
     --primary-container: #004880;
     --secondary: #7d2c1e;
+    --secondary-container: #7d2c1e;
     --outline: #8d9199;
     --tertiary: #eac248;
     --tertiary-container: #584400;
@@ -73,11 +75,12 @@ a {
     text-decoration: none;
 }
 
-button {
+button, #title {
+    transition: 0.5s;
     background-color: var(--background);
 }
 
-button:hover, #title:hover {
+button:hover, #title:hover, #addDocumentButton:hover, #importDocumentButton:hover {
     background-color: var(--tertiary-container);
 }
 
