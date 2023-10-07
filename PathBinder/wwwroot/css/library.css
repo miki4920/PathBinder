@@ -35,7 +35,6 @@ article {
     align-items: center;
     border: 2px solid var(--outline);
     height: 100%;
-    color: var(--background);
     background-image: url(../assets/page.png);
     cursor: pointer;
     transition: opacity 0.2s ease-in-out;
@@ -43,6 +42,13 @@ article {
     background-position: center;
     opacity: 0.75;
     border-radius: 4px;
+    color: var(--text);
+    font-size: 24px;
+    text-shadow: 1px 1px 0 var(--background), -1px 1px 0 var(--background), -1px -1px 0 var(--background), 1px -1px 0 var(--background);
+    text-align: center;
+    padding: 20px;
+    font-family: 'Tauri', sans-serif;
+    font-weight: normal;
 }
 
 .wrapper:hover .tile{
@@ -57,8 +63,6 @@ article {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    background-color: var(--secondary-container);
-    color: var(--background);
     border: none;
     border-radius: 50%;
     font-size: 24px;
@@ -66,10 +70,7 @@ article {
     justify-content: space-around;
     align-items: center;
     transition: background-color 0.5s;
-}
-
-.floatingButton:hover {
-    background-color: var(--secondary);
+    background-color: var(--primary-container);
 }
 
 .buttonContainer {
@@ -92,20 +93,10 @@ article {
 
 .tileButton {
     flex: 1;
-    color: var(--text);
     border: none;
-    background-color: var(--surface-1);
     padding: 5px 10px;
     align-items: center;
     border-radius: 4px;
     border: 1px solid var(--outline);
     cursor: pointer;
-}
-
-.tileButton:hover {
-    background-color: var(--surface-3);
-}
-
-.tileButton:active {
-    background-color: var(--surface-4);
 }
