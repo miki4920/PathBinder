@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -87,7 +87,7 @@
         if (url) {
             shadow.childNodes[0].removeAttribute('style');
             shadow.childNodes[0].style.backgroundImage = `url(${url})`
-            let currentlyOpenUid = localStorage.getItem('currentlyOpen');
+            let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
             let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
             existingDocumentData.cover = url;
             localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
@@ -374,14 +374,14 @@
 
     function postDocument() {
         let content = editor.getValue();
-        let currentlyOpenUid = localStorage.getItem('currentlyOpen');
+        let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
         let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
         existingDocumentData.content = content;
         localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
     }
 
     function getDocument() {
-        let uid = localStorage.getItem('currentlyOpen');
+        let uid = JSON.parse(localStorage.getItem('currentlyOpen'));
         if (uid !== null) {
             let doc = localStorage.getItem(uid);
             if (doc !== null) {
