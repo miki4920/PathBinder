@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -13,6 +13,7 @@
         <article id="tiles">
             <button class="floatingButton" id="addDocumentButton" onclick="addDocument()"><i class="fa-solid fa-plus"></i></button>
             <button class="floatingButton" id="importDocumentButton" onclick="importDocument"><i class="fa-solid fa-file-import"></i></button>
+            <input type="file" hidden accept=".json" id="importDocument"/>
         </article>
     </section>
     <script>
@@ -190,11 +191,36 @@
                 alert("Invalid document name!");
                 return;
             }
-            docManager.addDocument(name);
+            docManager.addDocument({ "name": name });
             window.location.href = '/Main/Write';
         }
 
+        function importDocument(file) {
+            const reader = new FileReader();
+            reader.readAsText(file, "text/json");
+            reader.onload = function (event) 
+            {   
+                const fileContent = JSON.parse(event.target.result);
+                docManager.addDocument(
+                    {
+                    "name": fileContent["name"],
+                    "content": fileContent["content"],
+                    "cover": fileContent["cover"]
+                    })
+                displayDocuments()
+            }
+        }
+
         window.onload = displayDocuments();
+
+        let documentInput = document.getElementById("importDocument");
+
+        document.getElementById("importDocumentButton").onclick = () => {
+            documentInput.click();
+        }
+        documentInput.onchange = () => {
+            importDocument(documentInput.files[0]);
+        }
     </script>
 </body>
 </html>
