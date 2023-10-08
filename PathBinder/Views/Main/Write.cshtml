@@ -397,6 +397,7 @@
     }
 
     function printDocument() {
+        postDocument()
         document.querySelectorAll('head link[rel="stylesheet"]').forEach((link) => {
             if (!link.href.endsWith('/css/site.css')) {
                 shadow.appendChild(link.cloneNode());
@@ -409,7 +410,8 @@
                     .page { margin: 0!important; }
         `
         shadow.appendChild(printStyle)
-        document.documentElement.innerHTML = shadow.innerHTML;
+        let printWindow = window.open('', '_blank');
+        printWindow.document.write(shadow.innerHTML);
     }
 
     const config = { minColumnWidth: 200, resizerSelector: ".resizer", mainSectionSelector: "section" };
