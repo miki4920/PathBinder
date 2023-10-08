@@ -68,6 +68,10 @@
     text-align: justify;
 }
 
+.page .break {
+    break-after: column;
+}
+
 .page .linebreak {
     border-bottom: 1px solid;
 }
