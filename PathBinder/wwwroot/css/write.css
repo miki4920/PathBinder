@@ -68,6 +68,11 @@ button {
     background-color: var(--surface-2) !important;
 }
 
+.CodeMirror-cursor {
+    border-left: 2px solid var(--text);
+    border-right: none;
+}
+
 .cm-mustache-brackets {
     color: var(--secondary);
     font-weight: bold;
@@ -97,9 +102,9 @@ button {
 .resizer::after {
     content: "";
     display: block;
-    background: var(--outline); /* Subtle lines to indicate it's an interactive element */
-    height: 50%; /* Adjust as per requirement */
-    width: 2px; /* Adjust as per requirement */
+    background: var(--outline); 
+    height: 50%; 
+    width: 2px; 
     margin: 20px 8px; 
 }
 
