@@ -421,13 +421,17 @@
         });
         let printStyle = document.createElement("style");
         printStyle.textContent = `
-                    html { margin: 0!important; }
-                    body { margin: 0!important; }
-                    .page { margin: 0!important; }
-        `
-        shadow.appendChild(printStyle)
+        html { margin: 0!important; }
+        body { margin: 0!important; }
+        .page { margin: 0!important; }
+    `;
         let printWindow = window.open('', '_blank');
-        printWindow.document.write(shadow.innerHTML);
+        printWindow.document.head.appendChild(printStyle);
+        printWindow.document.body.innerHTML = shadow.innerHTML;;
+        printWindow.document.close(); 
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
     }
 
     const config = { minColumnWidth: 200, resizerSelector: ".resizer", mainSectionSelector: "section" };
