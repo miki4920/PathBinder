@@ -114,7 +114,7 @@ main * {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: var(--surface-2); 
+    background-color: var(--surface-1); 
 }
 
 ::-webkit-scrollbar-thumb {
@@ -130,7 +130,7 @@ main * {
 /* For Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--surface-3) var(--surface-1);
+    scrollbar-color: var(--primary-container) var(--surface-1);
 }
 
 .accessibleText {
