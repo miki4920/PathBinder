@@ -20,6 +20,10 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/jump-to-line.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
     
@@ -55,7 +59,19 @@
         matchBrackets: true,
         theme: "default",
         mode: "mustacheHighlight",
-        scrollbarStyle: "native"
+        scrollbarStyle: "native",
+        extraKeys: {
+            "Ctrl-F": "findPersistent",
+            "Shift-Enter": "findPrev",
+            "Esc": "clearSearch",
+            "Enter": function (cm) {
+                if (cm.state.search.query) {
+                    cm.execCommand("findNext");
+                } else {
+                    cm.replaceSelection("\n", "end");
+                }
+            }
+        }
     });
     editor.addOverlay({ name: "mustacheHighlight" });
     const displayArea = document.getElementById("displayAreaHolder");
