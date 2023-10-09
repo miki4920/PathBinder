@@ -1,10 +1,10 @@
 [data-theme="light"] {
-    --background: #f8fdff;
+    --background: #f8fafd;
     --text: #001f25;
-    --surface-1: #f8fafd;
-    --surface-2: #f3f6fc;
-    --surface-3: #eff3fa;
-    --surface-4: #edf2fa;
+    --surface-1: #f3f6fc;
+    --surface-2: #eff3fa;
+    --surface-3: #edf2fa;
+    --surface-4: #eaf0f9;
     --primary: #1160a4;
     --primary-container: #d3e4ff;
     --secondary: #9c4233;
@@ -23,7 +23,7 @@
     --surface-4: #34363a;
     --primary: #a1c9ff;
     --primary-container: #004880;
-    --secondary: #7d2c1e;
+    --secondary: #DD9F92;
     --secondary-container: #7d2c1e;
     --outline: #8d9199;
     --tertiary: #eac248;
@@ -114,20 +114,38 @@ main * {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: var(--surface-1); 
+    background-color: var(--surface-2); 
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--surface-3);
-    border-radius: 10px; 
+    background-color: var(--primary-container);
+    border-radius: 10px;
+    transition: 0.5s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--surface-4);
+    background-color: var(--tertiary-container);
 }
 
 /* For Firefox */
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--surface-3) var(--surface-1);
+}
+
+.accessibleText {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.accessibleText:focus {
+    clip: auto;
+    height: auto;
+    overflow: auto;
+    position: absolute;
+    width: auto;
 }
