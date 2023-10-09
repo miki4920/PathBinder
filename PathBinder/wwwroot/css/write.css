@@ -73,6 +73,10 @@ button {
     border-right: none;
 }
 
+.CodeMirror-linenumber {
+    color: var(--text);
+}
+
 .cm-mustache-brackets {
     color: var(--secondary);
     font-weight: bold;
