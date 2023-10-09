@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -11,9 +11,9 @@
 
     <section>
         <article id="tiles">
-            <button class="floatingButton" id="addDocumentButton" onclick="addDocument()"><i class="fa-solid fa-plus"></i></button>
-            <button class="floatingButton" id="importDocumentButton" onclick="importDocument"><i class="fa-solid fa-file-import"></i></button>
-            <input type="file" hidden accept=".json" id="importDocument"/>
+            <button class="floatingButton" id="addDocumentButton" onclick="addDocument()"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span class="accessibleText">Add Document</span></button>
+            <button class="floatingButton" id="importDocumentButton" onclick="importDocument"><i class="fa-solid fa-file-import" aria-hidden="true"></i><span class="accessibleText">Import Document</span></button>
+            <input type="file" hidden accept=".json" id="importDocument" aria-hidden="true" tabindex="-1" aria-label="Import Document" />
         </article>
     </section>
     <script>
