@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -17,6 +17,15 @@
         </article>
     </section>
     <script>
+        class Helper {
+            static getInput(promptText) {
+                let name = prompt(promptText);
+                if (name === null || name.trim() === "") {
+                    return;
+                }
+                return name;
+            }
+        }
         class LocalStorageManager {
             getKey(key) {
                 key = JSON.parse(localStorage.getItem(key))
