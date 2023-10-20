@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -21,7 +21,7 @@
             static getInput(promptText) {
                 let name = prompt(promptText);
                 if (name === null || name.trim() === "") {
-                    return;
+                    return "";
                 }
                 return name;
             }
@@ -169,6 +169,9 @@
                 editButton.addEventListener("click", function (event) {
                     event.stopPropagation(); 
                     let name = Helper.getInput("Edit name of your document:");
+                    if (name === "") {
+                        return;
+                    }
                     data["name"] = name;
                     docManager.storageManager.setKey(key, data);  
                     DOMManager.updateTextContent(tile, name);
@@ -187,6 +190,9 @@
 
         function addDocument() {
             let name = Helper.getInput("Name your document:")
+            if (name === "") {
+                return;
+            }
             docManager.addDocument({ "name": name, "content": templateContent });
             displayDocuments();
         }
