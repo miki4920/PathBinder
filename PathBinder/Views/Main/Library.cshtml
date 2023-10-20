@@ -80,14 +80,8 @@
 
             exportDocument(key) {
                 const document = this.storageManager.getKey(key); 
-                const jsonContent = 
-                {
-                    "name": document["name"],
-                    "content": document["content"],
-                    "cover": document["cover"]
-                };
                 const fileName = `${document["name"]}.json`
-                const file = new Blob([JSON.stringify(jsonContent)], {
+                const file = new Blob([JSON.stringify(document)], {
                     type: 'application/json'
                 });
                 const link = DOMManager.createElement("a");
