@@ -135,12 +135,28 @@
         const storageManager = new LocalStorageManager();
         const docManager = new DocumentManager(storageManager);
 
+        function sortHandling() {
+
+        }
+
+        function sortDocuments(documents) {
+            let documentKey = document.getElementById('sortKey').value
+            let order = parseInt(document.getElementById('sortOrder').getAttribute('data-order'));
+            return documents.sort(function (a, b) {
+                let x = a["data"][documentKey];
+                let y = b["data"][documentKey];
+                return ((x < y) ? -1 + (order * 2) : ((x > y) ? 1 - (order * 2) : 0));
+            });
+        }
+
         function displayDocuments() {
             let tiles = document.getElementById("tiles");
             document.querySelectorAll('.wrapper').forEach(function (element) {
                 element.remove();
             });
-            for (let { key, data } of docManager.getAllDocuments()) {
+            let documents = docManager.getAllDocuments();
+            documents = sortDocuments(documents);
+            for (let { key, data } of documents) {
                 let wrapper = DOMManager.createElement("div", "wrapper");
                 let tile = DOMManager.createElement("div", "tile", data["name"]);
                 
