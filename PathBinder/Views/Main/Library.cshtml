@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -11,6 +11,13 @@
 
     <section>
         <article id="tiles">
+            <div id="sort">
+                <select id="sortKey" onchange="displayDocuments()">
+                    <option value="name">Name</option>
+                    <option value="lastModified">Last Modified</option>
+                </select>
+                <button id="sortOrder" data-order="1" onclick="this.dataset.order = 1 - this.dataset.order; this.textContent = this.dataset.order == '0' ? '▲ Ascending' : '▼ Descending'; displayDocuments();">▼ Descending</button>
+            </div>
             <button class="floatingButton" id="addDocumentButton" onclick="addDocument()"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span class="accessibleText">Add Document</span></button>
             <button class="floatingButton" id="importDocumentButton" onclick="importDocument"><i class="fa-solid fa-file-import" aria-hidden="true"></i><span class="accessibleText">Import Document</span></button>
             <input type="file" hidden accept=".json" id="importDocument" aria-hidden="true" tabindex="-1" aria-label="Import Document" />
