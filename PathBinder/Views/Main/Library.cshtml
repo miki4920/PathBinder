@@ -78,10 +78,7 @@
 
             addDocument(parameters) {
                 const uid = this._generateUID();
-                const name = (parameters["name"] !== undefined) ? (parameters["name"]) : "";
-                const content = (parameters["content"] !== undefined) ? (parameters["content"]) : "";
-                const cover = (parameters["cover"] !== undefined) ? (parameters["cover"]) : "";
-                this.storageManager.setKey(uid, { name: name, content: content, cover: cover });
+                this.storageManager.setKey(uid, parameters);
                 this.storageManager.setKey('currentlyOpen', uid);
             }
 
