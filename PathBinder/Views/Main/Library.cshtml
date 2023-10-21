@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Library";
 }
 <link rel="stylesheet" href="~/css/library.css" />
@@ -213,7 +213,8 @@
             if (name === "") {
                 return;
             }
-            docManager.addDocument({ "name": name, "content": templateContent });
+            let document = { "name": name, "content": templateContent, "cover": "", "lastModified": Date.now() };
+            docManager.addDocument(document);
             displayDocuments();
         }
 
@@ -223,12 +224,7 @@
             reader.onload = function (event) 
             {   
                 const fileContent = JSON.parse(event.target.result);
-                docManager.addDocument(
-                    {
-                    "name": fileContent["name"],
-                    "content": fileContent["content"],
-                    "cover": fileContent["cover"]
-                    })
+                docManager.addDocument(fileContent);
                 displayDocuments()
             }
         }
