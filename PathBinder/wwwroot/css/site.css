@@ -80,7 +80,7 @@ button, #title {
     background-color: var(--background);
 }
 
-button:hover, #title:hover, #addDocumentButton:hover, #importDocumentButton:hover {
+button:hover, #title:hover, #addDocumentButton:hover, #importDocumentButton:hover, #sortOrder:hover {
     background-color: var(--tertiary-container);
 }
 
