@@ -8,7 +8,6 @@
         <nav>
             <button onclick="postDocument()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
             <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Import</button>
-            <button onclick="askBackgroundImage()"><i class="fa-solid fa-image"></i>Cover</button>
             <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
         </nav>
         <div id="writeArea">
@@ -88,27 +87,15 @@
         .then(css => {
             pageStyle = document.createElement('style');
             pageStyle.textContent = css;
+            editor.on("change", function () {
+                displayChange();
+                $("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
+            });
             
         })
         .catch(error => {
             console.error('Fetch error: ', error);
         });
-    function askBackgroundImage() {
-        const url = prompt("Please enter a URL for background image that will fill the first page of your book:");
-        setBackgroundImage(url);
-        
-    }
-
-    function setBackgroundImage(url) {
-        if (url) {
-            shadow.childNodes[0].removeAttribute('style');
-            shadow.childNodes[0].style.backgroundImage = `url(${url})`
-            let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
-            let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
-            existingDocumentData.cover = url;
-            localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
-        }
-    }
 
     function cleanContent(html) {
         const parser = new DOMParser();
@@ -285,10 +272,12 @@
         
     }
 
-    function replacePlaceholders(placeholder) {
+    function replacePlaceholders(placeholder, page, wrapper) {
         // Remember that classes need to be in a list, even if only one element
         const elements = {
-            "cover": { "html": "img", "classes": ["cover", "wide"], "isImage": true },
+            "image": { "html": "img", "classes": ["image"]},
+            "mask": { "html": "div", "classes": ["masked"]},
+            "frame": { "html": "img", "classes": ["frame"]},
             "title": { "html": "h1", "classes": ["wide", "title"] },
             "header": { "html": "header", "classes": ["wide", "subtitle"] },
             "columnbreak": { "html": "div", "classes": ["break"] },
@@ -301,36 +290,77 @@
             "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
             "tag": { "html": "div", "classes": ["tag"] },
             "label": { "html": "div", "classes": ["label"] },
-            "line": { "html": "div", "classes": ["line"] },
+            "line": { "html": "p", "classes": ["line"]},
         }
-        const regex = /([a-zA-Z]+)(.*)/mg;
+        const regex = /([a-zA-Z]+)(:*)(.*?)(?:\[(.*?)\])?$/mg;
 
-        placeholder = placeholder.replace(regex, function (match, element, content) {
+        placeholder = placeholder.replace(regex, function (match, elementName, indentMarkers, content, attributes) {
+            let margin = indentMarkers.length;
 
-                element = elements[element.toLowerCase()]
-                if (element === undefined) {
-                    return match;
-                }
-                const newElement = document.createElement(element["html"]);
-                if (element["src"] !== undefined) {
-                    newElement.src = element["src"];
-                }
-                if (element["isImage"] !== undefined) {
-                    newElement.src = content.trim();
-                }
-                else {
-                    newElement.innerHTML = content.trim();
-                }
-                element["classes"]?.forEach(className => {
-                    newElement.classList.add(className);
+            let element = elements[elementName];
+            if (element === undefined) {
+                return match;
+            }
+
+            let newElement;
+            if (element["html"]) {
+                newElement = document.createElement(element["html"]);
+            }
+            if (element["src"] !== undefined) {
+                newElement.src = element["src"];
+            }
+            else if (element["html"] === "img") {
+                newElement.src = content.trim();
+            } else {
+                newElement.innerHTML = content.trim();
+            }
+
+            element["classes"]?.forEach(className => {
+                newElement.classList.add(className);
+            });
+
+            let shouldAttach = false;
+
+            if (newElement && attributes) {
+                const attrs = attributes.split(',').map(attr => attr.trim().split('='));
+                attrs.forEach(([key, value]) => {
+                    if (key === "class" && value === "attach") {
+                        shouldAttach = true
+                    }
+                    else if (key === "class" && value) { 
+                        newElement.classList.add(value);
+                    }
+                    else { 
+                        newElement.style[key] = value;
+                    }
                 });
-                return newElement.outerHTML;
+            }
+
+            if (elementName === "frame") {
+                page.style.backgroundImage = `url(${content.trim()})`;
+                newElement.src = `../assets/page.png`
+                page.appendChild(newElement);
+                wrapper.style.margin = `${parseFloat(newElement.style.padding) + 0.5}cm`;
+                newElement = "";
+            }
+             
+            if (margin > 0) {
+                newElement.style.marginLeft = `${margin}em`;
+            }
+
+            if (shouldAttach) {
+                page.appendChild(newElement);
+                newElement = null;
+            }
+
+            return newElement ? newElement.outerHTML : "";
         });
 
         return placeholder;
     }
 
-    function replaceBrackets(text) {
+    function replaceBrackets(text, page, wrapper) {
+        text = text.replace(/<\/?p>/g, "");
         let index = 0;
         function processSegment() {
             let content = '';
@@ -340,7 +370,7 @@
                     content += processSegment();
                 } else if (text[index] === '}' && text[index + 1] === '}') {
                     index += 2;
-                    return replacePlaceholders(content);
+                    return replacePlaceholders(content, page, wrapper);
                 } else {
                     content += text[index++];
                 }
@@ -373,20 +403,19 @@
         for (let element of htmlContent) {
             let page = createElementWithClass("div", "page");
             let columnWrapper = createElementWithClass("div", "columnWrapper");
-            columnWrapper.innerHTML = replaceBrackets(converter.makeHtml(element));
+            columnWrapper.innerHTML = replaceBrackets(converter.makeHtml(element), page, columnWrapper);
             applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
             columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
             page.appendChild(columnWrapper);
             shadow.appendChild(page); 
         }
+        let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
+        let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
+        existingDocumentData.cover = shadow.children[0].style.backgroundImage;
+        localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
         shadow.appendChild(pageStyle);
         
     }
-
-    editor.on("change", function() {
-        displayChange(); 
-        $("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
-    });
 
     function postDocument() {
         let content = editor.getValue();
@@ -403,7 +432,6 @@
             if (doc !== null) {
                 doc = JSON.parse(doc);
                 editor.setValue(doc.content);
-                setBackgroundImage(doc.cover);
             } else {
                 alert("Document not found!");
             }
