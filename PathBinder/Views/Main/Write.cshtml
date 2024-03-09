@@ -64,7 +64,7 @@
             "Shift-Enter": "findPrev",
             "Esc": "clearSearch",
             "Enter": function (cm) {
-                if (cm.state.search.query) {
+                if (cm?.state?.search?.query) {
                     cm.execCommand("findNext");
                 } else {
                     cm.replaceSelection("\n", "end");
@@ -341,6 +341,9 @@
                 newElement.src = `../assets/page.png`
                 page.appendChild(newElement);
                 wrapper.style.margin = `${parseFloat(newElement.style.padding) + 0.5}cm`;
+                let marginInMM = (parseFloat(newElement.style.padding) + 0.5) * 10;
+                wrapper.style.width = `${(210 - 2 * marginInMM)}mm`; 
+                wrapper.style.height = `${(297 - 2 * marginInMM)}mm`; 
                 newElement = "";
             }
              
