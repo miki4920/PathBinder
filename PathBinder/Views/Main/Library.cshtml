@@ -161,7 +161,7 @@
                 let tile = DOMManager.createElement("div", "tile", data["name"]);
                 
                 if (data["cover"]) {
-                    tile.style.backgroundImage = `url(${data["cover"]})`;
+                    tile.style.backgroundImage = data["cover"];
                 }
                 tile.addEventListener("click", function () {
                     storageManager.setKey('currentlyOpen', key.trim());
