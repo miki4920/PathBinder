@@ -30,6 +30,11 @@
 }
 
 .columnWrapper {
+    width: 180mm;
+    height: 267mm;
+}
+
+.columnWrapper {
     margin: 1.5cm;
 }
 
