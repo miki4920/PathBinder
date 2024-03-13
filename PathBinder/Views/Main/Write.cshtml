@@ -276,7 +276,7 @@
         // Remember that classes need to be in a list, even if only one element
         const elements = {
             "image": { "html": "img", "classes": ["image"]},
-            "frame": { "html": "img", "classes": ["frame"]},
+            "frame": { "html": "img"},
             "title": { "html": "h1", "classes": ["wide", "title"] },
             "header": { "html": "header", "classes": ["wide", "subtitle"] },
             "columnbreak": { "html": "div", "classes": ["break"] },
@@ -336,11 +336,16 @@
             }
 
             if (elementName === "frame") {
-                page.style.backgroundImage = `url(${content.trim()})`;
-                newElement.src = `../assets/page.png`
+                let pageElement = document.createElement(element["html"]);
+                pageElement.src = `../assets/page.png`
+                pageElement.classList.add(elementName);
+                pageElement.style.padding = newElement.style.padding;
+                newElement.src = content.trim();
+                newElement.style.padding = 0;
                 page.appendChild(newElement);
-                wrapper.style.margin = `${parseFloat(newElement.style.padding) + 0.5}cm`;
-                let marginInMM = (parseFloat(newElement.style.padding) + 0.5) * 10;
+                page.appendChild(pageElement);
+                wrapper.style.margin = `${parseFloat(pageElement.style.padding) + 0.5}cm`;
+                let marginInMM = (parseFloat(pageElement.style.padding) + 0.5) * 10;
                 wrapper.style.width = `${(210 - 2 * marginInMM)}mm`; 
                 wrapper.style.height = `${(297 - 2 * marginInMM)}mm`; 
                 newElement = "";
