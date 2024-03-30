@@ -24,6 +24,9 @@ namespace PathBinder.Controllers
 
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
+                client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.5");
                 try
                 {
                     string response = await client.GetStringAsync(request.Url);
@@ -36,7 +39,7 @@ namespace PathBinder.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(ex.Message);
+                    return BadRequest("It failed: " + ex.Message);
                 }
             }
         }
