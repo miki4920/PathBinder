@@ -91,6 +91,23 @@
     mask-size: cover;
 }
 
+.artist {
+    position: relative;
+}
+
+.artist .line, .artist {
+    font-family: "Walter Turncoat", cursive;
+    color: #766649;
+    text-align: center;
+    font-size: 1.1em;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.artist > :first-child {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
 .columnWrapper img {
     position: relative;
     height: auto;
