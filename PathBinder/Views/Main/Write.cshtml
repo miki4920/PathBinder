@@ -6,8 +6,9 @@
 <section>
     <div id="writeAreaHolder">
         <nav>
-            <button onclick="postDocument()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
+            <button id="save" onclick="animateSaving()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
             <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Import</button>
+            <button onclick="promptForFile()"><i class="fa-solid fa-file-import"></i>Foundry</button>
             <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
         </nav>
         <div id="writeArea">
@@ -73,6 +74,16 @@
         }
     });
     editor.addOverlay({ name: "mustacheHighlight" });
+    let autosaveTimeout;
+    editor.on('change', function () {
+        if (autosaveTimeout) {
+            clearTimeout(autosaveTimeout);
+        }
+        let saveButton = document.getElementById('save');
+        saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+        saveButton.disabled = false;
+        autosaveTimeout = setTimeout(animateSaving, 5000);
+    });
     const displayArea = document.getElementById("displayAreaHolder");
     const converter = new showdown.Converter();
     const shadow = displayArea.attachShadow({ mode: "open" });
@@ -213,7 +224,17 @@
         let currentNode = secondTitle.nextSibling;
         let extractedContent = secondTitle.outerHTML;
         while (currentNode) {
-            if (["H1", "H2", "H3", "H4", "H5", "H6"].includes(currentNode.tagName) || !currentNode.nextSibling) {
+            if (currentNode.tagName === "H3") {
+                const isLegacyContent = currentNode.textContent.toLowerCase().includes("legacy content");
+                if (isLegacyContent) {
+                    currentNode = currentNode.nextSibling;
+                    continue;
+                }
+                else {
+                    break;
+                }
+            }
+            else if (["H1", "H2", "H4", "H5", "H6"].includes(currentNode.tagName) || !currentNode.nextSibling) {
                 break;
             }
             extractedContent += currentNode.outerHTML ? currentNode.outerHTML : currentNode.textContent;
@@ -221,13 +242,6 @@
         }
 
         return cleanContent(extractedContent);
-    }
-
-    function promptForURL() {
-        const url = prompt("Please enter a URL from Archives of Nethys:");
-        if (url) {
-            processURL(url);
-        }
     }
 
     function replaceContent(content) {
@@ -269,8 +283,144 @@
         }
         content = extractContent(content);
         replaceContent(content);
-        
+
     }
+
+    function promptForURL() {
+        const url = prompt("Please enter a URL from Archives of Nethys:");
+        if (url) {
+            processURL(url);
+        }
+    }
+
+    function processJsonData(creatureData) {
+        const output = [];
+        output.push(`#### ${creatureData.name} {{label Creature ${creatureData.system.details.level.value}}}`);
+        const sizeMappings = {
+            "tiny": "Tiny",
+            "sml": "Small",
+            "med": "Medium",
+            "lg": "Large",
+            "huge": "Huge",
+            "grg": "Gargantuan"
+        };
+
+        const alignmentTags = ["chaotic", "evil", "lawful", "good", "neutral"];
+        creatureData.system.traits.value.forEach(trait => {
+            if (!alignmentTags.includes(trait)) { 
+                output.push(`{{tag ${trait.charAt(0).toUpperCase() + trait.slice(1)}}}`);
+            }
+        });
+        if (creatureData.system.traits.size.value) {
+            const sizeValue = creatureData.system.traits.size.value;
+            const fullSizeName = sizeMappings[sizeValue]; 
+            output.push(`{{tag ${fullSizeName}}}`);
+        }
+        const senses = creatureData.system.perception.senses.map(sense => sense.type).join(', ');
+        output.push(`{{line **Perception**  +${creatureData.system.perception.mod}; ${senses}}}`);
+
+        const languages = creatureData.system.details.languages.value.join(', ');
+        output.push(`{{line **Languages**  ${languages}}}`);
+
+        const skills = creatureData.items
+            .filter(item => item.type === 'lore')
+            .map(skill => `${skill.name} +${skill.system.mod.value}`)
+            .join(', ');
+        if (skills) {
+            output.push(`{{line **Skills**  ${skills}}}`);
+        }
+
+        const { str, dex, con, int, wis, cha } = creatureData.system.abilities;
+        output.push(`{{line **Str**  ${str.mod}, **Dex**  ${dex.mod}, **Con**  ${con.mod}, **Int**  ${int.mod}, **Wis**  ${wis.mod}, **Cha**  ${cha.mod}}}`);
+
+        const items = creatureData.items.filter(item => item.type === 'weapon' || item.type === 'armor');
+        items.forEach(item => {
+            output.push(`{{line **Items**  ${item.name}}}`);
+        });
+
+        output.push(`{{linebreak}}`);
+        output.push(`{{line **AC**  ${creatureData.system.attributes.ac.value}; **Fort**  +${creatureData.system.saves.fortitude.value}, **Ref**  +${creatureData.system.saves.reflex.value}, **Will**  +${creatureData.system.saves.will.value}}}`);
+        output.push(`{{line **HP**  ${creatureData.system.attributes.hp.value}}}`);
+
+        output.push(`{{linebreak}}`);
+        output.push(`{{line **Speed**  ${creatureData.system.attributes.speed.value} feet}}`);
+
+        creatureData.items.filter(item => item.type === 'melee').forEach(melee => {
+            const dmg = Object.values(melee.system.damageRolls)[0];
+            output.push(`{{line **Melee**   {{oneaction}}  ${melee.name} +${melee.system.bonus.value} [-2/-7], **Damage**  ${dmg.damage} ${dmg.damageType}}}`);
+        });
+
+        creatureData.items.filter(item => item.type === 'melee' && item.system.weaponType.value === 'ranged').forEach(ranged => {
+            const dmg = Object.values(ranged.system.damageRolls)[0];
+            output.push(`{{line **Ranged**   {{oneaction}}  ${ranged.name} +${ranged.system.bonus.value} [+0/-5], **Damage**  ${dmg.damage} ${dmg.damageType}}}`);
+        });
+
+        creatureData.items.filter(item => item.type === 'action').forEach(action => {
+            const actionSymbols = {
+                "action": "{{oneaction}} ",
+                "free": "{{freeaction}} ",
+                "reaction": "{{reaction}} ",
+                "passive": ""
+            };
+            let actionSymbol = actionSymbols[action.system.actionType.value];
+            if (action.system.actionType.value === "action" && action.system.actions.value) {
+                const actionCount = action.system.actions.value;
+                if (actionCount === 2) actionSymbol = "{{twoaction}} ";
+                if (actionCount === 3) actionSymbol = "{{threeaction}} ";
+            }
+
+            let actionText = `{{line **${action.name}** ${actionSymbol}`;
+            actionText += action.system.description.value
+                .replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
+                    return `**${text.trim()}**`;
+                })
+                .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
+                .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
+                .replace(/<\/?[^>]+>/g, "")
+                .replace(new RegExp("@@Damage\\[(\\d+d\\d+)\\[([^\\]]+)\\]\\]", "gi"), "$1 $2")
+                .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
+                    return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} save`
+                })
+                .replace(/@@(\{[^}]*\})/g, "$1")
+                .replace(/@@\w+\[[^\]]*\]/g, "")
+                .replace(/@@[^\s{]+/g, "")
+                .replace(/{([^}]*)}/g, "$1")
+                .replace(/\[\[[^\]]*\]\]/g, "")
+                .replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
+                return `${startBold}${text.trim()}${endBold}`;
+                })
+            actionText += `}}`;
+
+            output.push(actionText);
+        });
+
+        return output.join('\n');
+    }
+
+    function promptForFile() {
+        let fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'application/json';
+        fileInput.onchange = e => {
+            let file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            let reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    let jsonData = JSON.parse(e.target.result);
+                    replaceContent(processJsonData(jsonData));
+                } catch (error) {
+                    console.error('Error parsing JSON file:', error);
+                }
+            };
+            reader.readAsText(file);
+        };
+        fileInput.click();
+    }
+
+    
 
     function replacePlaceholders(placeholder, page, wrapper) {
         // Remember that classes need to be in a list, even if only one element
@@ -290,8 +440,9 @@
             "tag": { "html": "div", "classes": ["tag"] },
             "label": { "html": "div", "classes": ["label"] },
             "line": { "html": "p", "classes": ["line"]},
+            "artist": { "html": "div", "classes": ["artist"]}
         }
-        const regex = /([a-zA-Z]+)(:*)(.*?)(?:\[(.*?)\])?$/mg;
+        const regex = /([a-zA-Z]+)(:*)([\s\S]*?)(?:\[(.*?)\])?$/g;
 
         placeholder = placeholder.replace(regex, function (match, elementName, indentMarkers, content, attributes) {
             let margin = indentMarkers.length;
@@ -423,8 +574,20 @@
         shadow.appendChild(pageStyle);
         
     }
+    
+    function animateSaving() {
+        let saveButton = document.getElementById('save');
+        if (!saveButton.disabled) {
+            saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Saving...';
+            saveDocument();
+            setTimeout(() => {
+                saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Saved';
+                saveButton.disabled = true;
+            }, 500);
+        } 
+    }
 
-    function postDocument() {
+    function saveDocument() {
         let content = editor.getValue();
         let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
         let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
@@ -448,7 +611,7 @@
     }
 
     function printDocument() {
-        postDocument()
+        saveDocument()
         document.querySelectorAll('head link[rel="stylesheet"]').forEach((link) => {
             if (!link.href.endsWith('/css/site.css')) {
                 shadow.appendChild(link.cloneNode());
@@ -519,6 +682,13 @@
         localStorage.setItem("PathBinder-Scroll", 0);
         getDocument();
     };
+
+    document.addEventListener('keydown', function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+            animateSaving();
+        }
+    });
 </script>
 @section Scripts {
     @{
