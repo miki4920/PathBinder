@@ -295,106 +295,192 @@
 
     function processJsonData(creatureData) {
         const output = [];
-        output.push(`#### ${creatureData.name} {{label Creature ${creatureData.system.details.level.value}}}`);
         const sizeMappings = {
-            "tiny": "Tiny",
-            "sml": "Small",
-            "med": "Medium",
-            "lg": "Large",
-            "huge": "Huge",
-            "grg": "Gargantuan"
+            tiny: "Tiny",
+            sml: "Small",
+            med: "Medium",
+            lg: "Large",
+            huge: "Huge",
+            grg: "Gargantuan"
         };
-
         const alignmentTags = ["chaotic", "evil", "lawful", "good", "neutral"];
-        creatureData.system.traits.value.forEach(trait => {
-            if (!alignmentTags.includes(trait)) { 
-                output.push(`{{tag ${trait.charAt(0).toUpperCase() + trait.slice(1)}}}`);
-            }
-        });
-        if (creatureData.system.traits.size.value) {
-            const sizeValue = creatureData.system.traits.size.value;
-            const fullSizeName = sizeMappings[sizeValue]; 
-            output.push(`{{tag ${fullSizeName}}}`);
-        }
-        const senses = creatureData.system.perception.senses.map(sense => sense.type).join(', ');
-        output.push(`{{line **Perception**  +${creatureData.system.perception.mod}; ${senses}}}`);
 
-        const languages = creatureData.system.details.languages.value.join(', ');
-        output.push(`{{line **Languages**  ${languages}}}`);
-
-        const skills = creatureData.items
-            .filter(item => item.type === 'lore')
-            .map(skill => `${skill.name} +${skill.system.mod.value}`)
-            .join(', ');
-        if (skills) {
-            output.push(`{{line **Skills**  ${skills}}}`);
-        }
-
-        const { str, dex, con, int, wis, cha } = creatureData.system.abilities;
-        output.push(`{{line **Str**  ${str.mod}, **Dex**  ${dex.mod}, **Con**  ${con.mod}, **Int**  ${int.mod}, **Wis**  ${wis.mod}, **Cha**  ${cha.mod}}}`);
-
-        const items = creatureData.items.filter(item => item.type === 'weapon' || item.type === 'armor');
-        items.forEach(item => {
-            output.push(`{{line **Items**  ${item.name}}}`);
-        });
-
-        output.push(`{{linebreak}}`);
-        output.push(`{{line **AC**  ${creatureData.system.attributes.ac.value}; **Fort**  +${creatureData.system.saves.fortitude.value}, **Ref**  +${creatureData.system.saves.reflex.value}, **Will**  +${creatureData.system.saves.will.value}}}`);
-        output.push(`{{line **HP**  ${creatureData.system.attributes.hp.value}}}`);
-
-        output.push(`{{linebreak}}`);
-        output.push(`{{line **Speed**  ${creatureData.system.attributes.speed.value} feet}}`);
-
-        creatureData.items.filter(item => item.type === 'melee').forEach(melee => {
-            const dmg = Object.values(melee.system.damageRolls)[0];
-            output.push(`{{line **Melee**   {{oneaction}}  ${melee.name} +${melee.system.bonus.value} [-2/-7], **Damage**  ${dmg.damage} ${dmg.damageType}}}`);
-        });
-
-        creatureData.items.filter(item => item.type === 'melee' && item.system.weaponType.value === 'ranged').forEach(ranged => {
-            const dmg = Object.values(ranged.system.damageRolls)[0];
-            output.push(`{{line **Ranged**   {{oneaction}}  ${ranged.name} +${ranged.system.bonus.value} [+0/-5], **Damage**  ${dmg.damage} ${dmg.damageType}}}`);
-        });
-
-        creatureData.items.filter(item => item.type === 'action').forEach(action => {
-            const actionSymbols = {
-                "action": "{{oneaction}} ",
-                "free": "{{freeaction}} ",
-                "reaction": "{{reaction}} ",
-                "passive": ""
-            };
-            let actionSymbol = actionSymbols[action.system.actionType.value];
-            if (action.system.actionType.value === "action" && action.system.actions.value) {
-                const actionCount = action.system.actions.value;
-                if (actionCount === 2) actionSymbol = "{{twoaction}} ";
-                if (actionCount === 3) actionSymbol = "{{threeaction}} ";
-            }
-
-            let actionText = `{{line **${action.name}** ${actionSymbol}`;
-            actionText += action.system.description.value
-                .replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
-                    return `**${text.trim()}**`;
-                })
-                .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
-                .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
-                .replace(/<\/?[^>]+>/g, "")
-                .replace(new RegExp("@@Damage\\[(\\d+d\\d+)\\[([^\\]]+)\\]\\]", "gi"), "$1 $2")
-                .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
-                    return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} save`
-                })
-                .replace(/@@(\{[^}]*\})/g, "$1")
-                .replace(/@@\w+\[[^\]]*\]/g, "")
-                .replace(/@@[^\s{]+/g, "")
-                .replace(/{([^}]*)}/g, "$1")
-                .replace(/\[\[[^\]]*\]\]/g, "")
-                .replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
-                return `${startBold}${text.trim()}${endBold}`;
-                })
-            actionText += `}}`;
-
-            output.push(actionText);
-        });
+        output.push(formatCreatureLabel(creatureData));
+        output.push(...formatTraits(creatureData, alignmentTags));
+        output.push(formatSize(creatureData, sizeMappings));
+        output.push(formatPerception(creatureData));
+        output.push(formatLanguages(creatureData));
+        output.push(formatSkills(creatureData));
+        output.push(formatAbilities(creatureData));
+        output.push(...formatItems(creatureData));
+        output.push(formatLinebreak());
+        output.push(formatDefenses(creatureData));
+        output.push(formatHP(creatureData));
+        output.push(formatLinebreak());
+        output.push(formatSpeeds(creatureData));
+        output.push(formatResistances(creatureData));
+        output.push(formatImmunities(creatureData));
+        output.push(formatWeaknesses(creatureData));
+        output.push(...formatMelee(creatureData));
+        output.push(...formatRanged(creatureData));
+        output.push(...formatActions(creatureData));
 
         return output.join('\n');
+    }
+
+    function formatCreatureLabel(creatureData) {
+        return `#### ${creatureData.name} {{label Creature ${creatureData.system.details.level.value}}}`;
+    }
+
+    function formatTraits(creatureData, alignmentTags) {
+        return creatureData.system.traits.value.filter(trait => !alignmentTags.includes(trait))
+            .map(trait => `{{tag ${capitalizeFirstLetter(trait)}}}`);
+    }
+
+    function formatSize(creatureData, sizeMappings) {
+        const sizeValue = creatureData.system.traits.size.value;
+        return sizeValue ? `{{tag ${sizeMappings[sizeValue]}}}` : '';
+    }
+
+    function formatPerception(creatureData) {
+        const senses = creatureData.system.perception.senses.map(sense => sense.type).join(', ');
+        return `{{line **Perception**  +${creatureData.system.perception.mod}; ${senses}}}`;
+    }
+
+    function formatLanguages(creatureData) {
+        const languages = creatureData.system.details.languages.value.join(', ');
+        return `{{line **Languages**  ${languages}}}`;
+    }
+
+    function formatSkills(creatureData) {
+        const skills = creatureData.items.filter(item => item.type === 'lore')
+            .map(skill => `${skill.name} +${skill.system.mod.value}`).join(', ');
+        return skills ? `{{line **Skills**  ${skills}}}` : '';
+    }
+
+    function formatAbilities(creatureData) {
+        const { str, dex, con, int, wis, cha } = creatureData.system.abilities;
+        return `{{line **Str**  ${formatBonus(str.mod)}, **Dex**  ${formatBonus(dex.mod)}, **Con**  ${formatBonus(con.mod)}, **Int**  ${formatBonus(int.mod)}, **Wis**  ${formatBonus(wis.mod)}, **Cha**  ${formatBonus(cha.mod)}}}`;
+    }
+
+    function formatItems(creatureData) {
+        return creatureData.items.filter(item => ['weapon', 'armor'].includes(item.type))
+            .map(item => `{{line **Items**  ${item.name}}}`);
+    }
+
+    function formatLinebreak() {
+        return '{{linebreak}}';
+    }
+
+    function formatDefenses(creatureData) {
+        return `{{line **AC**  ${creatureData.system.attributes.ac.value}; **Fort**  +${creatureData.system.saves.fortitude.value}, **Ref**  +${creatureData.system.saves.reflex.value}, **Will**  +${creatureData.system.saves.will.value}}}`;
+    }
+
+    function formatHP(creatureData) {
+        return `{{line **HP**  ${creatureData.system.attributes.hp.value}}}`;
+    }
+
+    function formatSpeeds(creatureData) {
+    const speeds = creatureData.system.attributes.speed.otherSpeeds.map(speed => `${speed.type} ${speed.value} ft.`).join(', ');
+    return speeds ? `{{line **Speed**  ${speeds}}}` : '';
+}
+
+function formatResistances(creatureData) {
+    const resistances = creatureData.system.attributes.resistances.map(resistance => {
+        const exceptions = resistance.exceptions ? ` (except ${resistance.exceptions.join(', ')})` : '';
+        return `${resistance.type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
+    }).join('; ');
+    return resistances ? `{{line **Resistances**  ${resistances}}}` : '';
+}
+
+function formatImmunities(creatureData) {
+    const immunities = creatureData.system.attributes.immunities.map(immunity => immunity.type).join(', ');
+    return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
+}
+
+function formatWeaknesses(creatureData) {
+    const weaknesses = creatureData.system.attributes.weaknesses.map(weakness => `${weakness.type} ${weakness.value}`).join('; ');
+    return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
+}
+
+    function formatMelee(creatureData) {
+        return creatureData.items.filter(item => item.type === 'melee').map(melee => formatCombat(melee, false));
+    }
+
+    function formatRanged(creatureData) {
+        return creatureData.items.filter(item => item.type === 'melee' && item.system.weaponType.value === 'ranged')
+            .map(ranged => formatCombat(ranged, true));
+    }
+
+    function formatActions(creatureData) {
+        const actionSymbols = {
+            action: "{{oneaction}} ",
+            free: "{{freeaction}} ",
+            reaction: "{{reaction}} ",
+            passive: ""
+        };
+
+        return creatureData.items.filter(item => item.type === 'action')
+            .map(action => {
+                const actionSymbol = getActionSymbol(action, actionSymbols);
+                return formatActionText(action, actionSymbol);
+            });
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function formatCombat(combatItem, isRanged) {
+        const dmg = Object.values(combatItem.system.damageRolls)[0];
+        const traits = combatItem.system.traits.value.map(trait => trait.startsWith('reach-') ? `reach ${trait.split('-')[1]} feet` : trait).join(", ");
+        const isAgile = combatItem.system.traits.value.includes('agile');
+        const penalty = isAgile ? 4 : 5;
+        const secondPenalty = isAgile ? 8 : 10;
+        const adjustedBonus = combatItem.system.bonus.value;
+        const firstAdjustedBonus = adjustedBonus - penalty;
+        const secondAdjustedBonus = adjustedBonus - secondPenalty;
+        return `{{line **${isRanged ? "Ranged" : "Melee"}**   {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}] \\(${traits}), **Damage**  ${dmg.damage} ${dmg.damageType}}}`;
+    }
+
+    function formatBonus(bonus) {
+        return `${bonus >= 0 ? '+' : ''}${bonus}`;
+    }
+
+    function getActionSymbol(action, actionSymbols) {
+        let symbol = actionSymbols[action.system.actionType.value] || "";
+        if (action.system.actionType.value === "action" && action.system.actions.value) {
+            const actionCount = action.system.actions.value;
+            symbol = actionCount === 2 ? "{{twoaction}} " : actionCount === 3 ? "{{threeaction}} " : symbol;
+        }
+        return symbol;
+    }
+
+    function formatActionText(action, actionSymbol) {
+        let actionText = action.system.description.value;
+        actionText = cleanHtmlTags(actionText);
+        return `{{line **${action.name}** ${actionSymbol}${actionText}}}`;
+    }
+
+    function cleanHtmlTags(htmlString) {
+        return htmlString.replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
+            return `**${text.trim()}**`;
+        })
+            .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
+            .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
+            .replace(/<\/?[^>]+>/g, "")
+            .replace(new RegExp("@@Damage\\[(\\d+d\\d+)\\[([^\\]]+)\\]\\]", "gi"), "$1 $2")
+            .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
+                return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} ${basic ? '' : 'save'}`
+            })
+            .replace(/@@(\{[^}]*\})/g, "$1")
+            .replace(/@@\w+\[[^\]]*\]/g, "")
+            .replace(/@@[^\s{]+/g, "")
+            .replace(/{([^}]*)}/g, "$1")
+            .replace(/\[\[[^\]]*\]\]/g, "")
+            .replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
+                return `${startBold}${text.trim()}${endBold}`;
+            })
     }
 
     function promptForFile() {
@@ -419,8 +505,6 @@
         };
         fileInput.click();
     }
-
-    
 
     function replacePlaceholders(placeholder, page, wrapper) {
         // Remember that classes need to be in a list, even if only one element
