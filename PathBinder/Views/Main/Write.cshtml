@@ -381,27 +381,27 @@
     }
 
     function formatSpeeds(creatureData) {
-    const speeds = creatureData.system.attributes.speed.otherSpeeds.map(speed => `${speed.type} ${speed.value} ft.`).join(', ');
-    return speeds ? `{{line **Speed**  ${speeds}}}` : '';
-}
+        const speeds = creatureData.system.attributes.speed.otherSpeeds.map(speed => `${speed.type} ${speed.value} ft.`).join(', ');
+        return speeds ? `{{line **Speed**  ${speeds}}}` : '';
+    }
 
-function formatResistances(creatureData) {
-    const resistances = creatureData.system.attributes.resistances.map(resistance => {
-        const exceptions = resistance.exceptions ? ` (except ${resistance.exceptions.join(', ')})` : '';
-        return `${resistance.type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
-    }).join('; ');
-    return resistances ? `{{line **Resistances**  ${resistances}}}` : '';
-}
+    function formatResistances(creatureData) {
+        const resistances = creatureData.system.attributes.resistances.map(resistance => {
+            const exceptions = resistance.exceptions ? ` (except ${resistance.exceptions.join(', ')})` : '';
+            return `${resistance.type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
+        }).join('; ');
+        return resistances ? `{{line **Resistances**  ${resistances}}}` : '';
+    }
 
-function formatImmunities(creatureData) {
-    const immunities = creatureData.system.attributes.immunities.map(immunity => immunity.type).join(', ');
-    return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
-}
+    function formatImmunities(creatureData) {
+        const immunities = creatureData.system.attributes.immunities.map(immunity => immunity.type).join(', ');
+        return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
+    }
 
-function formatWeaknesses(creatureData) {
-    const weaknesses = creatureData.system.attributes.weaknesses.map(weakness => `${weakness.type} ${weakness.value}`).join('; ');
-    return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
-}
+    function formatWeaknesses(creatureData) {
+        const weaknesses = creatureData.system.attributes.weaknesses.map(weakness => `${weakness.type} ${weakness.value}`).join('; ');
+        return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
+    }
 
     function formatMelee(creatureData) {
         return creatureData.items.filter(item => item.type === 'melee').map(melee => formatCombat(melee, false));
@@ -524,7 +524,9 @@ function formatWeaknesses(creatureData) {
             "tag": { "html": "div", "classes": ["tag"] },
             "label": { "html": "div", "classes": ["label"] },
             "line": { "html": "p", "classes": ["line"]},
-            "artist": { "html": "div", "classes": ["artist"]}
+            "paragraph": { "html": "p", "classes": ["paragraph"] },
+            "artist": { "html": "div", "classes": ["artist"]},
+            "table": { "html": "table", "classes": ["table"]}
         }
         const regex = /([a-zA-Z]+)(:*)([\s\S]*?)(?:\[(.*?)\])?$/g;
 
@@ -545,7 +547,34 @@ function formatWeaknesses(creatureData) {
             }
             else if (element["html"] === "img") {
                 newElement.src = content.trim();
-            } else {
+            } 
+            else if (elementName === "table") {
+                const rows = content.trim().split('\n');
+                const headers = rows[0].split(',').map(header => header.trim());
+                const tbody = document.createElement('tbody');
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.innerText = header;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                newElement.appendChild(thead);
+
+                for (let i = 1; i < rows.length; i++) {
+                    const row = document.createElement('tr');
+                    rows[i].split(',').map(cell => cell.trim()).forEach(cellValue => {
+                        const td = document.createElement('td');
+                        td.innerText = cellValue;
+                        row.appendChild(td);
+                    });
+                    tbody.appendChild(row);
+                }
+                newElement.appendChild(tbody);
+            }
+            else {
                 newElement.innerHTML = content.trim();
             }
 
@@ -563,6 +592,12 @@ function formatWeaknesses(creatureData) {
                     }
                     else if (key === "class" && value) { 
                         newElement.classList.add(value);
+                    }
+                    else if (elementName === "table" && key === "headerBackground") {
+                        newElement.style.setProperty('--header-bg-color', value);
+                    }
+                    else if (elementName === "table" && key === "headerColor") {
+                        newElement.style.setProperty('--header-color', value);
                     }
                     else { 
                         newElement.style[key] = value;
@@ -619,8 +654,16 @@ function formatWeaknesses(creatureData) {
             }
             return content;
         }
-
-        return processSegment();
+        text = processSegment()
+        let lines = text.split('\n');
+        let processedLines = lines.map(line => {
+            if (line.trim() === "" || (line.startsWith('<') && !line.startsWith('<strong') && !line.startsWith('<b') && !line.startsWith('<em') && !line.startsWith('<i'))) {
+                return line;
+            } else {
+                return replacePlaceholders("line " + line, page, wrapper);
+            }
+        });
+        return processedLines.join('\n');
     }
 
     function applyClasses(content, selectors, className) {
@@ -645,7 +688,8 @@ function formatWeaknesses(creatureData) {
         for (let element of htmlContent) {
             let page = createElementWithClass("div", "page");
             let columnWrapper = createElementWithClass("div", "columnWrapper");
-            columnWrapper.innerHTML = replaceBrackets(converter.makeHtml(element), page, columnWrapper);
+            element = converter.makeHtml(element);
+            columnWrapper.innerHTML = replaceBrackets(element, page, columnWrapper);
             applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
             columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
             page.appendChild(columnWrapper);
