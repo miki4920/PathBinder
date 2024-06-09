@@ -210,6 +210,10 @@
     text-indent: -1em;
 }
 
+.page .paragraph + .paragraph {
+    text-indent: 1em;
+}
+
 .page .line-indent {
     margin-left: 2em;
     text-indent: -1em;
@@ -285,10 +289,31 @@
     margin: 0;
 }
 
-.page p + p {
-    text-indent: 1em;
-}
-
 .page img {
     vertical-align: middle;
+}
+
+.page .table {
+    width: 100%;
+    border-collapse: collapse; 
+    border-spacing: 0; 
+}
+
+.page .table * {
+    text-align: left;
+    font-family: 'Gelasio', sans-serif;
+    padding: 4px;
+}
+
+    .page .table th {
+        background-color: var(--header-bg-color, #02256E);
+        color: var(--header-color, white);
+    }
+
+.page .table tr:nth-child(even) {
+    background-color: #EEE3C8;
+}
+
+.page .table tr:nth-child(odd) {
+    background-color: #F5EFE0;
 }
