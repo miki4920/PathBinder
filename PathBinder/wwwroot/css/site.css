@@ -63,9 +63,10 @@ body {
 nav {
     background-color: var(--background);
     border-bottom: 1px solid var(--outline);
+    justify-content: space-between;
 }
 
-nav * {
+nav button, nav #buttonContainer, nav .dropdownButton {
     display: flex;
     flex-direction: row;
     font-weight: bold;
@@ -75,7 +76,7 @@ a {
     text-decoration: none;
 }
 
-button, #title {
+button, #title, .dropdownContent {
     transition: 0.5s;
     background-color: var(--background);
 }
