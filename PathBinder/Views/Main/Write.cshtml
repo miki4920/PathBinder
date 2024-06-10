@@ -381,12 +381,12 @@
     }
 
     function formatSpeeds(creatureData) {
-        const speeds = creatureData.system.attributes.speed.otherSpeeds.map(speed => `${speed.type} ${speed.value} ft.`).join(', ');
+        const speeds = creatureData.system.attributes.speed?.otherSpeeds.map(speed => `${speed.type} ${speed.value} ft.`).join(', ');
         return speeds ? `{{line **Speed**  ${speeds}}}` : '';
     }
 
     function formatResistances(creatureData) {
-        const resistances = creatureData.system.attributes.resistances.map(resistance => {
+        const resistances = creatureData.system.attributes?.resistances?.map(resistance => {
             const exceptions = resistance.exceptions ? ` (except ${resistance.exceptions.join(', ')})` : '';
             return `${resistance.type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
         }).join('; ');
@@ -394,12 +394,12 @@
     }
 
     function formatImmunities(creatureData) {
-        const immunities = creatureData.system.attributes.immunities.map(immunity => immunity.type).join(', ');
+        const immunities = creatureData.system.attributes?.immunities?.map(immunity => immunity.type).join(', ');
         return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
     }
 
     function formatWeaknesses(creatureData) {
-        const weaknesses = creatureData.system.attributes.weaknesses.map(weakness => `${weakness.type} ${weakness.value}`).join('; ');
+        const weaknesses = creatureData.system.attributes?.weaknesses?.map(weakness => `${weakness.type} ${weakness.value}`).join('; ');
         return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
     }
 
