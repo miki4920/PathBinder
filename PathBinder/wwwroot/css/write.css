@@ -17,13 +17,13 @@
     padding: 0;
 }
 
-button {
+button, #dropdownButton {
     cursor: pointer;
     border: none;
     text-decoration: none;
     padding: 6px;
     flex-grow: 0;
-    background-color: inherit;
+    background-color: var(--background);
     flex-direction: row;
     font-family: 'Tauri', sans-serif;
     font-weight: normal;
@@ -141,4 +141,28 @@ button {
 
 .resizer:hover {
     background: var(--surface-1);
+}
+
+.dropdownContainer {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    border-style: solid;
+    border-width: 0 0 1px 1px;
+    border-color: var(--outline);
+    transform: translateX(-11%);
+}
+
+.dropdownContainer button {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.dropdown:hover .dropdownContainer {
+    display: block;
+}
+
+.dropdownContainer:hover {
+    display: block;
 }
