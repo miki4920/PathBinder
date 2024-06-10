@@ -6,10 +6,17 @@
 <section>
     <div id="writeAreaHolder">
         <nav>
-            <button id="save" onclick="animateSaving()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
-            <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Import</button>
-            <button onclick="promptForFile()"><i class="fa-solid fa-file-import"></i>Foundry</button>
-            <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
+            <div id="buttonContainer">
+                <button id="save" onclick="animateSaving()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
+                <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Import</button>
+                <button onclick="promptForFile()"><i class="fa-solid fa-file-import"></i>Foundry</button>
+                <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
+            </div>
+            <div class="dropdown">
+                <button class="dropdownButton"><i class="fa-solid fa-bars"></i>Elements</button>
+                <div class="dropdownContainer">
+                </div>
+            </div>
         </nav>
         <div id="writeArea">
     </div>
@@ -26,7 +33,26 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/jump-to-line.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 <script>
-    
+    const paragraphElements = {
+        "image": { "html": "img", "classes": ["image"] },
+        "frame": { "html": "img" },
+        "title": { "html": "h1", "classes": ["wide", "title"] },
+        "header": { "html": "header", "classes": ["wide", "subtitle"] },
+        "line": { "html": "p", "classes": ["line"] },
+        "paragraph": { "html": "p", "classes": ["paragraph"] },
+        "linebreak": { "html": "div", "classes": ["linebreak"] },
+        "columnbreak": { "html": "div", "classes": ["break"] },
+        "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
+        "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
+        "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
+        "twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
+        "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
+        "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
+        "tag": { "html": "div", "classes": ["tag"] },
+        "label": { "html": "div", "classes": ["label"] },
+        "artist": { "html": "div", "classes": ["artist"] },
+        "table": { "html": "table", "classes": ["table"] }
+    }
     $("#displayAreaHolder").on("scroll", function () {
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
@@ -508,28 +534,8 @@
 
     function replacePlaceholders(placeholder, page, wrapper) {
         // Remember that classes need to be in a list, even if only one element
-        const elements = {
-            "image": { "html": "img", "classes": ["image"]},
-            "frame": { "html": "img"},
-            "title": { "html": "h1", "classes": ["wide", "title"] },
-            "header": { "html": "header", "classes": ["wide", "subtitle"] },
-            "columnbreak": { "html": "div", "classes": ["break"] },
-            "linebreak": { "html": "div", "classes": ["linebreak"] },
-            "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
-            "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
-            "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
-            "twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
-            "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
-            "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
-            "tag": { "html": "div", "classes": ["tag"] },
-            "label": { "html": "div", "classes": ["label"] },
-            "line": { "html": "p", "classes": ["line"]},
-            "paragraph": { "html": "p", "classes": ["paragraph"] },
-            "artist": { "html": "div", "classes": ["artist"]},
-            "table": { "html": "table", "classes": ["table"]}
-        }
         const regex = /([a-zA-Z]+)(:*)([\s\S]*?)(?:\[(.*?)\])?$/g;
-
+        const elements = paragraphElements;
         placeholder = placeholder.replace(regex, function (match, elementName, indentMarkers, content, attributes) {
             let margin = indentMarkers.length;
 
@@ -557,7 +563,7 @@
 
                 headers.forEach(header => {
                     const th = document.createElement('th');
-                    th.innerText = header;
+                    th.innerHTML = header;
                     headerRow.appendChild(th);
                 });
                 thead.appendChild(headerRow);
@@ -567,7 +573,7 @@
                     const row = document.createElement('tr');
                     rows[i].split(',').map(cell => cell.trim()).forEach(cellValue => {
                         const td = document.createElement('td');
-                        td.innerText = cellValue;
+                        td.innerHTML = cellValue;
                         row.appendChild(td);
                     });
                     tbody.appendChild(row);
@@ -806,8 +812,54 @@
         document.removeEventListener("mouseup", onMouseUp);
     }
 
+    function applyElement(key) {
+        console.log(key);
+    }
+
+    function fillDropdownContent() {
+        const dropdownContainer = document.querySelector('.dropdownContainer');
+        for (const [key, value] of Object.entries(paragraphElements)) {
+            const button = document.createElement('button');
+            button.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            button.onclick = () => applyElement(key);
+            dropdownContainer.appendChild(button);
+        }
+    }
+
+    function applyElement(key) {
+        const selectedText = editor.getSelection();
+        if (selectedText) {
+            const regex = /\{\{(.+?) (.+?)\}\}/g;
+            let newText;
+
+            if (regex.test(selectedText)) {
+                newText = selectedText.replace(regex, `{{${key} $2}}`);
+            } else {
+                newText = `{{${key} ${selectedText}}}`;
+            }
+
+            const startPos = editor.getCursor("from");
+            const endPos = editor.getCursor("to");
+
+            editor.replaceSelection(newText);
+
+            const newLines = newText.split('\n');
+            const newEndLine = startPos.line + newLines.length - 1;
+            const newEndCh = (newLines.length === 1) ?
+                startPos.ch + newText.length :
+                newLines[newLines.length - 1].length;
+
+            const newEndPos = {
+                line: newEndLine,
+                ch: newEndCh
+            };
+            editor.setSelection(startPos, newEndPos);
+        }
+    }
+
     window.onload = (event) => {
         localStorage.setItem("PathBinder-Scroll", 0);
+        fillDropdownContent()
         getDocument();
     };
 
