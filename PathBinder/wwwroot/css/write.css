@@ -166,7 +166,10 @@ button, #dropdownButton {
 .dropdown:hover .dropdownContainer,
 .visible {
     display: block;
-    background-color: var(--tertiary-container)
+}
+
+.dropdownButton:has(+ .visible) {
+    background-color: var(--tertiary-container);
 }
 
 .dropdownContainer:hover {
