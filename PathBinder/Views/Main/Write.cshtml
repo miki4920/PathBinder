@@ -352,7 +352,7 @@
         const output = [];
         const sizeMappings = {
             tiny: "Tiny",
-            sml: "Small",
+            sm: "Small",
             med: "Medium",
             lg: "Large",
             huge: "Huge",
@@ -377,9 +377,8 @@
         output.push(formatImmunities(creatureData));
         output.push(formatWeaknesses(creatureData));
         output.push(...formatMelee(creatureData));
-        output.push(...formatRanged(creatureData));
+        output.push(...formatSpellcasting(creatureData))
         output.push(...formatActions(creatureData));
-
         return output.join('\n');
     }
 
@@ -436,35 +435,38 @@
     }
 
     function formatSpeeds(creatureData) {
-        const speeds = creatureData.system.attributes.speed?.otherSpeeds.map(speed => `${speed.type} ${speed.value} ft.`).join(', ');
-        return speeds ? `{{line **Speed**  ${speeds}}}` : '';
+        const speeds = creatureData.system.attributes.speed?.otherSpeeds.map(speed => `${speed.type} ${speed.value} feet`).join(', ');
+        return speeds ? `{{line **Speed** ${creatureData.system.attributes.speed.value} feet, ${speeds}}}` : '';
+    }
+
+    function formatStringWithHyphen(str) {
+        return str.includes('-') ? str.split('-').join(' ') : str;
     }
 
     function formatResistances(creatureData) {
         const resistances = creatureData.system.attributes?.resistances?.map(resistance => {
-            const exceptions = resistance.exceptions ? ` (except ${resistance.exceptions.join(', ')})` : '';
-            return `${resistance.type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
+            const type = formatStringWithHyphen(resistance.type);
+            const exceptions = resistance.exceptions && resistance.exceptions.length > 0 ? ` (except ${resistance.exceptions.map(formatStringWithHyphen).join(', ')})` : '';
+            return `${type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
         }).join('; ');
         return resistances ? `{{line **Resistances**  ${resistances}}}` : '';
     }
 
     function formatImmunities(creatureData) {
-        const immunities = creatureData.system.attributes?.immunities?.map(immunity => immunity.type).join(', ');
+        const immunities = creatureData.system.attributes?.immunities?.map(immunity => formatStringWithHyphen(immunity.type)).join(', ');
         return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
     }
 
     function formatWeaknesses(creatureData) {
-        const weaknesses = creatureData.system.attributes?.weaknesses?.map(weakness => `${weakness.type} ${weakness.value}`).join('; ');
+        const weaknesses = creatureData.system.attributes?.weaknesses?.map(weakness => {
+            const type = formatStringWithHyphen(weakness.type);
+            return `${type} ${weakness.value}`;
+        }).join('; ');
         return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
     }
 
     function formatMelee(creatureData) {
         return creatureData.items.filter(item => item.type === 'melee').map(melee => formatCombat(melee, false));
-    }
-
-    function formatRanged(creatureData) {
-        return creatureData.items.filter(item => item.type === 'melee' && item.system.weaponType.value === 'ranged')
-            .map(ranged => formatCombat(ranged, true));
     }
 
     function formatActions(creatureData) {
@@ -478,8 +480,47 @@
         return creatureData.items.filter(item => item.type === 'action')
             .map(action => {
                 const actionSymbol = getActionSymbol(action, actionSymbols);
-                return formatActionText(action, actionSymbol);
+                return formatActionText(action, actionSymbol).replace(/paragraph:/, '§§§').replace(/paragraph:/g, 'paragraph').replace('§§§', 'paragraph:');;
             });
+    }
+
+    function formatSpellcasting(creatureData) {
+        const spellcastingEntries = creatureData.items.filter(item => item.type === 'spellcastingEntry');
+        return spellcastingEntries.map(entry => {
+            let spells = creatureData.items.filter(item => item.type === 'spell');
+            let maxLevel = Math.max(...spells.map(spell => spell.system.location.heightenedLevel || 0));
+            let groupedSpells = {};
+            spells.forEach(spell => {
+                let level = spell.system.location.heightenedLevel || (maxLevel + 1);
+                if (!groupedSpells[level]) groupedSpells[level] = [];
+                groupedSpells[level].push(spell);
+            });
+            let sortedLevels = Object.keys(groupedSpells).sort((a, b) => b - a);
+            let suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
+            let getSuffix = level => suffixes[level] || 'th';
+            let formattedSpells = sortedLevels.filter(level => level <= maxLevel).map(level => {
+                let spellsAtLevel = groupedSpells[level].map(spell => {
+                    let usesMax = spell.system.location.uses?.max;
+                    return `${spell.name}${usesMax ? ` (x${usesMax})` : ''}`;
+                }).join(', ');
+
+                return `**${level}${getSuffix(level)}** ${spellsAtLevel}`;
+            }).join(' ');
+            if (groupedSpells[maxLevel + 1]) {
+                let cantrips = groupedSpells[maxLevel + 1].map(spell => {
+                    let usesMax = spell.system.location.uses?.max;
+                    return `${spell.name}${usesMax ? ` (x${usesMax})` : ''}`;
+                }).join(', ');
+
+                formattedSpells += ` **Cantrips (${maxLevel}${getSuffix(maxLevel)})** ${cantrips}`;
+            }
+            const spellDC = entry.system.spelldc;
+            const name = 'Spells';
+            const tradition = capitalizeFirstLetter(entry.system.tradition.value);
+            const spellcastingType = capitalizeFirstLetter(entry.system.prepared.value);
+            const spellInfo = `**${tradition} ${spellcastingType} Spells** DC ${ spellDC.dc }, attack +${ spellDC.value }; `;
+            return `{{line ${spellInfo} ${formattedSpells}}}`
+        })
     }
 
     function capitalizeFirstLetter(string) {
@@ -488,14 +529,22 @@
 
     function formatCombat(combatItem, isRanged) {
         const dmg = Object.values(combatItem.system.damageRolls)[0];
-        const traits = combatItem.system.traits.value.map(trait => trait.startsWith('reach-') ? `reach ${trait.split('-')[1]} feet` : trait).join(", ");
+        isRanged = false;
+        const traits = combatItem.system.traits.value.length ? ` (${combatItem.system.traits.value.map(trait => {
+            let modifiedTrait = trait.includes('-') ? trait.split('-').join(' ') : trait;
+            if (/\d/.test(modifiedTrait)) modifiedTrait += ' feet';
+            if (modifiedTrait.includes('range')) isRanged = true;
+            return modifiedTrait;
+        }).join(", ")})` : "";
         const isAgile = combatItem.system.traits.value.includes('agile');
         const penalty = isAgile ? 4 : 5;
         const secondPenalty = isAgile ? 8 : 10;
         const adjustedBonus = combatItem.system.bonus.value;
         const firstAdjustedBonus = adjustedBonus - penalty;
         const secondAdjustedBonus = adjustedBonus - secondPenalty;
-        return `{{line **${isRanged ? "Ranged" : "Melee"}**   {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}] \\(${traits}), **Damage**  ${dmg.damage} ${dmg.damageType}}}`;
+        const description = combatItem.system.description.value ? `\n{{paragraph: ${cleanHtmlTags(combatItem.system.description.value)}}}` : "";
+        let combatText = `{{line **${isRanged ? "Ranged" : "Melee"}**   {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage**  ${dmg.damage} ${dmg.damageType}}}${description}`;
+        return combatText.replace(/paragraph:/, '§§§').replace(/paragraph:/g, 'paragraph').replace('§§§', 'paragraph:');
     }
 
     function formatBonus(bonus) {
@@ -521,21 +570,24 @@
         return htmlString.replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
             return `**${text.trim()}**`;
         })
-            .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
-            .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
-            .replace(/<\/?[^>]+>/g, "")
-            .replace(new RegExp("@@Damage\\[(\\d+d\\d+)\\[([^\\]]+)\\]\\]", "gi"), "$1 $2")
-            .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
-                return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} ${basic ? '' : 'save'}`
-            })
-            .replace(/@@(\{[^}]*\})/g, "$1")
-            .replace(/@@\w+\[[^\]]*\]/g, "")
-            .replace(/@@[^\s{]+/g, "")
-            .replace(/{([^}]*)}/g, "$1")
-            .replace(/\[\[[^\]]*\]\]/g, "")
-            .replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
-                return `${startBold}${text.trim()}${endBold}`;
-            })
+        .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
+        .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
+        .replace(/<\/?[^>]+>/g, "")
+        .replace(/@@Damage\[\(([^)]+)\)\[([^\]]+)\]\]/, (match, p1, p2) => `${p1} ${p2.toLowerCase()}`)
+        .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
+            return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} ${basic ? '' : 'save'}`
+        })
+        .replace(/@@(\{[^}]*\})/g, "$1")
+        .replace(/@@\w+\[[^\]]*\]/g, "")
+        .replace(/@@[^\s{]+/g, "")
+        .replace(/{([^}]*)}/g, "$1")
+        .replace(/\[\[[^\]]*\]\]/g, "")
+        .replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
+            return `${startBold}${text.trim()}${endBold}`;
+        })
+        .replace(/(\*\*[^\*]+\*\*)([^*]+)/g, (match, p1, p2, offset, string) => {
+            return offset === 0 ? p1 + p2 : `\n{{paragraph: ${p1}${p2}}}`;
+        })
     }
 
     function promptForFile() {
