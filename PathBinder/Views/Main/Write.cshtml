@@ -40,8 +40,9 @@
         "header": { "html": "header", "classes": ["wide", "subtitle"] },
         "line": { "html": "p", "classes": ["line"] },
         "paragraph": { "html": "p", "classes": ["paragraph"] },
-        "linebreak": { "html": "div", "classes": ["linebreak"] },
-        "columnbreak": { "html": "div", "classes": ["break"] },
+        "linebreak": { "html": "div", "classes": ["linebreak"], "special": true },
+        "columnbreak": { "html": "div", "classes": ["break"], "special": true },
+        "pagebreak": {"special": true},
         "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
         "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
         "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
@@ -893,10 +894,6 @@
         document.removeEventListener("mouseup", onMouseUp);
     }
 
-    function applyElement(key) {
-        console.log(key);
-    }
-
     function fillDropdownContent() {
         const dropdownContainer = document.querySelector('.dropdownContainer');
         for (const [key, value] of Object.entries(paragraphElements)) {
@@ -918,7 +915,20 @@
 
     function applyElement(key) {
         const selectedText = editor.getSelection();
-        if (selectedText) {
+        const cursorPos = editor.getCursor();
+        if (paragraphElements[key].special) {
+            const newText = `{{${key}}}`;
+            editor.replaceRange(newText, {
+                line: cursorPos.line,
+                ch: 0
+            });
+            const newCursorPos = {
+                line: cursorPos.line,
+                ch: 0
+            };
+            editor.setCursor(newCursorPos);
+        }
+        else if (selectedText) {
             const regex = /\{\{(.+?) (.+?)\}\}/g;
             let newText;
 
