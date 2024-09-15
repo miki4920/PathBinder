@@ -578,7 +578,7 @@
         .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
         .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
         .replace(/<\/?[^>]+>/g, "")
-        .replace(/@@Damage\[([^)]+)(?:\[([^\]]+)\])?\]/, (match, p1, p2) => `${p1}${p2 ? ' ' + p2.toLowerCase() : ''}`)
+        .replace(/@@Damage\[([^)]+)\]/, (match, p1) => `${p1.replace('[', ' ').replace(']', '')}`)
         .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
             return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} ${basic ? '' : 'save'}`
         })
