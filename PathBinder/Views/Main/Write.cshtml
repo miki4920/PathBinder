@@ -531,7 +531,7 @@
     function formatCombat(combatItem, isRanged) {
         const dmg = Object.values(combatItem.system.damageRolls)[0];
         isRanged = false;
-        const traits = combatItem.system.traits.value.length ? ` (${combatItem.system.traits.value.map(trait => {
+        const traits = combatItem.system.traits.value.length ? ` \\(${combatItem.system.traits.value.map(trait => {
             let modifiedTrait = trait.includes('-') ? trait.split('-').join(' ') : trait;
             if (/\d/.test(modifiedTrait)) modifiedTrait += ' feet';
             if (modifiedTrait.includes('range')) isRanged = true;
@@ -563,8 +563,12 @@
 
     function formatActionText(action, actionSymbol) {
         let actionText = action.system.description.value;
+        const actionTraits = action.system.traits.value.length ? ` \\(${action.system.traits.value.map(trait => {
+            let modifiedTrait = trait.includes('-') ? trait.split('-').join(' ') : trait;
+            return modifiedTrait;
+        }).join(", ")})` : "";
         actionText = cleanHtmlTags(actionText);
-        return `{{line **${action.name}** ${actionSymbol}${actionText}}}`;
+        return `{{line **${action.name}** ${actionSymbol}${actionTraits} ${ actionText }}}`;
     }
 
     function cleanHtmlTags(htmlString) {
@@ -574,7 +578,7 @@
         .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
         .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
         .replace(/<\/?[^>]+>/g, "")
-        .replace(/@@Damage\[\(([^)]+)\)\[([^\]]+)\]\]/, (match, p1, p2) => `${p1} ${p2.toLowerCase()}`)
+        .replace(/@@Damage\[([^)]+)(?:\[([^\]]+)\])?\]/, (match, p1, p2) => `${p1}${p2 ? ' ' + p2.toLowerCase() : ''}`)
         .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
             return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} ${basic ? '' : 'save'}`
         })
