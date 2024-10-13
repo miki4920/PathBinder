@@ -572,28 +572,61 @@
     }
 
     function cleanHtmlTags(htmlString) {
-        return htmlString.replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
-            return `**${text.trim()}**`;
-        })
-        .replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3')
-        .replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3')
-        .replace(/<\/?[^>]+>/g, "")
-        .replace(/@@Damage\[([^)]+)\]/, (match, p1) => `${p1.replace('[', ' ').replace(']', '')}`)
-        .replace(new RegExp("@@Check\\[type:(\\w+)\\|dc:(\\d+)(\\|basic:true)?\\]", "gi"), function (match, type, dc, basic) {
-            return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} ${basic ? '' : 'save'}`
-        })
-        .replace(/@@(\{[^}]*\})/g, "$1")
-        .replace(/@@\w+\[[^\]]*\]/g, "")
-        .replace(/@@[^\s{]+/g, "")
-        .replace(/{([^}]*)}/g, "$1")
-        .replace(/\[\[[^\]]*\]\]/g, "")
-        .replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
+        // Replace <b> or <strong> tags with **text**
+        htmlString = htmlString.replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
+            return `**${text.trim()}** `;
+        });
+
+        // Add space after the opening '**' if followed immediately by a non-space character
+        htmlString = htmlString.replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3');
+
+        // Add space before the closing '**' if preceded by a non-space character
+        htmlString = htmlString.replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3');
+
+        // Remove any other HTML tags
+        htmlString = htmlString.replace(/<\/?[^>]+>/g, "");
+
+        // Replace @@Damage[ ] with formatted string
+        htmlString = htmlString.replace(/@@Damage\[([^)]+?)]\]/, (match, p1) => {
+            return `${p1.replace('[', ' ').replace(']', '')}`;
+        });
+
+        // Replace @@Check with formatted string
+        htmlString = htmlString.replace(new RegExp("@@Check\\[(\\w+)\\|dc:(\\d{2})(\\|basic)?\\]\\s*(save)?", "gi"), function (match, type, dc, basic) {
+            return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} save`;
+        });
+
+        // Replace @@{} with content inside curly braces
+        htmlString = htmlString.replace(/@@(\{[^}]*\})/g, "$1");
+
+        // Remove @@[...] and similar patterns
+        htmlString = htmlString.replace(/@@\w+\[[^\]]*\]/g, "");
+
+        // Remove any remaining @@ followed by non-space characters
+        htmlString = htmlString.replace(/@@[^\s{]+/g, "");
+
+        // Remove braces, keeping the content inside
+        htmlString = htmlString.replace(/{([^}]*)}/g, "$1");
+
+        // Remove double square brackets and their content
+        htmlString = htmlString.replace(/\[\[[^\]]*\]\]/g, "");
+
+        // Trim any unnecessary spaces inside **text**
+        htmlString = htmlString.replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
             return `${startBold}${text.trim()}${endBold}`;
-        })
-        .replace(/(\*\*[^\*]+\*\*)([^*]+)/g, (match, p1, p2, offset, string) => {
+        });
+
+        // Add a space after every full stop if there isn't one
+        htmlString = htmlString.replace(/\.([^\s])/g, '. $1');
+
+        // Convert **bold** followed by non-bold text to a paragraph format
+        htmlString = htmlString.replace(/(\*\*[^\*]+\*\*)([^*]+)/g, function (match, p1, p2, offset, string) {
             return offset === 0 ? p1 + p2 : `\n{{paragraph: ${p1}${p2}}}`;
-        })
+        });
+
+        return htmlString;
     }
+
 
     function promptForFile() {
         let fileInput = document.createElement('input');
