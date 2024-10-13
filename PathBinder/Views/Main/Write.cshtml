@@ -492,7 +492,7 @@
             let maxLevel = Math.max(...spells.map(spell => spell.system.location.heightenedLevel || 0));
             let groupedSpells = {};
             spells.forEach(spell => {
-                let level = spell.system.location.heightenedLevel || (maxLevel + 1);
+                let level = spell.system.traits.value.includes('cantrip') ? (maxLevel + 1) : spell.system.location.heightenedLevel || spell.system.level.value;
                 if (!groupedSpells[level]) groupedSpells[level] = [];
                 groupedSpells[level].push(spell);
             });
@@ -594,6 +594,21 @@
         // Replace @@Check with formatted string
         htmlString = htmlString.replace(new RegExp("@@Check\\[(\\w+)\\|dc:(\\d{2})(\\|basic)?\\]\\s*(save)?", "gi"), function (match, type, dc, basic) {
             return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} save`;
+        });
+
+        // Replace @@Template with fomatted string
+        htmlString = htmlString.replace(/@@Template\[(.*?)\]/g, function (match, p1) {
+            let parts = p1.split("|");
+
+            let formattedParts = parts.map(part => {
+                let match = part.match(/(\d+)/);
+                if (match) {
+                    return match[1] + "-foot";
+                }
+                return part;
+            });
+
+            return formattedParts.reverse().join(" ");
         });
 
         // Replace @@{} with content inside curly braces
