@@ -408,8 +408,8 @@
     }
 
     function formatSkills(creatureData) {
-        const skills = creatureData.items.filter(item => item.type === 'lore')
-            .map(skill => `${skill.name} +${skill.system.mod.value}`).join(', ');
+        const capitalizeWords = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
+        const skills = Object.entries(creatureData.system.skills).map(([name, data]) => `${capitalizeWords(name)} +${data.base}`).join(', ');
         return skills ? `{{line **Skills**  ${skills}}}` : '';
     }
 
@@ -437,7 +437,7 @@
 
     function formatSpeeds(creatureData) {
         const speeds = creatureData.system.attributes.speed?.otherSpeeds.map(speed => `${speed.type} ${speed.value} feet`).join(', ');
-        return speeds ? `{{line **Speed** ${creatureData.system.attributes.speed.value} feet, ${speeds}}}` : '';
+        return `{{line **Speed** ${creatureData.system.attributes.speed.value} feet` + (speeds ? `, ${speeds}` : '') + '}}';
     }
 
     function formatStringWithHyphen(str) {
@@ -742,18 +742,21 @@
                     else { 
                         newElement.style[key] = value;
                     }
+
+                    if (elementName === "image") {
+                        shouldAttach = true
+                    }
                 });
             }
 
             if (elementName === "frame") {
                 let pageElement = document.createElement(element["html"]);
                 pageElement.src = `../assets/page.png`
-                pageElement.classList.add(elementName);
-                pageElement.style.padding = newElement.style.padding;
                 newElement.src = content.trim();
                 newElement.style.padding = 0;
-                page.appendChild(newElement);
+                newElement.classList.add(elementName);
                 page.appendChild(pageElement);
+                page.appendChild(newElement);
                 wrapper.style.margin = `${parseFloat(pageElement.style.padding) + 0.5}cm`;
                 let marginInMM = (parseFloat(pageElement.style.padding) + 0.5) * 10;
                 wrapper.style.width = `${(210 - 2 * marginInMM)}mm`; 
