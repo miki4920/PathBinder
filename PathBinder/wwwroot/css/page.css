@@ -19,8 +19,15 @@
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 1cm; 
-    z-index: 0; 
+    mask-size: cover;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    z-index: 100 !important;
+    mask-image: url('../assets/frame.png');
+}
+
+.page .base {
+    mask-image: url('../assets/base.png')!important;
 }
 
 .page, .columnWrapper {
