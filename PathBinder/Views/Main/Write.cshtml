@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -52,8 +52,20 @@
         "tag": { "html": "div", "classes": ["tag"] },
         "label": { "html": "div", "classes": ["label"] },
         "artist": { "html": "div", "classes": ["artist"] },
-        "table": { "html": "table", "classes": ["table"] }
+        "table": { "html": "table", "classes": ["table"] },
+        "dc": {"html": "span"}
     }
+    const dcs = {
+        0: 14, 1: 15, 2: 16, 3: 18, 4: 19, 5: 20, 6: 22, 7: 23, 8: 24, 9: 26,
+        10: 27, 11: 28, 12: 30, 13: 31, 14: 32, 15: 34, 16: 35, 17: 36, 18: 38,
+        19: 39, 20: 40, 21: 42, 22: 44, 23: 46, 24: 48, 25: 50,
+
+        untrained: 10,
+        trained: 15,
+        expert: 20,
+        master: 30,
+        legendary: 40
+    };
     $("#displayAreaHolder").on("scroll", function () {
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
@@ -762,6 +774,10 @@
                 wrapper.style.width = `${(210 - 2 * marginInMM)}mm`; 
                 wrapper.style.height = `${(297 - 2 * marginInMM)}mm`; 
                 newElement = "";
+            }
+
+            if (elementName === "dc") {
+                newElement.innerHTML = 'DC ' + dcs[content.trim()];
             }
              
             if (margin > 0) {
