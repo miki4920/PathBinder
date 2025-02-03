@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -21,7 +21,10 @@
         <div id="writeArea">
     </div>
     </div>
-    <div class="resizer"></div>
+    <div class="resizer">
+        <button onclick="scrollToPart('editor')"><i class="fa-solid fa-arrow-left"></i></button>
+        <button onclick="scrollToPart('preview')"><i class="fa-solid fa-arrow-right"></i></button>
+    </div>
     <div id="displayAreaHolder"></div>
 </section>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -1031,6 +1034,48 @@
             editor.setSelection(startPos, newEndPos);
         }
     }
+
+    function scrollToPart(mode) {
+        const doc = editor.getDoc()
+        const pageBreaks = []
+        doc.eachLine(l => { if (l.text.includes("{{pagebreak}}")) pageBreaks.push(doc.getLineNumber(l)) })
+        const host = document.getElementById('displayAreaHolder')
+        const pages = host.shadowRoot.querySelectorAll('.page')
+        if (mode === 'editor') {
+            let idx = pages.length, closest = Number.MAX_VALUE
+            pages.forEach((p, i) => {
+                const ratio = Math.abs(p.getBoundingClientRect().top / p.clientHeight)
+                if (ratio < closest) { closest = ratio; idx = i }
+            })
+            if (idx === 0) { editor.scrollTo(null, 0); return }
+            idx--
+            if (idx < 0 || idx >= pageBreaks.length) return
+            const line = pageBreaks[idx]
+            const { top } = editor.charCoords({ line, ch: 0 }, 'local')
+            editor.scrollTo(null, top)
+        } else {
+            const top = editor.getScrollInfo().top
+            let idx = 0, dist = Number.MAX_VALUE
+            for (let i = 0; i < pageBreaks.length; i++) {
+                const line = pageBreaks[i];
+                const { top: lineTop } = editor.charCoords({ line, ch: 0 }, 'local');
+                if (i === 0 && top - lineTop < 0) {
+                    idx = 0;
+                    break;
+                }
+                const d = lineTop - top;
+                if (d > 0) {
+                    dist = d;
+                    idx = i;
+                    break;
+                }
+                idx = pageBreaks.length;
+            }
+            if (idx < 0 || idx >= pages.length) return
+            pages[idx].scrollIntoView()
+        }
+    }
+
 
     window.onload = (event) => {
         localStorage.setItem("PathBinder-Scroll", 0);

@@ -1,4 +1,4 @@
-section {
+﻿section {
     display: grid;
     flex-basis: 100%;
     grid-template-columns: 1fr 20px 1fr;
@@ -132,14 +132,31 @@ button, #dropdownButton {
     display:flex;
 }
 
-.resizer::before,
+.resizer button {
+    border-bottom: 1px solid var(--outline);
+    padding: 10px 0;
+}
+
+.resizer button:first-of-type {
+    border-top: 1px solid var(--outline);
+}
+
+.resizer::before {
+    content: "";
+    display: block;
+    background: var(--outline);
+    height: 17px;
+    width: 2px;
+    margin: 8px 8px;
+}
+
 .resizer::after {
     content: "";
     display: block;
     background: var(--outline); 
-    height: 50%; 
+    height: 90%; 
     width: 2px; 
-    margin: 20px 8px; 
+    margin: 8px 8px; 
 }
 
 
