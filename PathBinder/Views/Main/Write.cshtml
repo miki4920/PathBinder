@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -78,6 +78,10 @@
 
                 if (stream.match(/^#/) || stream.match(/^\*/)) {
                     return "mustache-markdown";
+                }
+
+                if (stream.match("pagebreak")) {
+                    return "mustache-pagebreak"; 
                 }
 
                 if (stream.string.charAt(stream.start - 2) === '{' || stream.string.charAt(stream.start - 4) === '{') {

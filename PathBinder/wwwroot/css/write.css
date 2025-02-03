@@ -1,4 +1,4 @@
-﻿section {
+section {
     display: grid;
     flex-basis: 100%;
     grid-template-columns: 1fr 20px 1fr;
@@ -116,6 +116,10 @@ button, #dropdownButton {
 .cm-mustache-markdown {
     color: var(--tertiary);
     font-weight: bold;
+}
+
+.cm-mustache-pagebreak {
+    color: var(--pagebreak)
 }
 
 .resizer {
