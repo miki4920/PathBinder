@@ -35,6 +35,10 @@ button, #dropdownButton {
     line-height: 1.3!important;
 }
 
+.fa-solid.fa-arrow-right {
+    margin: 0;
+}
+
 #writeArea, #displayAreaHolder {
     flex-direction: column;
     overflow-x: hidden;
