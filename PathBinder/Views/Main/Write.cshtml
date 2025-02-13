@@ -709,7 +709,8 @@
             } 
             else if (elementName === "table") {
                 const rows = content.trim().split('\n');
-                const headers = rows[0].split(',').map(header => header.trim());
+                const headers = rows[0].split(/,(?! )/).map(header => header.trim());
+
                 const tbody = document.createElement('tbody');
                 const thead = document.createElement('thead');
                 const headerRow = document.createElement('tr');
@@ -724,7 +725,7 @@
 
                 for (let i = 1; i < rows.length; i++) {
                     const row = document.createElement('tr');
-                    rows[i].split(',').map(cell => cell.trim()).forEach(cellValue => {
+                    rows[i].split(/,(?! )/).map(cell => cell.trim()).forEach(cellValue => {
                         const td = document.createElement('td');
                         td.innerHTML = cellValue;
                         row.appendChild(td);
