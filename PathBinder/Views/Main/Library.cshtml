@@ -160,8 +160,9 @@
                 let wrapper = DOMManager.createElement("div", "wrapper");
                 let tile = DOMManager.createElement("div", "tile", data["name"]);
                 
-                if (data["cover"]) {
-                    tile.style.backgroundImage = data["cover"];
+                let match = data['content']?.match(/{{image\s+(https?:\/\/[^\s\[]+)\[class=attach\]}}/);
+                if (match && match[1]) {
+                    tile.style.backgroundImage = `url(${match[1]})`;
                 }
                 tile.addEventListener("click", function () {
                     storageManager.setKey('currentlyOpen', key.trim());
