@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
@@ -774,6 +774,16 @@
 
             if (elementName === "dc") {
                 newElement.innerHTML = 'DC ' + dcs[content.trim()];
+            }
+
+            if (/^:+$/g.test(content.trim())) {
+                const breaksCount = (content.match(/:/g) || []).length;
+                newElement.innerHTML = '';
+                newElement.classList = [];
+                for (let i = 0; i < breaksCount; i++) {
+                    newElement.appendChild(document.createElement("br"));
+                   
+                }
             }
              
             if (margin > 0) {
