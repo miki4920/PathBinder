@@ -9,7 +9,8 @@
         <nav>
             <div id="buttonContainer">
                 <button id="save" onclick="animateSaving()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
-                <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Import</button>
+                <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Nethys</button>
+                <button onclick="promptForHomebrewery()"><i class="fa-solid fa-book"></i>Homebrewery</button>
                 <button onclick="promptForFile()"><i class="fa-solid fa-file-import"></i>Foundry</button>
                 <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
             </div>
@@ -28,6 +29,16 @@
     </div>
     <div id="displayAreaHolder"></div>
 </section>
+<div id="homebreweryModal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Paste Homebrewery markdown</h2>
+        <textarea id="homebreweryInput"></textarea>
+        <div class="modal-actions">
+            <button class="cancel" onclick="closeHomebrewery()">Cancel</button>
+            <button class="ok" onclick="handleHomebrewery()">OK</button>
+        </div>
+    </div>
+</div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
@@ -37,6 +48,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/jump-to-line.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
 <script>
+    const CREDITS_PAGE = `
+{{paragraph **Some artwork © Dean Spencer, used with permission. All rights reserved.**}}
+{{line **Some artwork copyright Murzabaev Roman aka s0ulafein**}}
+{{line **Ooze artwork by Jeff Koch.**}}
+{{line **used with permission.**}}
+{{line **Maps by Snowy's Maps**}}
+{{line **Music by RPG Music Maker**}}
+{{line **Writing by Snowy's Maps**}}
+{{linebreak}}
+**Open Gaming License**
+{{paragraph The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ("Wizards"). All Rights Reserved.}}
+{{paragraph 1. Definitions: (a)"Contributors" means the copyright and/or trademark owners who have contributed Open Game Content; (b)"Derivative Material" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) "Distribute" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)"Open Game Content" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) "Product Identity" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) "Trademark" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) "Use", "Used" or "Using" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) "You" or "Your" means the licensee in terms of this agreement. 2. The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License. 3. Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License. 4. Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content. 5. Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License. 6. Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute. 7. Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity. 8. Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content. 9. Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License. 10. Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute. 11. Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so. 12. Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected. 13. Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License. 14. Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable. 15. COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc. System Reference Document. Copyright 2000. Wizards of the Coast, Inc; Authors: Jonathan Tweet, Monte Cook, Skip Williams, based on material by E. Gary Gygax and Dave Arneson. Pathfinder Core Rulebook (Second Edition) © 2019, Paizo Inc.; Designers: Logan Bonner, Jason Bulmahn, Stephen Radney-MacFarland, and Mark Seifter.[font-size=11px]}}
+`.trim();
+
     const paragraphElements = {
         "image": { "html": "img", "classes": ["image"] },
         "frame": { "html": "img" },
@@ -671,6 +696,114 @@
             reader.readAsText(file);
         };
         fileInput.click();
+    }
+
+    function promptForHomebrewery() {
+        document.getElementById('homebreweryModal').classList.remove('hidden');
+
+        if (navigator.clipboard?.readText) {
+            navigator.clipboard.readText().then(text => {
+                if (text) document.getElementById('homebreweryInput').value = text;
+            }).catch(() => {});
+        }
+    }
+
+    function closeHomebrewery() {
+        document.getElementById('homebreweryInput').innerHTML = '';
+        document.getElementById('homebreweryModal').classList.add('hidden');
+    }
+
+    function processFrontHomebreweryPage(page) {
+        const title = (page.match(/^#\s+(.+)$/m) || [, ''])[1].trim();
+        const bgUrl = (page.match(/!\[background image]\(([^)]+)\)/i) || [, ''])[1];
+        const styleMatch = page.match(/!\[background image]\([^)]+\)\{([^}]+)\}/i);
+        const styles = {};
+        if (styleMatch) {
+            styleMatch[1].split(',').forEach(s => {
+                const [k, v] = s.split(':').map(x => x.trim());
+                if (k && v) styles[k.toLowerCase()] = v;
+            });
+        }
+        const addUnit = v => /^\d+(\.\d+)?$/.test(v) ? v + '%' : v;
+        const width = addUnit(styles.width || 'auto');
+        const height = addUnit(styles.height || '100');
+        const posAttrs = ['left', 'top', 'right', 'bottom']
+            .filter(p => styles[p])
+            .map(p => `${p}=${addUnit(styles[p])}`);
+        const author = (page.match(/\{\{banner\s+([^}]+)}}/i) || [, ''])[1].trim();
+        if (!title || !bgUrl) return page;
+        const imgAttrs = ['class=attach', `width=${width}`, `height=${height}`, ...posAttrs].join(', ');
+        return [
+            `{{image ${bgUrl}[${imgAttrs}]}}`,
+            ``,
+            `{{title ${title}[position=absolute, bottom=74%, width=100%, font-size=76px, line-height=100%]}}`,
+            ``,
+            `{{image https://i.imgur.com/W3kGupe.png[width=50%, position=absolute, left=50%, top=79%, transform=translateX(-50%), class=attach, height=auto]}}`,
+            ``,
+            `{{title By ${author}[position=absolute, bottom=0%, width=100%, font-size=40px]}}`
+        ].join('\n\n');
+    }
+
+    function replaceFrames(page) {
+        let usedFrame = false;
+        return page.replace(/{{imageMaskEdge[\s\S]*?}}/g, (block) => {
+            const urlMatch = block.match(/\!\[.*?\]\(([^)]+)\)/);
+            const url = (urlMatch ? urlMatch[1] : '').trim();
+            if (url === '') {
+                usedFrame = true;
+            }
+            if (!usedFrame) {
+                usedFrame = true;
+                return `{{frame ${url}}}`;   
+            }
+            return ''; 
+        });
+    }
+
+    function convertMarkdownTables(page) {
+        const lines = page.split(/\r?\n/);
+        const out = [];
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (/^\|/.test(line)) {
+                const tbl = [];
+                while (i < lines.length && /^\|/.test(lines[i])) {
+                    tbl.push(lines[i++]);
+                }
+                i--;            
+                if (tbl.length >= 2 && /^\|\s*[-:]+/.test(tbl[1])) {
+                    const header = tbl[0].split('|').slice(1, -1).map(c => c.trim());
+                    const rows = tbl.slice(2).map(r => r.split('|').slice(1, -1).map(c => c.trim()));
+                    out.push(
+                        `{{table ${header.join(',')}`,
+                        ...rows.map(r => r.join(',')),
+                        '}}'
+                    );
+                    continue;   
+                }
+                out.push(...tbl);
+                continue;
+            }
+            out.push(line);
+        }
+        return out.join('\n');
+    }
+
+
+    function handleHomebrewery() {
+        let text = document.getElementById('homebreweryInput').value;
+        document.getElementById('homebreweryInput').innerHTML = '';
+        closeHomebrewery();     
+        text = text.replace(/\\column/g, '{{columnbreak}}');
+        let pages = text.split('\\page');
+        pages[0] = processFrontHomebreweryPage(pages[0]);
+        pages = pages.map(replaceFrames);
+        pages = pages.map(convertMarkdownTables);
+        pages[pages.length - 1] = CREDITS_PAGE;
+        pages = pages.join('{{pagebreak}}');
+        pages = pages.replace(/(\r?\n\s*){3,}/g, '\n');
+        editor.setValue(pages);
+
     }
 
     function replacePlaceholders(placeholder, page, wrapper) {

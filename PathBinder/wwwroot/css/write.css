@@ -200,3 +200,66 @@ button, #dropdownButton {
 .dropdownContainer:hover {
     display: block;
 }
+
+.hidden {
+    display: none!important;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.modal-content {
+    background: var(--surface-1);
+    color: var(--text);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 600px;
+}
+
+.modal-content h2 {
+    margin: 0 0 0.5rem;
+}
+
+.modal-content textarea {
+    width: 100%;
+    height: 15rem;
+    resize: vertical;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--outline);
+    padding: 0.5rem;
+}
+
+.modal-actions {
+    text-align: right;
+    margin-top: 0.5rem;
+}
+
+.modal-actions button {
+    width: 100px;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font: inherit;
+}
+
+.modal-actions .cancel {
+    background: var(--secondary-container);
+    color: var(--text);
+    float: left;
+}
+
+.modal-actions .ok {
+    background: var(--primary-container);
+    color: var(--text);
+    margin-left: 0.5rem;
+}
