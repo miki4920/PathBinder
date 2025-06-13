@@ -160,7 +160,7 @@
                 let wrapper = DOMManager.createElement("div", "wrapper");
                 let tile = DOMManager.createElement("div", "tile", data["name"]);
                 
-                let match = data['content']?.match(/{{image\s+(https?:\/\/[^\s\[]+)\[class=attach\]}}/);
+                let match = data['content']?.match(/{{image\s+(https?:\/\/[^\s\[]+)\[class=attach.*\]}}/);
                 if (match && match[1]) {
                     tile.style.backgroundImage = `url(${match[1]})`;
                 }
