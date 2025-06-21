@@ -393,25 +393,33 @@
         };
         const alignmentTags = ["chaotic", "evil", "lawful", "good", "neutral"];
 
-        output.push(formatCreatureLabel(creatureData));
-        output.push(...formatTraits(creatureData, alignmentTags));
-        output.push(formatSize(creatureData, sizeMappings));
-        output.push(formatPerception(creatureData));
-        output.push(formatLanguages(creatureData));
-        output.push(formatSkills(creatureData));
-        output.push(formatAbilities(creatureData));
-        output.push(...formatItems(creatureData));
-        output.push(formatLinebreak());
-        output.push(formatDefenses(creatureData));
-        output.push(formatHP(creatureData));
-        output.push(formatLinebreak());
-        output.push(formatSpeeds(creatureData));
-        output.push(formatResistances(creatureData));
-        output.push(formatImmunities(creatureData));
-        output.push(formatWeaknesses(creatureData));
-        output.push(...formatMelee(creatureData));
-        output.push(...formatSpellcasting(creatureData))
-        output.push(...formatActions(creatureData));
+        const addOutput = (result) => {
+            if (Array.isArray(result)) {
+                output.push(...result.filter(Boolean));
+            } else if (result) {
+                output.push(result);
+            }
+        };
+
+        addOutput(formatCreatureLabel(creatureData));
+        addOutput(formatTraits(creatureData, alignmentTags));
+        addOutput(formatSize(creatureData, sizeMappings));
+        addOutput(formatPerception(creatureData));
+        addOutput(formatLanguages(creatureData));
+        addOutput(formatSkills(creatureData));
+        addOutput(formatAbilities(creatureData));
+        addOutput(formatItems(creatureData));
+        addOutput(formatLinebreak());
+        addOutput(formatDefenses(creatureData));
+        addOutput(formatHP(creatureData));
+        addOutput(formatLinebreak());
+        addOutput(formatSpeeds(creatureData));
+        addOutput(formatResistances(creatureData));
+        addOutput(formatImmunities(creatureData));
+        addOutput(formatWeaknesses(creatureData));
+        addOutput(formatMelee(creatureData));
+        addOutput(formatSpellcasting(creatureData));
+        addOutput(formatActions(creatureData));
         return output.join('\n');
     }
 
