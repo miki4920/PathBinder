@@ -521,10 +521,32 @@
             passive: ""
         };
 
-        return creatureData.items.filter(item => item.type === 'action')
+        const actionOrder = {
+            "{{freeaction}} ": 0,
+            "{{oneaction}} ": 1,
+            "{{twoaction}} ": 2,
+            "{{threeaction}} ": 3,
+            "{{reaction}} ": 4,
+            "": 4
+        };
+
+        return creatureData.items
+            .filter(item => item.type === 'action')
             .map(action => {
                 const actionSymbol = getActionSymbol(action, actionSymbols);
-                return formatActionText(action, actionSymbol).replace(/paragraph:/, '§§§').replace(/paragraph:/g, 'paragraph').replace('§§§', 'paragraph:');;
+                return {
+                    action,
+                    symbol: actionSymbol
+                };
+            })
+            .sort((a, b) => {
+                return (actionOrder[a.symbol] ?? 5) - (actionOrder[b.symbol] ?? 5);
+            })
+            .map(({ action, symbol }) => {
+                return formatActionText(action, symbol)
+                    .replace(/paragraph:/, '§§§')
+                    .replace(/paragraph:/g, 'paragraph')
+                    .replace('§§§', 'paragraph:');
             });
     }
 
