@@ -594,23 +594,37 @@
     }
 
     function formatCombat(combatItem, isRanged) {
-        const dmg = Object.values(combatItem.system.damageRolls)[0];
+        const dmgRolls = Object.values(combatItem.system.damageRolls);
         isRanged = false;
-        const traits = combatItem.system.traits.value.length ? ` \\(${combatItem.system.traits.value.map(trait => {
-            let modifiedTrait = trait.includes('-') ? trait.split('-').join(' ') : trait;
-            if (/\d/.test(modifiedTrait)) modifiedTrait += ' feet';
-            if (modifiedTrait.includes('range')) isRanged = true;
-            return modifiedTrait;
-        }).join(", ")})` : "";
+
+        const traitsList = combatItem.system.traits.value.map(trait => {
+            let t = trait.includes('-') ? trait.split('-').join(' ') : trait;
+            if (/\d{2,}/.test(t)) t += ' feet';
+            if (t.includes('range')) isRanged = true;
+            return t;
+        });
+        const traits = traitsList.length ? ` \\(${traitsList.join(", ")})` : "";
+
         const isAgile = combatItem.system.traits.value.includes('agile');
         const penalty = isAgile ? 4 : 5;
         const secondPenalty = isAgile ? 8 : 10;
+
         const adjustedBonus = combatItem.system.bonus.value;
         const firstAdjustedBonus = adjustedBonus - penalty;
         const secondAdjustedBonus = adjustedBonus - secondPenalty;
-        const description = combatItem.system.description.value ? `\n{{paragraph: ${cleanHtmlTags(combatItem.system.description.value)}}}` : "";
-        let combatText = `{{line **${isRanged ? "Ranged" : "Melee"}**   {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage**  ${dmg.damage} ${dmg.damageType}}}${description}`;
-        return combatText.replace(/paragraph:/, '§§§').replace(/paragraph:/g, 'paragraph').replace('§§§', 'paragraph:');
+
+        const damageString = dmgRolls.map(d => `${d.damage} ${d.damageType}`).join(" + ");
+
+        const description = combatItem.system.description.value
+            ? `\n{{paragraph: ${cleanHtmlTags(combatItem.system.description.value)}}}`
+            : "";
+
+        const combatText = `{{line **${isRanged ? "Ranged" : "Melee"}**   {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage**  ${damageString}}}${description}`;
+
+        return combatText
+            .replace(/paragraph:/, '§§§')
+            .replace(/paragraph:/g, 'paragraph')
+            .replace('§§§', 'paragraph:');
     }
 
     function formatBonus(bonus) {
