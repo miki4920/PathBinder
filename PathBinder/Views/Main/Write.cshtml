@@ -444,7 +444,10 @@
 
     function formatLanguages(creatureData) {
         const languages = creatureData.system.details.languages.value.join(', ');
-        return `{{line **Languages**  ${languages}}}`;
+        if (languages) {
+            return `{{line **Languages**  ${languages}}}`;
+        }
+        return '';
     }
 
     function formatSkills(creatureData) {
