@@ -1,0 +1,74 @@
+﻿#loginPage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tiles {
+    background-color: var(--background);
+}
+
+form {
+    width: 40%;
+    border-radius: 8px;
+    background-color: var(--surface-2);
+    padding: 0 5%;
+}
+
+form * {
+    font-size: 18px;
+    font-family: Arial;
+}
+
+#loginTitle {
+    font-size: 1.75em;
+    padding: 15% 0 16px 0;
+}
+
+#loginSubTitle {
+    font-size: 16px;
+    padding: 0 0 8px 0;
+}
+
+.loginText, .loginInput {
+    display: block;
+}
+
+.loginText {
+    padding: 6% 0 3% 0;
+}
+
+.loginInput {
+    background-color: var(--surface-4);
+    outline: none;
+    border:none;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+}
+
+.loginButton {
+    background-color: var(--primary-container);
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    width: 100%;
+    padding: 12px;
+    margin: 28px 0 8px 0;
+    cursor: pointer;
+}
+
+.registerLink {
+    color: var(--primary-container);
+    transition: 0.5s;
+}
+
+.registerLink:hover {
+    color: var(--tertiary-container);
+}
+
+.loginBottomForm {
+    padding: 0 0 15% 0; 
+}

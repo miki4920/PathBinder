@@ -95,6 +95,9 @@
         master: 30,
         legendary: 40
     };
+
+        const documentId = window.location.pathname.split('/').filter(Boolean).pop();
+
     $("#displayAreaHolder").on("scroll", function () {
         localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
     });
@@ -412,11 +415,12 @@
         addOutput(formatLinebreak());
         addOutput(formatDefenses(creatureData));
         addOutput(formatHP(creatureData));
-        addOutput(formatLinebreak());
-        addOutput(formatSpeeds(creatureData));
+        addOutput(formatHardness(creatureData));
         addOutput(formatResistances(creatureData));
         addOutput(formatImmunities(creatureData));
         addOutput(formatWeaknesses(creatureData));
+        addOutput(formatLinebreak());
+        addOutput(formatSpeeds(creatureData));
         addOutput(formatMelee(creatureData));
         addOutput(formatSpellcasting(creatureData));
         addOutput(formatActions(creatureData));
@@ -476,6 +480,14 @@
 
     function formatHP(creatureData) {
         return `{{line **HP**  ${creatureData.system.attributes.hp.value}}}`;
+    }
+
+    function formatHardness(creatureData) {
+        let hardness = creatureData?.system?.attributes?.hardness?.value;
+        if (hardness) {
+            return `{{line **Hardness**  ${hardness}}}`
+        }
+        return '';
     }
 
     function formatSpeeds(creatureData) {
@@ -605,6 +617,18 @@
         });
         const traits = traitsList.length ? ` \\(${traitsList.join(", ")})` : "";
 
+        const attackEffectsList = combatItem.system.attackEffects.value.map(attackEffect => {
+            let t = attackEffect.includes('-') ? attackEffect.split('-').join(' ') : attackEffect;
+            return t;
+        });
+        const formattedEffects = attackEffectsList.map(effect =>
+          effect.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
+        );
+
+        const attackEffects = formattedEffects.length
+            ? ` plus ${formattedEffects.slice(0, -1).join(", ") + (formattedEffects.length > 1 ? ", and " : "") + formattedEffects.slice(-1)} `
+            : " ";
+
         const isAgile = combatItem.system.traits.value.includes('agile');
         const penalty = isAgile ? 4 : 5;
         const secondPenalty = isAgile ? 8 : 10;
@@ -619,7 +643,7 @@
             ? `\n{{paragraph: ${cleanHtmlTags(combatItem.system.description.value)}}}`
             : "";
 
-        const combatText = `{{line **${isRanged ? "Ranged" : "Melee"}**   {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage**  ${damageString}}}${description}`;
+                    const combatText = `{{line **${isRanged ? "Ranged" : "Melee"}** {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage** ${damageString}${attackEffects}}}${description}`;
 
         return combatText
             .replace(/paragraph:/, '§§§')
@@ -1040,10 +1064,6 @@
             page.appendChild(columnWrapper);
             shadow.appendChild(page); 
         }
-        let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
-        let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
-        existingDocumentData.cover = shadow.children[0].style.backgroundImage;
-        localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
         shadow.appendChild(pageStyle);
         
     }
@@ -1060,27 +1080,20 @@
         } 
     }
 
-    function saveDocument() {
+    async function saveDocument() {
         let content = editor.getValue();
-        let currentlyOpenUid = JSON.parse(localStorage.getItem('currentlyOpen'));
-        let existingDocumentData = JSON.parse(localStorage.getItem(currentlyOpenUid));
-        existingDocumentData.content = content;
-        localStorage.setItem(currentlyOpenUid, JSON.stringify(existingDocumentData));
+        const r = await fetch("/api/files/" + documentId, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ content: content })
+                });
     }
 
-    function getDocument() {
-        let uid = JSON.parse(localStorage.getItem('currentlyOpen'));
-        if (uid !== null) {
-            let doc = localStorage.getItem(uid);
-            if (doc !== null) {
-                doc = JSON.parse(doc);
-                editor.setValue(doc.content);
-            } else {
-                alert("Document not found!");
-            }
-        } else {
-            alert("No document currently open!");
-        }
+    async function getDocument() {
+
+        let row = await fetch("/api/files/" + documentId, { headers: { Accept: "application/json" } });
+        row = await row.json();
+        editor.setValue(row.content);
     }
 
     function printDocument() {
@@ -1269,8 +1282,3 @@
         }
     });
 </script>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

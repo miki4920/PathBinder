@@ -52,7 +52,6 @@ article {
     justify-content: center;
     background-color: var(--surface-1);
     border: none;
-    border-right: 1px solid var(--outline);
     padding: 10px; 
     font-family: 'Tauri', sans-serif;
     font-size: inherit;

@@ -5,22 +5,22 @@
     --surface-2: #eff3fa;
     --surface-3: #edf2fa;
     --surface-4: #eaf0f9;
-    --primary: #1160a4;
-    --primary-container: #d3e4ff;
-    --secondary: #9c4233;
-    --secondary-container: #ffdad3;
+    --primary: #d3e4ff;
+    --primary-container: #1160a4;
+    --secondary: #ffdad3;
+    --secondary-container: #9c4233;
     --outline: #73777f;
-    --tertiary: #745b00;
-    --tertiary-container: #ffe08b;
+    --tertiary: #ffe08b;
+    --tertiary-container: #745b00;
 }
 
 [data-theme="dark"] {
-    --background: #1f1f1f;
+    --background: #000000;
+    --surface-1: #0d0d0d; 
+    --surface-2: #141414;
+    --surface-3: #1b1b1b;
+    --surface-4: #212121; 
     --text: #e3e3e3;
-    --surface-1: #28292a;
-    --surface-2: #2d2f31;
-    --surface-3: #333438;
-    --surface-4: #34363a;
     --primary: #a1c9ff;
     --primary-container: #004880;
     --secondary: #DD9F92;
