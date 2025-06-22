@@ -1,0 +1,50 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<link rel="stylesheet" href="~/css/library.css" />
+<link rel="stylesheet" href="~/css/login.css" />
+<!DOCTYPE html>
+<html>
+<body>
+    <section>
+        <article id="tiles">
+            <div id="loginPage">
+                <form id="account" method="post">
+                    <h1 id="loginTitle">Welcome to Pathbinder</h1>
+                    <p id="loginSubTitle">Please Enter Your Account Details</p>
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3">
+                        <label asp-for="Input.Email" class="form-label loginText">Email</label>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        <input asp-for="Input.Email" class="form-control loginInput" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                      
+                    </div>
+                    <div class="form-floating mb-3">
+                        <label asp-for="Input.Password" class="form-label loginText">Password</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        <input asp-for="Input.Password" class="form-control loginInput" autocomplete="current-password" aria-required="true" placeholder="Password" />
+                    </div>
+                    <input type="hidden" asp-for="Input.RememberMe" value="true" />
+                    <div>
+                        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary loginButton">Log in</button>
+                    </div>
+                    <div>
+                        <p class="loginBottomForm">
+                            Don't have an account? <a class="registerLink" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Sign up</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </article>
+    </section>
+   
+</body>
+</html>
