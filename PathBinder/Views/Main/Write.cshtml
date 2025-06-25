@@ -1,43 +1,43 @@
 @{
-    ViewData["Title"] = "Write";
+	ViewData["Title"] = "Write";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" />
-<link rel="stylesheet" href="~/css/write.css"/>
-<link rel="stylesheet" href="~/css/page.css"/>
+<link rel="stylesheet" href="~/css/write.css" />
+<link rel="stylesheet" href="~/css/page.css" />
 <section>
-    <div id="writeAreaHolder">
-        <nav>
-            <div id="buttonContainer">
-                <button id="save" onclick="animateSaving()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
-                <button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Nethys</button>
-                <button onclick="promptForHomebrewery()"><i class="fa-solid fa-book"></i>Homebrewery</button>
-                <button onclick="promptForFile()"><i class="fa-solid fa-file-import"></i>Foundry</button>
-                <button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
-            </div>
-            <div class="dropdown">
-                <button class="dropdownButton"><i class="fa-solid fa-bars"></i>Elements</button>
-                <div class="dropdownContainer hidden">
-                </div>
-            </div>
-        </nav>
-        <div id="writeArea">
-    </div>
-    </div>
-    <div class="resizer">
-        <button onclick="scrollToPart('editor')"><i class="fa-solid fa-arrow-left"></i></button>
-        <button onclick="scrollToPart('preview')"><i class="fa-solid fa-arrow-right"></i></button>
-    </div>
-    <div id="displayAreaHolder"></div>
+	<div id="writeAreaHolder">
+		<nav>
+			<div id="buttonContainer">
+				<button id="save" onclick="animateSaving()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
+				<button onclick="promptForURL()"><i class="fa-solid fa-globe"></i>Nethys</button>
+				<button onclick="promptForHomebrewery()"><i class="fa-solid fa-book"></i>Homebrewery</button>
+				<button onclick="promptForFile()"><i class="fa-solid fa-file-import"></i>Foundry</button>
+				<button onclick="printDocument()"><i class="fa-solid fa-print"></i>Print</button>
+			</div>
+			<div class="dropdown">
+				<button class="dropdownButton"><i class="fa-solid fa-bars"></i>Elements</button>
+				<div class="dropdownContainer hidden">
+				</div>
+			</div>
+		</nav>
+		<div id="writeArea">
+		</div>
+	</div>
+	<div class="resizer">
+		<button onclick="scrollToPart('editor')"><i class="fa-solid fa-arrow-left"></i></button>
+		<button onclick="scrollToPart('preview')"><i class="fa-solid fa-arrow-right"></i></button>
+	</div>
+	<div id="displayAreaHolder"></div>
 </section>
 <div id="homebreweryModal" class="modal hidden">
-    <div class="modal-content">
-        <h2>Paste Homebrewery markdown</h2>
-        <textarea id="homebreweryInput"></textarea>
-        <div class="modal-actions">
-            <button class="cancel" onclick="closeHomebrewery()">Cancel</button>
-            <button class="ok" onclick="handleHomebrewery()">OK</button>
-        </div>
-    </div>
+	<div class="modal-content">
+		<h2>Paste Homebrewery markdown</h2>
+		<textarea id="homebreweryInput"></textarea>
+		<div class="modal-actions">
+			<button class="cancel" onclick="closeHomebrewery()">Cancel</button>
+			<button class="ok" onclick="handleHomebrewery()">OK</button>
+		</div>
+	</div>
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
@@ -48,1248 +48,1248 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/jump-to-line.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
 <script>
-    const CREDITS_PAGE = `
-{{paragraph **Some artwork © Dean Spencer, used with permission. All rights reserved.**}}
-{{line **Some artwork copyright Murzabaev Roman aka s0ulafein**}}
-{{line **Ooze artwork by Jeff Koch.**}}
-{{line **used with permission.**}}
-{{line **Maps by Snowy's Maps**}}
-{{line **Music by RPG Music Maker**}}
-{{line **Writing by Snowy's Maps**}}
-{{linebreak}}
-**Open Gaming License**
-{{paragraph The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ("Wizards"). All Rights Reserved.}}
-{{paragraph 1. Definitions: (a)"Contributors" means the copyright and/or trademark owners who have contributed Open Game Content; (b)"Derivative Material" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) "Distribute" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)"Open Game Content" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) "Product Identity" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) "Trademark" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) "Use", "Used" or "Using" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) "You" or "Your" means the licensee in terms of this agreement. 2. The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License. 3. Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License. 4. Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content. 5. Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License. 6. Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute. 7. Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity. 8. Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content. 9. Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License. 10. Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute. 11. Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so. 12. Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected. 13. Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License. 14. Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable. 15. COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc. System Reference Document. Copyright 2000. Wizards of the Coast, Inc; Authors: Jonathan Tweet, Monte Cook, Skip Williams, based on material by E. Gary Gygax and Dave Arneson. Pathfinder Core Rulebook (Second Edition) © 2019, Paizo Inc.; Designers: Logan Bonner, Jason Bulmahn, Stephen Radney-MacFarland, and Mark Seifter.[font-size=11px]}}
-`.trim();
-
-    const paragraphElements = {
-        "image": { "html": "img", "classes": ["image"] },
-        "frame": { "html": "img" },
-        "title": { "html": "h1", "classes": ["wide", "title"] },
-        "header": { "html": "header", "classes": ["wide", "subtitle"] },
-        "line": { "html": "p", "classes": ["line"] },
-        "paragraph": { "html": "p", "classes": ["paragraph"] },
-        "linebreak": { "html": "div", "classes": ["linebreak"], "special": true },
-        "columnbreak": { "html": "div", "classes": ["break"], "special": true },
-        "pagebreak": {"special": true},
-        "passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
-        "freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
-        "oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
-        "twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
-        "threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
-        "reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
-        "tag": { "html": "div", "classes": ["tag"] },
-        "label": { "html": "div", "classes": ["label"] },
-        "artist": { "html": "div", "classes": ["artist"] },
-        "table": { "html": "table", "classes": ["table"] },
-        "dc": {"html": "span"}
-    }
-    const dcs = {
-        0: 14, 1: 15, 2: 16, 3: 18, 4: 19, 5: 20, 6: 22, 7: 23, 8: 24, 9: 26,
-        10: 27, 11: 28, 12: 30, 13: 31, 14: 32, 15: 34, 16: 35, 17: 36, 18: 38,
-        19: 39, 20: 40, 21: 42, 22: 44, 23: 46, 24: 48, 25: 50,
-
-        untrained: 10,
-        trained: 15,
-        expert: 20,
-        master: 30,
-        legendary: 40
-    };
-
-        const documentId = window.location.pathname.split('/').filter(Boolean).pop();
-
-    $("#displayAreaHolder").on("scroll", function () {
-        localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
-    });
-    CodeMirror.defineMode("mustacheHighlight", function (config, parserConfig) {
-        return {
-            token: function (stream, state) {
-                if (stream.match("{{") || stream.match("}}")) {
-                    return "mustache-brackets";
-                }
-
-                if (stream.match(/^#/) || stream.match(/^\*/)) {
-                    return "mustache-markdown";
-                }
-
-                if (stream.match("pagebreak")) {
-                    return "mustache-pagebreak"; 
-                }
-
-                if (stream.string.charAt(stream.start - 2) === '{' || stream.string.charAt(stream.start - 4) === '{') {
-                    if (stream.match(/^[^\s{}]+/)) {
-                        return "mustache-firstWord";
-                    }
-                }
-
-                stream.next();
-                return null;
-            }
-        };
-    });
-    const editor = CodeMirror(document.getElementById("writeArea"), {
-        lineNumbers: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-        matchBrackets: true,
-        theme: "default",
-        mode: "mustacheHighlight",
-        scrollbarStyle: "native",
-        extraKeys: {
-            "Ctrl-F": "findPersistent",
-            "Shift-Enter": "findPrev",
-            "Esc": "clearSearch",
-            "Enter": function (cm) {
-                if (cm?.state?.search?.query) {
-                    cm.execCommand("findNext");
-                } else {
-                    cm.replaceSelection("\n", "end");
-                }
-            },
-            "Ctrl-B": function (cm) {
-                toggleWrapSelection(cm, "**");
-            },
-            "Ctrl-I": function (cm) {
-                toggleWrapSelection(cm, "*");
-            }
-        }
-    });
-    editor.addOverlay({ name: "mustacheHighlight" });
-    let autosaveTimeout;
-    editor.on('change', function () {
-        if (autosaveTimeout) {
-            clearTimeout(autosaveTimeout);
-        }
-        let saveButton = document.getElementById('save');
-        saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
-        saveButton.disabled = false;
-        autosaveTimeout = setTimeout(animateSaving, 5000);
-    });
-    const displayArea = document.getElementById("displayAreaHolder");
-    const converter = new showdown.Converter();
-    const shadow = displayArea.attachShadow({ mode: "open" });
-    const styleSheet = [...document.styleSheets].find(s => s.href?.includes('/css/page.css'));
-    const pageStyle = document.createElement('style');
-    pageStyle.textContent = [...styleSheet.cssRules].map(rule => rule.cssText).join('\n');
-    editor.on("change", function () {
-        displayChange();
-        $("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
-    });
-
-    function toggleWrapSelection(cm, wrapper) {
-        const selection = cm.getSelection();
-        const cursorPosFrom = cm.getCursor("from");
-        const cursorPosTo = cm.getCursor("to");
-
-        const isWrapped = selection.startsWith(wrapper) && selection.endsWith(wrapper);
-
-        if (isWrapped) {
-            const unwrappedSelection = selection.slice(wrapper.length, -wrapper.length);
-            cm.replaceSelection(unwrappedSelection);
-            cm.setSelection(
-                { line: cursorPosFrom.line, ch: cursorPosFrom.ch },
-                { line: cursorPosTo.line, ch: cursorPosTo.ch - 2 * wrapper.length }
-            );
-        } else {
-            cm.replaceSelection(wrapper + selection + wrapper);
-            cm.setSelection(
-                { line: cursorPosFrom.line, ch: cursorPosFrom.ch },
-                { line: cursorPosTo.line, ch: cursorPosTo.ch + 2 * wrapper.length }
-            );
-        }
-    }
-
-    function cleanContent(html) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        const allElements = doc.querySelectorAll('*');
-        allElements.forEach(element => {
-            const firstChild = element.firstChild;
-            if (firstChild && firstChild.nodeType === Node.TEXT_NODE && !firstChild.textContent.trim()) {
-                element.remove();
-            }
-        });
-
-        const actionSpans = doc.querySelectorAll('span[class*="action"]');
-        actionSpans.forEach(span => {
-            let content = span.textContent.trim();
-            content = content.replace(/[-\[\]]/g, '');
-
-            if (content.endsWith('s')) {
-                content = content.slice(0, -1);
-            }
-            const replacementText = `{{${content}}}`;
-
-            const textNode = document.createTextNode(replacementText);
-            span.parentNode.replaceChild(textNode, span);
-        });
-
-        const anchors = doc.querySelectorAll('a');
-        anchors.forEach(anchor => {
-            const text = document.createTextNode(anchor.textContent);
-            anchor.parentNode.replaceChild(text, anchor);
-        })
-
-        const bElements = doc.querySelectorAll('b');
-        bElements.forEach(b => {
-            const content = b.textContent.trim();
-
-            const replacementText = `**${content}** `;
-
-            const textNode = document.createTextNode(replacementText);
-            b.parentNode.replaceChild(textNode, b);
-        });
-
-        const h1Elements = doc.querySelectorAll('h1');
-        h1Elements.forEach(h1 => {
-            const firstChildContent = h1.childNodes[0] ? h1.childNodes[0].textContent.trim() : '';
-            const secondChildContent = h1.childNodes[1] ? h1.childNodes[1].textContent.trim() : '';
-
-            const replacementText = `#### ${firstChildContent} {{label ${secondChildContent}}}\n`;
-
-            const textNode = document.createTextNode(replacementText);
-            h1.parentNode.replaceChild(textNode, h1);
-        });
-
-
-
-        const spanWithTagClass = doc.querySelectorAll('span[class*="trait"]');
-        spanWithTagClass.forEach(span => {
-            const content = span.textContent.trim();
-
-            const replacementText = `{{tag ${content}}}\n`;
-
-            const textNode = document.createTextNode(replacementText);
-            span.parentNode.replaceChild(textNode, span);
-        });
-
-        const spans = doc.querySelectorAll('span');
-        spans.forEach(span => {
-            const content = span.innerHTML.trim();
-            const replacementHTML = `<br>${content}`;
-            span.outerHTML = replacementHTML;
-        });
-
-        const hrElements = doc.querySelectorAll('hr');
-        hrElements.forEach(hr => {
-            const replacementHTML = '<br>{{linebreak}}<br>';
-            hr.outerHTML = replacementHTML;
-        });
-
-        const brElements = Array.from(doc.querySelectorAll('br'));
-
-        brElements.forEach((br, index) => {
-            if (index < brElements.length) { 
-                const nextBr = brElements[index + 1];
-                let contentNodes = [];
-                let currentNode = br.nextSibling;
-                while (currentNode && currentNode !== nextBr) {
-                    contentNodes.push(currentNode);
-                    currentNode = currentNode.nextSibling;
-                }
-                const content = contentNodes.map(node => node.textContent).join('').trim();
-                if (content) {
-                    const replacement = document.createTextNode(`{{line ${content}}}\n`);
-                    doc.body.insertBefore(replacement, br);
-                    contentNodes.forEach(node => node.remove());
-                }
-            }
-            br.remove();
-        });
-
-        let content = doc.body.innerHTML;
-
-        while (content.includes('{{line {{linebreak}}}}')) {
-            content = content.replace('{{line {{linebreak}}}}', '{{linebreak}}');
-        }
-
-        doc.body.innerHTML = content;
-
-        return doc.body.innerHTML;
-    }
-
-    function extractContent(content) {
-        const titleElements = content.querySelectorAll('h1');
-        const secondTitle = titleElements[1] === undefined ? titleElements[0] : titleElements[1];
-        let currentNode = secondTitle.nextSibling;
-        let extractedContent = secondTitle.outerHTML;
-        while (currentNode) {
-            if (currentNode.tagName === "H3") {
-                const isLegacyContent = currentNode.textContent.toLowerCase().includes("legacy content");
-                if (isLegacyContent) {
-                    currentNode = currentNode.nextSibling;
-                    continue;
-                }
-                else {
-                    break;
-                }
-            }
-            else if (["H1", "H2", "H4", "H5", "H6"].includes(currentNode.tagName) || !currentNode.nextSibling) {
-                break;
-            }
-            extractedContent += currentNode.outerHTML ? currentNode.outerHTML : currentNode.textContent;
-            currentNode = currentNode.nextSibling;
-        }
-
-        return cleanContent(extractedContent);
-    }
-
-    function replaceContent(content) {
-        const cursorPosition = editor.getCursor();
-        editor.replaceRange(content, cursorPosition);
-    }
-
-    async function processURL(url) {
-        const serverEndpoint = '@Url.Action("PostImport", "Import")';
-        const localStorageKey = `archive-${url}`;
-        const parser = new DOMParser();
-
-        let content = localStorage.getItem(localStorageKey);
-        if (content) {
-            content = parser.parseFromString(content, 'text/html');
-        }
-        else {
-            try {
-                const response = await fetch(serverEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ Url: url })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                let data = await response.text();
-                data = parser.parseFromString(data, 'text/html');
-                let element = data.getElementById('ctl00_RadDrawer1_Content_MainContent_DetailedOutput');
-                localStorage.setItem(localStorageKey, element.innerHTML);
-                content = element;
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error.message);
-            }
-        }
-        content = extractContent(content);
-        replaceContent(content);
-
-    }
-
-    function promptForURL() {
-        const url = prompt("Please enter a URL from Archives of Nethys:");
-        if (url) {
-            processURL(url);
-        }
-    }
-
-    function processJsonData(creatureData) {
-        const output = [];
-        const sizeMappings = {
-            tiny: "Tiny",
-            sm: "Small",
-            med: "Medium",
-            lg: "Large",
-            huge: "Huge",
-            grg: "Gargantuan"
-        };
-        const alignmentTags = ["chaotic", "evil", "lawful", "good", "neutral"];
-
-        const addOutput = (result) => {
-            if (Array.isArray(result)) {
-                output.push(...result.filter(Boolean));
-            } else if (result) {
-                output.push(result);
-            }
-        };
-
-        addOutput(formatCreatureLabel(creatureData));
-        addOutput(formatTraits(creatureData, alignmentTags));
-        addOutput(formatSize(creatureData, sizeMappings));
-        addOutput(formatPerception(creatureData));
-        addOutput(formatLanguages(creatureData));
-        addOutput(formatSkills(creatureData));
-        addOutput(formatAbilities(creatureData));
-        addOutput(formatItems(creatureData));
-        addOutput(formatLinebreak());
-        addOutput(formatDefenses(creatureData));
-        addOutput(formatHP(creatureData));
-        addOutput(formatHardness(creatureData));
-        addOutput(formatResistances(creatureData));
-        addOutput(formatImmunities(creatureData));
-        addOutput(formatWeaknesses(creatureData));
-        addOutput(formatLinebreak());
-        addOutput(formatSpeeds(creatureData));
-        addOutput(formatMelee(creatureData));
-        addOutput(formatSpellcasting(creatureData));
-        addOutput(formatActions(creatureData));
-        return output.join('\n');
-    }
-
-    function formatCreatureLabel(creatureData) {
-        return `#### ${creatureData.name} {{label Creature ${creatureData.system.details.level.value}}}`;
-    }
-
-    function formatTraits(creatureData, alignmentTags) {
-        return creatureData.system.traits.value.filter(trait => !alignmentTags.includes(trait))
-            .map(trait => `{{tag ${capitalizeFirstLetter(trait)}}}`);
-    }
-
-    function formatSize(creatureData, sizeMappings) {
-        const sizeValue = creatureData.system.traits.size.value;
-        return sizeValue ? `{{tag ${sizeMappings[sizeValue]}}}` : '';
-    }
-
-    function formatPerception(creatureData) {
-        const senses = creatureData.system.perception.senses.map(sense => {
-            let formattedSense = sense.type;
-            if (sense.acuity) {
-                formattedSense += ` (${sense.acuity})`;
-            }
-            if (sense.range) {
-                formattedSense += ` ${sense.range} feet`;
-            }
-            return formattedSense;
-        }).join(', ');
-
-        return `{{line **Perception** +${creatureData.system.perception.mod}; ${senses}}}`;
-    }
-
-    function formatLanguages(creatureData) {
-        const languages = creatureData.system.details.languages.value.join(', ');
-        if (languages) {
-            return `{{line **Languages**  ${languages}}}`;
-        }
-        return '';
-    }
-
-    function formatSkills(creatureData) {
-        const capitalizeWords = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
-        const skills = Object.entries(creatureData.system.skills).map(([name, data]) => `${capitalizeWords(name)} +${data.base}`).join(', ');
-        return skills ? `{{line **Skills**  ${skills}}}` : '';
-    }
-
-    function formatAbilities(creatureData) {
-        const { str, dex, con, int, wis, cha } = creatureData.system.abilities;
-        return `{{line **Str**  ${formatBonus(str.mod)}, **Dex**  ${formatBonus(dex.mod)}, **Con**  ${formatBonus(con.mod)}, **Int**  ${formatBonus(int.mod)}, **Wis**  ${formatBonus(wis.mod)}, **Cha**  ${formatBonus(cha.mod)}}}`;
-    }
-
-    function formatItems(creatureData) {
-        return creatureData.items.filter(item => ['weapon', 'armor'].includes(item.type))
-            .map(item => `{{line **Items**  ${item.name}}}`);
-    }
-
-    function formatLinebreak() {
-        return '{{linebreak}}';
-    }
-
-    function formatDefenses(creatureData) {
-        return `{{line **AC**  ${creatureData.system.attributes.ac.value}; **Fort**  +${creatureData.system.saves.fortitude.value}, **Ref**  +${creatureData.system.saves.reflex.value}, **Will**  +${creatureData.system.saves.will.value}}}`;
-    }
-
-    function formatHP(creatureData) {
-        return `{{line **HP**  ${creatureData.system.attributes.hp.value}}}`;
-    }
-
-    function formatHardness(creatureData) {
-        let hardness = creatureData?.system?.attributes?.hardness?.value;
-        if (hardness) {
-            return `{{line **Hardness**  ${hardness}}}`
-        }
-        return '';
-    }
-
-    function formatSpeeds(creatureData) {
-        const speeds = creatureData.system.attributes.speed?.otherSpeeds.map(speed => `${speed.type} ${speed.value} feet`).join(', ');
-        return `{{line **Speed** ${creatureData.system.attributes.speed.value} feet` + (speeds ? `, ${speeds}` : '') + '}}';
-    }
-
-    function formatStringWithHyphen(str) {
-        return str.includes('-') ? str.split('-').join(' ') : str;
-    }
-
-    function formatResistances(creatureData) {
-        const resistances = creatureData.system.attributes?.resistances?.map(resistance => {
-            const type = formatStringWithHyphen(resistance.type);
-            const exceptions = resistance.exceptions && resistance.exceptions.length > 0 ? ` (except ${resistance.exceptions.map(formatStringWithHyphen).join(', ')})` : '';
-            return `${type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
-        }).join('; ');
-        return resistances ? `{{line **Resistances**  ${resistances}}}` : '';
-    }
-
-    function formatImmunities(creatureData) {
-        const immunities = creatureData.system.attributes?.immunities?.map(immunity => formatStringWithHyphen(immunity.type)).join(', ');
-        return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
-    }
-
-    function formatWeaknesses(creatureData) {
-        const weaknesses = creatureData.system.attributes?.weaknesses?.map(weakness => {
-            const type = formatStringWithHyphen(weakness.type);
-            return `${type} ${weakness.value}`;
-        }).join('; ');
-        return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
-    }
-
-    function formatMelee(creatureData) {
-        return creatureData.items.filter(item => item.type === 'melee').map(melee => formatCombat(melee, false));
-    }
-
-    function formatActions(creatureData) {
-        const actionSymbols = {
-            action: "{{oneaction}} ",
-            free: "{{freeaction}} ",
-            reaction: "{{reaction}} ",
-            passive: ""
-        };
-
-        const actionOrder = {
-            "{{freeaction}} ": 0,
-            "{{oneaction}} ": 1,
-            "{{twoaction}} ": 2,
-            "{{threeaction}} ": 3,
-            "{{reaction}} ": 4,
-            "": 4
-        };
-
-        return creatureData.items
-            .filter(item => item.type === 'action')
-            .map(action => {
-                const actionSymbol = getActionSymbol(action, actionSymbols);
-                return {
-                    action,
-                    symbol: actionSymbol
-                };
-            })
-            .sort((a, b) => {
-                return (actionOrder[a.symbol] ?? 5) - (actionOrder[b.symbol] ?? 5);
-            })
-            .map(({ action, symbol }) => {
-                return formatActionText(action, symbol)
-                    .replace(/paragraph:/, '§§§')
-                    .replace(/paragraph:/g, 'paragraph')
-                    .replace('§§§', 'paragraph:');
-            });
-    }
-
-    function formatSpellcasting(creatureData) {
-        const spellcastingEntries = creatureData.items.filter(item => item.type === 'spellcastingEntry');
-        return spellcastingEntries.map(entry => {
-            let spells = creatureData.items.filter(item => item.type === 'spell');
-            let maxLevel = Math.max(...spells.map(spell => spell.system.location.heightenedLevel || 0));
-            let groupedSpells = {};
-            spells.forEach(spell => {
-                let level = spell.system.traits.value.includes('cantrip') ? (maxLevel + 1) : spell.system.location.heightenedLevel || spell.system.level.value;
-                if (!groupedSpells[level]) groupedSpells[level] = [];
-                groupedSpells[level].push(spell);
-            });
-            let sortedLevels = Object.keys(groupedSpells).sort((a, b) => b - a);
-            let suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
-            let getSuffix = level => suffixes[level] || 'th';
-            let formattedSpells = sortedLevels.filter(level => level <= maxLevel).map(level => {
-                let spellsAtLevel = groupedSpells[level].map(spell => {
-                    let usesMax = spell.system.location.uses?.max;
-                    return `${spell.name}${usesMax ? ` (x${usesMax})` : ''}`;
-                }).join(', ');
-
-                return `**${level}${getSuffix(level)}** ${spellsAtLevel}`;
-            }).join(' ');
-            if (groupedSpells[maxLevel + 1]) {
-                let cantrips = groupedSpells[maxLevel + 1].map(spell => {
-                    let usesMax = spell.system.location.uses?.max;
-                    return `${spell.name}${usesMax ? ` (x${usesMax})` : ''}`;
-                }).join(', ');
-
-                formattedSpells += ` **Cantrips (${maxLevel}${getSuffix(maxLevel)})** ${cantrips}`;
-            }
-            const spellDC = entry.system.spelldc;
-            const name = 'Spells';
-            const tradition = capitalizeFirstLetter(entry.system.tradition.value);
-            const spellcastingType = capitalizeFirstLetter(entry.system.prepared.value);
-            const spellInfo = `**${tradition} ${spellcastingType} Spells** DC ${ spellDC.dc }, attack +${ spellDC.value }; `;
-            return `{{line ${spellInfo} ${formattedSpells}}}`
-        })
-    }
-
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    function formatCombat(combatItem, isRanged) {
-        const dmgRolls = Object.values(combatItem.system.damageRolls);
-        isRanged = false;
-
-        const traitsList = combatItem.system.traits.value.map(trait => {
-            let t = trait.includes('-') ? trait.split('-').join(' ') : trait;
-            if (/\d{2,}/.test(t)) t += ' feet';
-            if (t.includes('range')) isRanged = true;
-            return t;
-        });
-        const traits = traitsList.length ? ` \\(${traitsList.join(", ")})` : "";
-
-        const attackEffectsList = combatItem.system.attackEffects.value.map(attackEffect => {
-            let t = attackEffect.includes('-') ? attackEffect.split('-').join(' ') : attackEffect;
-            return t;
-        });
-        const formattedEffects = attackEffectsList.map(effect =>
-          effect.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
-        );
-
-        const attackEffects = formattedEffects.length
-            ? ` plus ${formattedEffects.slice(0, -1).join(", ") + (formattedEffects.length > 1 ? ", and " : "") + formattedEffects.slice(-1)} `
-            : " ";
-
-        const isAgile = combatItem.system.traits.value.includes('agile');
-        const penalty = isAgile ? 4 : 5;
-        const secondPenalty = isAgile ? 8 : 10;
-
-        const adjustedBonus = combatItem.system.bonus.value;
-        const firstAdjustedBonus = adjustedBonus - penalty;
-        const secondAdjustedBonus = adjustedBonus - secondPenalty;
-
-        const damageString = dmgRolls.map(d => `${d.damage} ${d.damageType}`).join(" + ");
-
-        const description = combatItem.system.description.value
-            ? `\n{{paragraph: ${cleanHtmlTags(combatItem.system.description.value)}}}`
-            : "";
-
-                    const combatText = `{{line **${isRanged ? "Ranged" : "Melee"}** {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage** ${damageString}${attackEffects}}}${description}`;
-
-        return combatText
-            .replace(/paragraph:/, '§§§')
-            .replace(/paragraph:/g, 'paragraph')
-            .replace('§§§', 'paragraph:');
-    }
-
-    function formatBonus(bonus) {
-        return `${bonus >= 0 ? '+' : ''}${bonus}`;
-    }
-
-    function getActionSymbol(action, actionSymbols) {
-        let symbol = actionSymbols[action.system.actionType.value] || "";
-        if (action.system.actionType.value === "action" && action.system.actions.value) {
-            const actionCount = action.system.actions.value;
-            symbol = actionCount === 2 ? "{{twoaction}} " : actionCount === 3 ? "{{threeaction}} " : symbol;
-        }
-        return symbol;
-    }
-
-    function formatActionText(action, actionSymbol) {
-        let actionText = action.system.description.value;
-        const actionTraits = action.system.traits.value.length ? ` \\(${action.system.traits.value.map(trait => {
-            let modifiedTrait = trait.includes('-') ? trait.split('-').join(' ') : trait;
-            return modifiedTrait;
-        }).join(", ")})` : "";
-        actionText = cleanHtmlTags(actionText);
-        return `{{line **${action.name}** ${actionSymbol}${actionTraits} ${ actionText }}}`;
-    }
-
-    function cleanHtmlTags(htmlString) {
-        // Replace <b> or <strong> tags with **text**
-        htmlString = htmlString.replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
-            return `**${text.trim()}** `;
-        });
-
-        // Add space after the opening '**' if followed immediately by a non-space character
-        htmlString = htmlString.replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3');
-
-        // Add space before the closing '**' if preceded by a non-space character
-        htmlString = htmlString.replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3');
-
-        // Remove any other HTML tags
-        htmlString = htmlString.replace(/<\/?[^>]+>/g, "");
-
-        // Replace @@Damage[ ] with formatted string
-        htmlString = htmlString.replace(
-            /@@Damage\[\s*\(?\s*([^\s\[\]()]+)\s*\)?\s*\[?([a-zA-Z]+)\]?\s*\]/,
-            '$1 $2'
-        );
-
-        // Replace @@Check with formatted string
-        htmlString = htmlString.replace(new RegExp("@@Check\\[(\\w+)\\|dc:(\\d{2})(\\|basic)?\\]\\s*(save)?", "gi"), function (match, type, dc, basic) {
-            return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} save`;
-        });
-
-        // Replace @@Template with fomatted string
-        htmlString = htmlString.replace(/@@Template\[(.*?)\]/g, function (match, p1) {
-            let parts = p1.split("|");
-
-            let formattedParts = parts.map(part => {
-                let match = part.match(/(\d+)/);
-                if (match) {
-                    return match[1] + "-foot";
-                }
-                return part;
-            });
-
-            return formattedParts.reverse().join(" ");
-        });
-
-        // Replace @@{} with content inside curly braces
-        htmlString = htmlString.replace(/@@(\{[^}]*\})/g, "$1");
-
-        // Remove @@[...] and similar patterns
-        htmlString = htmlString.replace(/@@\w+\[[^\]]*\]/g, "");
-
-        // Remove any remaining @@ followed by non-space characters
-        htmlString = htmlString.replace(/@@[^\s{]+/g, "");
-
-        // Remove braces, keeping the content inside
-        htmlString = htmlString.replace(/{([^}]*)}/g, "$1");
-
-        // Remove double square brackets and their content
-        htmlString = htmlString.replace(/\[\[[^\]]*\]\]/g, "");
-
-        // Trim any unnecessary spaces inside **text**
-        htmlString = htmlString.replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
-            return `${startBold}${text.trim()}${endBold}`;
-        });
-
-        // Add a space after every full stop if there isn't one
-        htmlString = htmlString.replace(/\.([^\s])/g, '. $1');
-
-        // Convert **bold** followed by non-bold text to a paragraph format
-        htmlString = htmlString.replace(/(\*\*[^\*]+\*\*)([^*]+)/g, function (match, p1, p2, offset, string) {
-            return offset === 0 ? p1 + p2 : `\n{{paragraph: ${p1}${p2}}}`;
-        });
-
-        return htmlString;
-    }
-
-
-    function promptForFile() {
-        let fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'application/json';
-        fileInput.onchange = e => {
-            let file = e.target.files[0];
-            if (!file) {
-                return;
-            }
-            let reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    let jsonData = JSON.parse(e.target.result);
-                    replaceContent(processJsonData(jsonData));
-                } catch (error) {
-                    console.error('Error parsing JSON file:', error);
-                }
-            };
-            reader.readAsText(file);
-        };
-        fileInput.click();
-    }
-
-    function promptForHomebrewery() {
-        document.getElementById('homebreweryModal').classList.remove('hidden');
-
-        if (navigator.clipboard?.readText) {
-            navigator.clipboard.readText().then(text => {
-                if (text) document.getElementById('homebreweryInput').value = text;
-            }).catch(() => {});
-        }
-    }
-
-    function closeHomebrewery() {
-        document.getElementById('homebreweryInput').innerHTML = '';
-        document.getElementById('homebreweryModal').classList.add('hidden');
-    }
-
-    function processFrontHomebreweryPage(page) {
-        const title = (page.match(/^#\s+(.+)$/m) || [, ''])[1].trim();
-        const bgUrl = (page.match(/!\[background image]\(([^)]+)\)/i) || [, ''])[1];
-        const styleMatch = page.match(/!\[background image]\([^)]+\)\{([^}]+)\}/i);
-        const styles = {};
-        if (styleMatch) {
-            styleMatch[1].split(',').forEach(s => {
-                const [k, v] = s.split(':').map(x => x.trim());
-                if (k && v) styles[k.toLowerCase()] = v;
-            });
-        }
-        const addUnit = v => /^\d+(\.\d+)?$/.test(v) ? v + '%' : v;
-        const width = addUnit(styles.width || 'auto');
-        const height = addUnit(styles.height || '100');
-        const posAttrs = ['left', 'top', 'right', 'bottom']
-            .filter(p => styles[p])
-            .map(p => `${p}=${addUnit(styles[p])}`);
-        const author = (page.match(/\{\{banner\s+([^}]+)}}/i) || [, ''])[1].trim();
-        if (!title || !bgUrl) return page;
-        const imgAttrs = ['class=attach', `width=${width}`, `height=${height}`, ...posAttrs].join(', ');
-        return [
-            `{{image ${bgUrl}[${imgAttrs}]}}`,
-            ``,
-            `{{title ${title}[position=absolute, bottom=74%, width=100%, font-size=76px, line-height=100%]}}`,
-            ``,
-            `{{image https://i.imgur.com/W3kGupe.png[width=50%, position=absolute, left=50%, top=79%, transform=translateX(-50%), class=attach, height=auto]}}`,
-            ``,
-            `{{title By ${author}[position=absolute, bottom=0%, width=100%, font-size=40px]}}`
-        ].join('\n\n');
-    }
-
-    function replaceFrames(page) {
-        let usedFrame = false;
-        return page.replace(/{{imageMaskEdge[\s\S]*?}}/g, (block) => {
-            const urlMatch = block.match(/\!\[.*?\]\(([^)]+)\)/);
-            const url = (urlMatch ? urlMatch[1] : '').trim();
-            if (url === '') {
-                usedFrame = true;
-            }
-            if (!usedFrame) {
-                usedFrame = true;
-                return `{{frame ${url}}}`;   
-            }
-            return ''; 
-        });
-    }
-
-    function convertMarkdownTables(page) {
-        const lines = page.split(/\r?\n/);
-        const out = [];
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            if (/^\|/.test(line)) {
-                const tbl = [];
-                while (i < lines.length && /^\|/.test(lines[i])) {
-                    tbl.push(lines[i++]);
-                }
-                i--;            
-                if (tbl.length >= 2 && /^\|\s*[-:]+/.test(tbl[1])) {
-                    const header = tbl[0].split('|').slice(1, -1).map(c => c.trim());
-                    const rows = tbl.slice(2).map(r => r.split('|').slice(1, -1).map(c => c.trim()));
-                    out.push(
-                        `{{table ${header.join(',')}`,
-                        ...rows.map(r => r.join(',')),
-                        '}}'
-                    );
-                    continue;   
-                }
-                out.push(...tbl);
-                continue;
-            }
-            out.push(line);
-        }
-        return out.join('\n');
-    }
-
-
-    function handleHomebrewery() {
-        let text = document.getElementById('homebreweryInput').value;
-        document.getElementById('homebreweryInput').innerHTML = '';
-        closeHomebrewery();     
-        text = text.replace(/\\column/g, '{{columnbreak}}');
-        let pages = text.split('\\page');
-        pages[0] = processFrontHomebreweryPage(pages[0]);
-        pages = pages.map(replaceFrames);
-        pages = pages.map(convertMarkdownTables);
-        pages[pages.length - 1] = CREDITS_PAGE;
-        pages = pages.join('{{pagebreak}}');
-        pages = pages.replace(/(\r?\n\s*){3,}/g, '\n');
-        editor.setValue(pages);
-
-    }
-
-    function replacePlaceholders(placeholder, page, wrapper) {
-        // Remember that classes need to be in a list, even if only one element
-        const regex = /([a-zA-Z]+)(:*)([\s\S]*?)(?:\[(.*?)\])?$/g;
-        const elements = paragraphElements;
-        placeholder = placeholder.replace(regex, function (match, elementName, indentMarkers, content, attributes) {
-            let margin = indentMarkers.length;
-
-            let element = elements[elementName];
-            if (element === undefined) {
-                return match;
-            }
-
-            let newElement;
-            if (element["html"]) {
-                newElement = document.createElement(element["html"]);
-            }
-            if (element["src"] !== undefined) {
-                newElement.src = element["src"];
-            }
-            else if (element["html"] === "img") {
-                newElement.src = content.trim();
-            } 
-            else if (elementName === "table") {
-                const rows = content.trim().split('\n');
-                const headers = rows[0].split(/,(?! )/).map(header => header.trim());
-
-                const tbody = document.createElement('tbody');
-                const thead = document.createElement('thead');
-                const headerRow = document.createElement('tr');
-
-                headers.forEach(header => {
-                    const th = document.createElement('th');
-                    th.innerHTML = header;
-                    headerRow.appendChild(th);
-                });
-                thead.appendChild(headerRow);
-                newElement.appendChild(thead);
-
-                for (let i = 1; i < rows.length; i++) {
-                    const row = document.createElement('tr');
-                    rows[i].split(/,(?! )/).map(cell => cell.trim()).forEach(cellValue => {
-                        const td = document.createElement('td');
-                        td.innerHTML = cellValue;
-                        row.appendChild(td);
-                    });
-                    tbody.appendChild(row);
-                }
-                newElement.appendChild(tbody);
-            }
-            else {
-                newElement.innerHTML = content.trim();
-            }
-
-            element["classes"]?.forEach(className => {
-                newElement.classList.add(className);
-            });
-
-            let shouldAttach = false;
-
-            if (newElement && attributes) {
-                const attrs = attributes.split(',').map(attr => attr.trim().split('='));
-                attrs.forEach(([key, value]) => {
-                    if (key === "class" && value === "attach") {
-                        shouldAttach = true
-                    }
-                    else if (key === "class" && value) { 
-                        newElement.classList.add(value);
-                    }
-                    else if (elementName === "table" && key === "headerBackground") {
-                        newElement.style.setProperty('--header-bg-color', value);
-                    }
-                    else if (elementName === "table" && key === "headerColor") {
-                        newElement.style.setProperty('--header-color', value);
-                    }
-                    else { 
-                        newElement.style[key] = value;
-                    }
-
-                    if (elementName === "image") {
-                        shouldAttach = true
-                    }
-                });
-            }
-
-            if (elementName === "frame") {
-                let pageElement = document.createElement(element["html"]);
-                pageElement.src = `../assets/page.png`
-                newElement.src = content.trim();
-                newElement.style.padding = 0;
-                newElement.classList.add(elementName);
-                page.appendChild(pageElement);
-                page.appendChild(newElement);
-                wrapper.style.margin = `${parseFloat(pageElement.style.padding) + 0.5}cm`;
-                let marginInMM = (parseFloat(pageElement.style.padding) + 0.5) * 10;
-                wrapper.style.width = `${(210 - 2 * marginInMM)}mm`; 
-                wrapper.style.height = `${(297 - 2 * marginInMM)}mm`; 
-                newElement = "";
-            }
-
-            if (elementName === "dc") {
-                newElement.innerHTML = 'DC ' + dcs[content.trim()];
-            }
-
-            if (/^:+$/g.test(content.trim())) {
-                const breaksCount = (content.match(/:/g) || []).length;
-                newElement.innerHTML = '';
-                newElement.classList = [];
-                for (let i = 0; i < breaksCount; i++) {
-                    newElement.appendChild(document.createElement("br"));
-                   
-                }
-            }
-             
-            if (margin > 0) {
-                newElement.style.marginLeft = `${margin}em`;
-            }
-
-            if (shouldAttach) {
-                page.appendChild(newElement);
-                newElement = null;
-            }
-
-            return newElement ? newElement.outerHTML : "";
-        });
-
-        return placeholder;
-    }
-
-    function replaceBrackets(text, page, wrapper) {
-        text = text.replace(/<\/?p>/g, "");
-        let index = 0;
-        function processSegment() {
-            let content = '';
-            while (index < text.length) {
-                if (text[index] === '{' && text[index + 1] === '{') {
-                    index += 2;
-                    content += processSegment();
-                } else if (text[index] === '}' && text[index + 1] === '}') {
-                    index += 2;
-                    return replacePlaceholders(content, page, wrapper);
-                } else {
-                    content += text[index++];
-                }
-            }
-            return content;
-        }
-        text = processSegment()
-        let lines = text.split('\n');
-        let processedLines = lines.map(line => {
-            if (line.trim() === "" || (line.startsWith('<') && !line.startsWith('<strong') && !line.startsWith('<b') && !line.startsWith('<em') && !line.startsWith('<i'))) {
-                return line;
-            } else {
-                return replacePlaceholders("paragraph " + line, page, wrapper);
-            }
-        });
-        return processedLines.join('\n');
-    }
-
-    function applyClasses(content, selectors, className) {
-        selectors.forEach(selector => {
-            content.querySelectorAll(selector).forEach(element => {
-                element.classList.add(className);
-            });
-        });
-       
-    }
-
-    function createElementWithClass(tagName, className) {
-        const element = document.createElement(tagName);
-        element.classList.add(className);
-        return element;
-    }
-
-    function displayChange() {
-        shadow.innerHTML = "";
-        let htmlContent = editor.getValue();
-        htmlContent = htmlContent.split("\{\{pagebreak\}\}");
-        for (let element of htmlContent) {
-            let page = createElementWithClass("div", "page");
-            let columnWrapper = createElementWithClass("div", "columnWrapper");
-            element = converter.makeHtml(element);
-            columnWrapper.innerHTML = replaceBrackets(element, page, columnWrapper);
-            applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
-            columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
-            page.appendChild(columnWrapper);
-            shadow.appendChild(page); 
-        }
-        shadow.appendChild(pageStyle);
-        
-    }
-    
-    function animateSaving() {
-        let saveButton = document.getElementById('save');
-        if (!saveButton.disabled) {
-            saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Saving...';
-            saveDocument();
-            setTimeout(() => {
-                saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Saved';
-                saveButton.disabled = true;
-            }, 500);
-        } 
-    }
-
-    async function saveDocument() {
-        let content = editor.getValue();
-        const r = await fetch("/api/files/" + documentId, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: content })
-                });
-    }
-
-    async function getDocument() {
-
-        let row = await fetch("/api/files/" + documentId, { headers: { Accept: "application/json" } });
-        row = await row.json();
-        editor.setValue(row.content);
-    }
-
-    function printDocument() {
-        saveDocument()
-        document.querySelectorAll('head link[rel="stylesheet"]').forEach((link) => {
-            if (!link.href.endsWith('/css/site.css')) {
-                shadow.appendChild(link.cloneNode());
-            }
-        });
-        let printStyle = document.createElement("style");
-        printStyle.textContent = `
-        html { margin: 0!important; }
-        body { margin: 0!important; }
-        .page { margin: 0!important; }
-    `;
-        let printWindow = window.open('', '_blank');
-        printWindow.document.head.appendChild(printStyle);
-        printWindow.document.body.innerHTML = shadow.innerHTML;;
-        printWindow.document.close(); 
-        printWindow.focus();
-        printWindow.print();
-    }
-
-    const config = { minColumnWidth: 200, resizerSelector: ".resizer", mainSectionSelector: "section" };
-    const state = { isResizing: false, initialX: null, initialWidths: null };
-    const elements = {
-        resizer: document.querySelector(config.resizerSelector),
-        main: document.querySelector(config.mainSectionSelector)
-    };
-
-    elements.resizer.addEventListener("mousedown", e => {
-        state.isResizing = true;
-        state.initialX = e.clientX;
-        state.initialWidths = getInitialWidths();
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
-    });
-
-    function getInitialWidths() {
-        const styles = getComputedStyle(elements.main);
-        const columns = styles.gridTemplateColumns.split(" ");
-        return [parseInt(columns[0]), parseInt(columns[2])];
-    }
-
-    function onMouseMove(e) {
-        if (!state.isResizing) return;
-        const deltaX = e.clientX - state.initialX;
-        const [newLeftWidth, newRightWidth] = updateWidths(deltaX);
-        elements.main.style.gridTemplateColumns = `${newLeftWidth}px 20px ${newRightWidth}px`;
-    }
-
-    function updateWidths(deltaX) {
-        let newLeftWidth = state.initialWidths[0] + deltaX;
-        let newRightWidth = state.initialWidths[1] - deltaX;
-        if (newLeftWidth < config.minColumnWidth) {
-            newLeftWidth = config.minColumnWidth;
-            newRightWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
-        } else if (newRightWidth < config.minColumnWidth) {
-            newRightWidth = config.minColumnWidth;
-            newLeftWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
-        }
-        return [newLeftWidth, newRightWidth];
-    }
-
-    function onMouseUp() {
-        state.isResizing = false;
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-    }
-
-    function fillDropdownContent() {
-        const dropdownContainer = document.querySelector('.dropdownContainer');
-        for (const [key, value] of Object.entries(paragraphElements)) {
-            const button = document.createElement('button');
-            button.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            button.onclick = () => applyElement(key);
-            dropdownContainer.appendChild(button);
-        }
-        const buttons = document.querySelectorAll(".dropdownButton");
-        const targets = document.querySelectorAll(".dropdownContainer");
-        buttons.forEach((button, index) => {
-            const target = targets[index];
-            button.addEventListener("click", function () {
-                target.classList.toggle("visible");
-                target.classList.toggle("hidden");
-            });
-        });
-    }
-
-    function applyElement(key) {
-        const selectedText = editor.getSelection();
-        const cursorPos = editor.getCursor();
-        if (paragraphElements[key].special) {
-            const newText = `{{${key}}}`;
-            editor.replaceRange(newText, {
-                line: cursorPos.line,
-                ch: 0
-            });
-            const newCursorPos = {
-                line: cursorPos.line,
-                ch: 0
-            };
-            editor.setCursor(newCursorPos);
-        }
-        else if (selectedText) {
-            const regex = /\{\{(.+?) (.+?)\}\}/g;
-            let newText;
-
-            if (regex.test(selectedText)) {
-                newText = selectedText.replace(regex, `{{${key} $2}}`);
-            } else {
-                newText = `{{${key} ${selectedText}}}`;
-            }
-
-            const startPos = editor.getCursor("from");
-            const endPos = editor.getCursor("to");
-
-            editor.replaceSelection(newText);
-
-            const newLines = newText.split('\n');
-            const newEndLine = startPos.line + newLines.length - 1;
-            const newEndCh = (newLines.length === 1) ?
-                startPos.ch + newText.length :
-                newLines[newLines.length - 1].length;
-
-            const newEndPos = {
-                line: newEndLine,
-                ch: newEndCh
-            };
-            editor.setSelection(startPos, newEndPos);
-        }
-    }
-
-    function scrollToPart(mode) {
-        const doc = editor.getDoc()
-        const pageBreaks = []
-        doc.eachLine(l => { if (l.text.includes("{{pagebreak}}")) pageBreaks.push(doc.getLineNumber(l)) })
-        const host = document.getElementById('displayAreaHolder')
-        const pages = host.shadowRoot.querySelectorAll('.page')
-        if (mode === 'editor') {
-            let idx = pages.length, closest = Number.MAX_VALUE
-            pages.forEach((p, i) => {
-                const ratio = Math.abs(p.getBoundingClientRect().top / p.clientHeight)
-                if (ratio < closest) { closest = ratio; idx = i }
-            })
-            if (idx === 0) { editor.scrollTo(null, 0); return }
-            idx--
-            if (idx < 0 || idx >= pageBreaks.length) return
-            const line = pageBreaks[idx]
-            const { top } = editor.charCoords({ line, ch: 0 }, 'local')
-            editor.scrollTo(null, top)
-        } else {
-            const top = editor.getScrollInfo().top
-            let idx = 0, dist = Number.MAX_VALUE
-            for (let i = 0; i < pageBreaks.length; i++) {
-                const line = pageBreaks[i];
-                const { top: lineTop } = editor.charCoords({ line, ch: 0 }, 'local');
-                if (i === 0 && top - lineTop < 0) {
-                    idx = 0;
-                    break;
-                }
-                const d = lineTop - top;
-                if (d > 0) {
-                    dist = d;
-                    idx = i;
-                    break;
-                }
-                idx = pageBreaks.length;
-            }
-            if (idx < 0 || idx >= pages.length) return
-            pages[idx].scrollIntoView()
-        }
-    }
-
-
-    window.onload = (event) => {
-        localStorage.setItem("PathBinder-Scroll", 0);
-        fillDropdownContent()
-        getDocument();
-    };
-
-    document.addEventListener('keydown', function (event) {
-        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-            event.preventDefault();
-            animateSaving();
-        }
-    });
+	const CREDITS_PAGE = `
+	{{paragraph **Some artwork © Dean Spencer, used with permission. All rights reserved.**}}
+	{{line **Some artwork copyright Murzabaev Roman aka s0ulafein**}}
+	{{line **Ooze artwork by Jeff Koch.**}}
+	{{line **used with permission.**}}
+	{{line **Maps by Snowy's Maps**}}
+	{{line **Music by RPG Music Maker**}}
+	{{line **Writing by Snowy's Maps**}}
+	{{linebreak}}
+	**Open Gaming License**
+	{{paragraph The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ("Wizards"). All Rights Reserved.}}
+	{{paragraph 1. Definitions: (a)"Contributors" means the copyright and/or trademark owners who have contributed Open Game Content; (b)"Derivative Material" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) "Distribute" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)"Open Game Content" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) "Product Identity" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) "Trademark" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) "Use", "Used" or "Using" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) "You" or "Your" means the licensee in terms of this agreement. 2. The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License. 3. Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License. 4. Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content. 5. Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License. 6. Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute. 7. Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity. 8. Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content. 9. Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License. 10. Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute. 11. Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so. 12. Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected. 13. Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License. 14. Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable. 15. COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc. System Reference Document. Copyright 2000. Wizards of the Coast, Inc; Authors: Jonathan Tweet, Monte Cook, Skip Williams, based on material by E. Gary Gygax and Dave Arneson. Pathfinder Core Rulebook (Second Edition) © 2019, Paizo Inc.; Designers: Logan Bonner, Jason Bulmahn, Stephen Radney-MacFarland, and Mark Seifter.[font-size=11px]}}
+	`.trim();
+
+		const paragraphElements = {
+			"image": { "html": "img", "classes": ["image"] },
+			"frame": { "html": "img" },
+			"title": { "html": "h1", "classes": ["wide", "title"] },
+			"header": { "html": "header", "classes": ["wide", "subtitle"] },
+			"line": { "html": "p", "classes": ["line"] },
+			"paragraph": { "html": "p", "classes": ["paragraph"] },
+			"linebreak": { "html": "div", "classes": ["linebreak"], "special": true },
+			"columnbreak": { "html": "div", "classes": ["break"], "special": true },
+			"pagebreak": {"special": true},
+			"passive": { "html": "img", "src": "../assets/passive.png", "classes": ["action", "oneaction"] },
+			"freeaction": { "html": "img", "src": "../assets/freeaction.png", "classes": ["action", "oneaction"] },
+			"oneaction": { "html": "img", "src": "../assets/oneaction.png", "classes": ["action", "oneaction"] },
+			"twoaction": { "html": "img", "src": "../assets/twoaction.png", "classes": ["action", "twoaction"] },
+			"threeaction": { "html": "img", "src": "../assets/threeaction.png", "classes": ["action", "threeaction"] },
+			"reaction": { "html": "img", "src": "../assets/reaction.png", "classes": ["action", "oneaction"] },
+			"tag": { "html": "div", "classes": ["tag"] },
+			"label": { "html": "div", "classes": ["label"] },
+			"artist": { "html": "div", "classes": ["artist"] },
+			"table": { "html": "table", "classes": ["table"] },
+			"dc": {"html": "span"}
+		}
+		const dcs = {
+			0: 14, 1: 15, 2: 16, 3: 18, 4: 19, 5: 20, 6: 22, 7: 23, 8: 24, 9: 26,
+			10: 27, 11: 28, 12: 30, 13: 31, 14: 32, 15: 34, 16: 35, 17: 36, 18: 38,
+			19: 39, 20: 40, 21: 42, 22: 44, 23: 46, 24: 48, 25: 50,
+
+			untrained: 10,
+			trained: 15,
+			expert: 20,
+			master: 30,
+			legendary: 40
+		};
+
+		const documentId = window.location.pathname.split('/').filter(Boolean).pop();
+
+		$("#displayAreaHolder").on("scroll", function () {
+			localStorage.setItem("PathBinder-Scroll", $("#displayAreaHolder").scrollTop());
+		});
+		CodeMirror.defineMode("mustacheHighlight", function (config, parserConfig) {
+			return {
+				token: function (stream, state) {
+					if (stream.match("{{") || stream.match("}}")) {
+						return "mustache-brackets";
+					}
+
+					if (stream.match(/^#/) || stream.match(/^\*/)) {
+						return "mustache-markdown";
+					}
+
+					if (stream.match("pagebreak")) {
+						return "mustache-pagebreak";
+					}
+
+					if (stream.string.charAt(stream.start - 2) === '{' || stream.string.charAt(stream.start - 4) === '{') {
+						if (stream.match(/^[^\s{}]+/)) {
+							return "mustache-firstWord";
+						}
+					}
+
+					stream.next();
+					return null;
+				}
+			};
+		});
+		const editor = CodeMirror(document.getElementById("writeArea"), {
+			lineNumbers: true,
+			lineWrapping: true,
+			styleActiveLine: true,
+			matchBrackets: true,
+			theme: "default",
+			mode: "mustacheHighlight",
+			scrollbarStyle: "native",
+			extraKeys: {
+				"Ctrl-F": "findPersistent",
+				"Shift-Enter": "findPrev",
+				"Esc": "clearSearch",
+				"Enter": function (cm) {
+					if (cm?.state?.search?.query) {
+						cm.execCommand("findNext");
+					} else {
+						cm.replaceSelection("\n", "end");
+					}
+				},
+				"Ctrl-B": function (cm) {
+					toggleWrapSelection(cm, "**");
+				},
+				"Ctrl-I": function (cm) {
+					toggleWrapSelection(cm, "*");
+				}
+			}
+		});
+		editor.addOverlay({ name: "mustacheHighlight" });
+		let autosaveTimeout;
+		editor.on('change', function () {
+			if (autosaveTimeout) {
+				clearTimeout(autosaveTimeout);
+			}
+			let saveButton = document.getElementById('save');
+			saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+			saveButton.disabled = false;
+			autosaveTimeout = setTimeout(animateSaving, 5000);
+		});
+		const displayArea = document.getElementById("displayAreaHolder");
+		const converter = new showdown.Converter();
+		const shadow = displayArea.attachShadow({ mode: "open" });
+		const styleSheet = [...document.styleSheets].find(s => s.href?.includes('/css/page.css'));
+		const pageStyle = document.createElement('style');
+		pageStyle.textContent = [...styleSheet.cssRules].map(rule => rule.cssText).join('\n');
+		editor.on("change", function () {
+			displayChange();
+			$("#displayAreaHolder").scrollTop(localStorage.getItem("PathBinder-Scroll"));
+		});
+
+		function toggleWrapSelection(cm, wrapper) {
+			const selection = cm.getSelection();
+			const cursorPosFrom = cm.getCursor("from");
+			const cursorPosTo = cm.getCursor("to");
+
+			const isWrapped = selection.startsWith(wrapper) && selection.endsWith(wrapper);
+
+			if (isWrapped) {
+				const unwrappedSelection = selection.slice(wrapper.length, -wrapper.length);
+				cm.replaceSelection(unwrappedSelection);
+				cm.setSelection(
+					{ line: cursorPosFrom.line, ch: cursorPosFrom.ch },
+					{ line: cursorPosTo.line, ch: cursorPosTo.ch - 2 * wrapper.length }
+				);
+			} else {
+				cm.replaceSelection(wrapper + selection + wrapper);
+				cm.setSelection(
+					{ line: cursorPosFrom.line, ch: cursorPosFrom.ch },
+					{ line: cursorPosTo.line, ch: cursorPosTo.ch + 2 * wrapper.length }
+				);
+			}
+		}
+
+		function cleanContent(html) {
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(html, 'text/html');
+
+			const allElements = doc.querySelectorAll('*');
+			allElements.forEach(element => {
+				const firstChild = element.firstChild;
+				if (firstChild && firstChild.nodeType === Node.TEXT_NODE && !firstChild.textContent.trim()) {
+					element.remove();
+				}
+			});
+
+			const actionSpans = doc.querySelectorAll('span[class*="action"]');
+			actionSpans.forEach(span => {
+				let content = span.textContent.trim();
+				content = content.replace(/[-\[\]]/g, '');
+
+				if (content.endsWith('s')) {
+					content = content.slice(0, -1);
+				}
+				const replacementText = `{{${content}}}`;
+
+				const textNode = document.createTextNode(replacementText);
+				span.parentNode.replaceChild(textNode, span);
+			});
+
+			const anchors = doc.querySelectorAll('a');
+			anchors.forEach(anchor => {
+				const text = document.createTextNode(anchor.textContent);
+				anchor.parentNode.replaceChild(text, anchor);
+			})
+
+			const bElements = doc.querySelectorAll('b');
+			bElements.forEach(b => {
+				const content = b.textContent.trim();
+
+				const replacementText = `**${content}** `;
+
+				const textNode = document.createTextNode(replacementText);
+				b.parentNode.replaceChild(textNode, b);
+			});
+
+			const h1Elements = doc.querySelectorAll('h1');
+			h1Elements.forEach(h1 => {
+				const firstChildContent = h1.childNodes[0] ? h1.childNodes[0].textContent.trim() : '';
+				const secondChildContent = h1.childNodes[1] ? h1.childNodes[1].textContent.trim() : '';
+
+				const replacementText = `#### ${firstChildContent} {{label ${secondChildContent}}}\n`;
+
+				const textNode = document.createTextNode(replacementText);
+				h1.parentNode.replaceChild(textNode, h1);
+			});
+
+
+
+			const spanWithTagClass = doc.querySelectorAll('span[class*="trait"]');
+			spanWithTagClass.forEach(span => {
+				const content = span.textContent.trim();
+
+				const replacementText = `{{tag ${content}}}\n`;
+
+				const textNode = document.createTextNode(replacementText);
+				span.parentNode.replaceChild(textNode, span);
+			});
+
+			const spans = doc.querySelectorAll('span');
+			spans.forEach(span => {
+				const content = span.innerHTML.trim();
+				const replacementHTML = `<br>${content}`;
+				span.outerHTML = replacementHTML;
+			});
+
+			const hrElements = doc.querySelectorAll('hr');
+			hrElements.forEach(hr => {
+				const replacementHTML = '<br>{{linebreak}}<br>';
+				hr.outerHTML = replacementHTML;
+			});
+
+			const brElements = Array.from(doc.querySelectorAll('br'));
+
+			brElements.forEach((br, index) => {
+				if (index < brElements.length) {
+					const nextBr = brElements[index + 1];
+					let contentNodes = [];
+					let currentNode = br.nextSibling;
+					while (currentNode && currentNode !== nextBr) {
+						contentNodes.push(currentNode);
+						currentNode = currentNode.nextSibling;
+					}
+					const content = contentNodes.map(node => node.textContent).join('').trim();
+					if (content) {
+						const replacement = document.createTextNode(`{{line ${content}}}\n`);
+						doc.body.insertBefore(replacement, br);
+						contentNodes.forEach(node => node.remove());
+					}
+				}
+				br.remove();
+			});
+
+			let content = doc.body.innerHTML;
+
+			while (content.includes('{{line {{linebreak}}}}')) {
+				content = content.replace('{{line {{linebreak}}}}', '{{linebreak}}');
+			}
+
+			doc.body.innerHTML = content;
+
+			return doc.body.innerHTML;
+		}
+
+		function extractContent(content) {
+			const titleElements = content.querySelectorAll('h1');
+			const secondTitle = titleElements[1] === undefined ? titleElements[0] : titleElements[1];
+			let currentNode = secondTitle.nextSibling;
+			let extractedContent = secondTitle.outerHTML;
+			while (currentNode) {
+				if (currentNode.tagName === "H3") {
+					const isLegacyContent = currentNode.textContent.toLowerCase().includes("legacy content");
+					if (isLegacyContent) {
+						currentNode = currentNode.nextSibling;
+						continue;
+					}
+					else {
+						break;
+					}
+				}
+				else if (["H1", "H2", "H4", "H5", "H6"].includes(currentNode.tagName) || !currentNode.nextSibling) {
+					break;
+				}
+				extractedContent += currentNode.outerHTML ? currentNode.outerHTML : currentNode.textContent;
+				currentNode = currentNode.nextSibling;
+			}
+
+			return cleanContent(extractedContent);
+		}
+
+		function replaceContent(content) {
+			const cursorPosition = editor.getCursor();
+			editor.replaceRange(content, cursorPosition);
+		}
+
+		async function processURL(url) {
+			const serverEndpoint = '@Url.Action("PostImport", "Import")';
+			const localStorageKey = `archive-${url}`;
+			const parser = new DOMParser();
+
+			let content = localStorage.getItem(localStorageKey);
+			if (content) {
+				content = parser.parseFromString(content, 'text/html');
+			}
+			else {
+				try {
+					const response = await fetch(serverEndpoint, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ Url: url })
+					});
+
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+
+					let data = await response.text();
+					data = parser.parseFromString(data, 'text/html');
+					let element = data.getElementById('ctl00_RadDrawer1_Content_MainContent_DetailedOutput');
+					localStorage.setItem(localStorageKey, element.innerHTML);
+					content = element;
+				} catch (error) {
+					console.error('There was a problem with the fetch operation:', error.message);
+				}
+			}
+			content = extractContent(content);
+			replaceContent(content);
+
+		}
+
+		function promptForURL() {
+			const url = prompt("Please enter a URL from Archives of Nethys:");
+			if (url) {
+				processURL(url);
+			}
+		}
+
+		function processJsonData(creatureData) {
+			const output = [];
+			const sizeMappings = {
+				tiny: "Tiny",
+				sm: "Small",
+				med: "Medium",
+				lg: "Large",
+				huge: "Huge",
+				grg: "Gargantuan"
+			};
+			const alignmentTags = ["chaotic", "evil", "lawful", "good", "neutral"];
+
+			const addOutput = (result) => {
+				if (Array.isArray(result)) {
+					output.push(...result.filter(Boolean));
+				} else if (result) {
+					output.push(result);
+				}
+			};
+
+			addOutput(formatCreatureLabel(creatureData));
+			addOutput(formatTraits(creatureData, alignmentTags));
+			addOutput(formatSize(creatureData, sizeMappings));
+			addOutput(formatPerception(creatureData));
+			addOutput(formatLanguages(creatureData));
+			addOutput(formatSkills(creatureData));
+			addOutput(formatAbilities(creatureData));
+			addOutput(formatItems(creatureData));
+			addOutput(formatLinebreak());
+			addOutput(formatDefenses(creatureData));
+			addOutput(formatHP(creatureData));
+			addOutput(formatHardness(creatureData));
+			addOutput(formatResistances(creatureData));
+			addOutput(formatImmunities(creatureData));
+			addOutput(formatWeaknesses(creatureData));
+			addOutput(formatLinebreak());
+			addOutput(formatSpeeds(creatureData));
+			addOutput(formatMelee(creatureData));
+			addOutput(formatSpellcasting(creatureData));
+			addOutput(formatActions(creatureData));
+			return output.join('\n');
+		}
+
+		function formatCreatureLabel(creatureData) {
+			return `#### ${creatureData.name} {{label Creature ${creatureData.system.details.level.value}}}`;
+		}
+
+		function formatTraits(creatureData, alignmentTags) {
+			return creatureData.system.traits.value.filter(trait => !alignmentTags.includes(trait))
+				.map(trait => `{{tag ${capitalizeFirstLetter(trait)}}}`);
+		}
+
+		function formatSize(creatureData, sizeMappings) {
+			const sizeValue = creatureData.system.traits.size.value;
+			return sizeValue ? `{{tag ${sizeMappings[sizeValue]}}}` : '';
+		}
+
+		function formatPerception(creatureData) {
+			const senses = creatureData.system.perception.senses.map(sense => {
+				let formattedSense = sense.type;
+				if (sense.acuity) {
+					formattedSense += ` (${sense.acuity})`;
+				}
+				if (sense.range) {
+					formattedSense += ` ${sense.range} feet`;
+				}
+				return formattedSense;
+			}).join(', ');
+
+			return `{{line **Perception** +${creatureData.system.perception.mod}; ${senses}}}`;
+		}
+
+		function formatLanguages(creatureData) {
+			const languages = creatureData.system.details.languages.value.join(', ');
+			if (languages) {
+				return `{{line **Languages**  ${languages}}}`;
+			}
+			return '';
+		}
+
+		function formatSkills(creatureData) {
+			const capitalizeWords = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
+			const skills = Object.entries(creatureData.system.skills).map(([name, data]) => `${capitalizeWords(name)} +${data.base}`).join(', ');
+			return skills ? `{{line **Skills**  ${skills}}}` : '';
+		}
+
+		function formatAbilities(creatureData) {
+			const { str, dex, con, int, wis, cha } = creatureData.system.abilities;
+			return `{{line **Str**  ${formatBonus(str.mod)}, **Dex**  ${formatBonus(dex.mod)}, **Con**  ${formatBonus(con.mod)}, **Int**  ${formatBonus(int.mod)}, **Wis**  ${formatBonus(wis.mod)}, **Cha**  ${formatBonus(cha.mod)}}}`;
+		}
+
+		function formatItems(creatureData) {
+			return creatureData.items.filter(item => ['weapon', 'armor'].includes(item.type))
+				.map(item => `{{line **Items**  ${item.name}}}`);
+		}
+
+		function formatLinebreak() {
+			return '{{linebreak}}';
+		}
+
+		function formatDefenses(creatureData) {
+			return `{{line **AC**  ${creatureData.system.attributes.ac.value}; **Fort**  +${creatureData.system.saves.fortitude.value}, **Ref**  +${creatureData.system.saves.reflex.value}, **Will**  +${creatureData.system.saves.will.value}}}`;
+		}
+
+		function formatHP(creatureData) {
+			return `{{line **HP**  ${creatureData.system.attributes.hp.value}}}`;
+		}
+
+		function formatHardness(creatureData) {
+			let hardness = creatureData?.system?.attributes?.hardness?.value;
+			if (hardness) {
+				return `{{line **Hardness**  ${hardness}}}`
+			}
+			return '';
+		}
+
+		function formatSpeeds(creatureData) {
+			const speeds = creatureData.system.attributes.speed?.otherSpeeds.map(speed => `${speed.type} ${speed.value} feet`).join(', ');
+			return `{{line **Speed** ${creatureData.system.attributes.speed.value} feet` + (speeds ? `, ${speeds}` : '') + '}}';
+		}
+
+		function formatStringWithHyphen(str) {
+			return str.includes('-') ? str.split('-').join(' ') : str;
+		}
+
+		function formatResistances(creatureData) {
+			const resistances = creatureData.system.attributes?.resistances?.map(resistance => {
+				const type = formatStringWithHyphen(resistance.type);
+				const exceptions = resistance.exceptions && resistance.exceptions.length > 0 ? ` (except ${resistance.exceptions.map(formatStringWithHyphen).join(', ')})` : '';
+				return `${type}${resistance.value ? ` ${resistance.value}` : ''}${exceptions}`;
+			}).join('; ');
+			return resistances ? `{{line **Resistances**  ${resistances}}}` : '';
+		}
+
+		function formatImmunities(creatureData) {
+			const immunities = creatureData.system.attributes?.immunities?.map(immunity => formatStringWithHyphen(immunity.type)).join(', ');
+			return immunities ? `{{line **Immunities**  ${immunities}}}` : '';
+		}
+
+		function formatWeaknesses(creatureData) {
+			const weaknesses = creatureData.system.attributes?.weaknesses?.map(weakness => {
+				const type = formatStringWithHyphen(weakness.type);
+				return `${type} ${weakness.value}`;
+			}).join('; ');
+			return weaknesses ? `{{line **Weaknesses**  ${weaknesses}}}` : '';
+		}
+
+		function formatMelee(creatureData) {
+			return creatureData.items.filter(item => item.type === 'melee').map(melee => formatCombat(melee, false));
+		}
+
+		function formatActions(creatureData) {
+			const actionSymbols = {
+				action: "{{oneaction}} ",
+				free: "{{freeaction}} ",
+				reaction: "{{reaction}} ",
+				passive: ""
+			};
+
+			const actionOrder = {
+				"{{freeaction}} ": 0,
+				"{{oneaction}} ": 1,
+				"{{twoaction}} ": 2,
+				"{{threeaction}} ": 3,
+				"{{reaction}} ": 4,
+				"": 4
+			};
+
+			return creatureData.items
+				.filter(item => item.type === 'action')
+				.map(action => {
+					const actionSymbol = getActionSymbol(action, actionSymbols);
+					return {
+						action,
+						symbol: actionSymbol
+					};
+				})
+				.sort((a, b) => {
+					return (actionOrder[a.symbol] ?? 5) - (actionOrder[b.symbol] ?? 5);
+				})
+				.map(({ action, symbol }) => {
+					return formatActionText(action, symbol)
+						.replace(/paragraph:/, '§§§')
+						.replace(/paragraph:/g, 'paragraph')
+						.replace('§§§', 'paragraph:');
+				});
+		}
+
+		function formatSpellcasting(creatureData) {
+			const spellcastingEntries = creatureData.items.filter(item => item.type === 'spellcastingEntry');
+			return spellcastingEntries.map(entry => {
+				let spells = creatureData.items.filter(item => item.type === 'spell');
+				let maxLevel = Math.max(...spells.map(spell => spell.system.location.heightenedLevel || 0));
+				let groupedSpells = {};
+				spells.forEach(spell => {
+					let level = spell.system.traits.value.includes('cantrip') ? (maxLevel + 1) : spell.system.location.heightenedLevel || spell.system.level.value;
+					if (!groupedSpells[level]) groupedSpells[level] = [];
+					groupedSpells[level].push(spell);
+				});
+				let sortedLevels = Object.keys(groupedSpells).sort((a, b) => b - a);
+				let suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
+				let getSuffix = level => suffixes[level] || 'th';
+				let formattedSpells = sortedLevels.filter(level => level <= maxLevel).map(level => {
+					let spellsAtLevel = groupedSpells[level].map(spell => {
+						let usesMax = spell.system.location.uses?.max;
+						return `${spell.name}${usesMax ? ` (x${usesMax})` : ''}`;
+					}).join(', ');
+
+					return `**${level}${getSuffix(level)}** ${spellsAtLevel}`;
+				}).join(' ');
+				if (groupedSpells[maxLevel + 1]) {
+					let cantrips = groupedSpells[maxLevel + 1].map(spell => {
+						let usesMax = spell.system.location.uses?.max;
+						return `${spell.name}${usesMax ? ` (x${usesMax})` : ''}`;
+					}).join(', ');
+
+					formattedSpells += ` **Cantrips (${maxLevel}${getSuffix(maxLevel)})** ${cantrips}`;
+				}
+				const spellDC = entry.system.spelldc;
+				const name = 'Spells';
+				const tradition = capitalizeFirstLetter(entry.system.tradition.value);
+				const spellcastingType = capitalizeFirstLetter(entry.system.prepared.value);
+				const spellInfo = `**${tradition} ${spellcastingType} Spells** DC ${ spellDC.dc }, attack +${ spellDC.value }; `;
+				return `{{line ${spellInfo} ${formattedSpells}}}`
+			})
+		}
+
+		function capitalizeFirstLetter(string) {
+			return string.charAt(0).toUpperCase() + string.slice(1);
+		}
+
+		function formatCombat(combatItem, isRanged) {
+			const dmgRolls = Object.values(combatItem.system.damageRolls);
+			isRanged = false;
+
+			const traitsList = combatItem.system.traits.value.map(trait => {
+				let t = trait.includes('-') ? trait.split('-').join(' ') : trait;
+				if (/\d{2,}/.test(t)) t += ' feet';
+				if (t.includes('range')) isRanged = true;
+				return t;
+			});
+			const traits = traitsList.length ? ` \\(${traitsList.join(", ")})` : "";
+
+			const attackEffectsList = combatItem.system.attackEffects.value.map(attackEffect => {
+				let t = attackEffect.includes('-') ? attackEffect.split('-').join(' ') : attackEffect;
+				return t;
+			});
+			const formattedEffects = attackEffectsList.map(effect =>
+			  effect.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
+			);
+
+			const attackEffects = formattedEffects.length
+				? ` plus ${formattedEffects.slice(0, -1).join(", ") + (formattedEffects.length > 1 ? ", and " : "") + formattedEffects.slice(-1)} `
+				: " ";
+
+			const isAgile = combatItem.system.traits.value.includes('agile');
+			const penalty = isAgile ? 4 : 5;
+			const secondPenalty = isAgile ? 8 : 10;
+
+			const adjustedBonus = combatItem.system.bonus.value;
+			const firstAdjustedBonus = adjustedBonus - penalty;
+			const secondAdjustedBonus = adjustedBonus - secondPenalty;
+
+			const damageString = dmgRolls.map(d => `${d.damage} ${d.damageType}`).join(" + ");
+
+			const description = combatItem.system.description.value
+				? `\n{{paragraph: ${cleanHtmlTags(combatItem.system.description.value)}}}`
+				: "";
+
+						const combatText = `{{line **${isRanged ? "Ranged" : "Melee"}** {{oneaction}}  ${combatItem.name} ${formatBonus(adjustedBonus)} [${formatBonus(firstAdjustedBonus)}/${formatBonus(secondAdjustedBonus)}]${traits}, **Damage** ${damageString}${attackEffects}}}${description}`;
+
+			return combatText
+				.replace(/paragraph:/, '§§§')
+				.replace(/paragraph:/g, 'paragraph')
+				.replace('§§§', 'paragraph:');
+		}
+
+		function formatBonus(bonus) {
+			return `${bonus >= 0 ? '+' : ''}${bonus}`;
+		}
+
+		function getActionSymbol(action, actionSymbols) {
+			let symbol = actionSymbols[action.system.actionType.value] || "";
+			if (action.system.actionType.value === "action" && action.system.actions.value) {
+				const actionCount = action.system.actions.value;
+				symbol = actionCount === 2 ? "{{twoaction}} " : actionCount === 3 ? "{{threeaction}} " : symbol;
+			}
+			return symbol;
+		}
+
+		function formatActionText(action, actionSymbol) {
+			let actionText = action.system.description.value;
+			const actionTraits = action.system.traits.value.length ? ` \\(${action.system.traits.value.map(trait => {
+				let modifiedTrait = trait.includes('-') ? trait.split('-').join(' ') : trait;
+				return modifiedTrait;
+			}).join(", ")})` : "";
+			actionText = cleanHtmlTags(actionText);
+			return `{{line **${action.name}** ${actionSymbol}${actionTraits} ${ actionText }}}`;
+		}
+
+		function cleanHtmlTags(htmlString) {
+			// Replace <b> or <strong> tags with **text**
+			htmlString = htmlString.replace(/<(b|strong)>(\s*)([\s\S]+?)(\s*)<\/\1>/gi, function (match, tag, leadingSpace, text, trailingSpace) {
+				return `**${text.trim()}** `;
+			});
+
+			// Add space after the opening '**' if followed immediately by a non-space character
+			htmlString = htmlString.replace(/(^|\s)(\*\*)(\S)/g, '$1$2 $3');
+
+			// Add space before the closing '**' if preceded by a non-space character
+			htmlString = htmlString.replace(/(\S)(\*\*)(\s|$)/g, '$1 $2$3');
+
+			// Remove any other HTML tags
+			htmlString = htmlString.replace(/<\/?[^>]+>/g, "");
+
+			// Replace @@Damage[ ] with formatted string
+			htmlString = htmlString.replace(
+				/@@Damage\[\s*\(?\s*([^\s\[\]()]+)\s*\)?\s*\[?([a-zA-Z]+)\]?\s*\]/,
+				'$1 $2'
+			);
+
+			// Replace @@Check with formatted string
+			htmlString = htmlString.replace(new RegExp("@@Check\\[(\\w+)\\|dc:(\\d{2})(\\|basic)?\\]\\s*(save)?", "gi"), function (match, type, dc, basic) {
+				return `DC ${dc} ${basic ? 'basic ' : ''}${type.charAt(0).toUpperCase() + type.slice(1)} save`;
+			});
+
+			// Replace @@Template with fomatted string
+			htmlString = htmlString.replace(/@@Template\[(.*?)\]/g, function (match, p1) {
+				let parts = p1.split("|");
+
+				let formattedParts = parts.map(part => {
+					let match = part.match(/(\d+)/);
+					if (match) {
+						return match[1] + "-foot";
+					}
+					return part;
+				});
+
+				return formattedParts.reverse().join(" ");
+			});
+
+			// Replace @@{} with content inside curly braces
+			htmlString = htmlString.replace(/@@(\{[^}]*\})/g, "$1");
+
+			// Remove @@[...] and similar patterns
+			htmlString = htmlString.replace(/@@\w+\[[^\]]*\]/g, "");
+
+			// Remove any remaining @@ followed by non-space characters
+			htmlString = htmlString.replace(/@@[^\s{]+/g, "");
+
+			// Remove braces, keeping the content inside
+			htmlString = htmlString.replace(/{([^}]*)}/g, "$1");
+
+			// Remove double square brackets and their content
+			htmlString = htmlString.replace(/\[\[[^\]]*\]\]/g, "");
+
+			// Trim any unnecessary spaces inside **text**
+			htmlString = htmlString.replace(/(\*\*)(\s*)(.*?)(\s*)(\*\*)/g, function (match, startBold, leadingSpace, text, trailingSpace, endBold) {
+				return `${startBold}${text.trim()}${endBold}`;
+			});
+
+			// Add a space after every full stop if there isn't one
+			htmlString = htmlString.replace(/\.([^\s])/g, '. $1');
+
+			// Convert **bold** followed by non-bold text to a paragraph format
+			htmlString = htmlString.replace(/(\*\*[^\*]+\*\*)([^*]+)/g, function (match, p1, p2, offset, string) {
+				return offset === 0 ? p1 + p2 : `\n{{paragraph: ${p1}${p2}}}`;
+			});
+
+			return htmlString;
+		}
+
+
+		function promptForFile() {
+			let fileInput = document.createElement('input');
+			fileInput.type = 'file';
+			fileInput.accept = 'application/json';
+			fileInput.onchange = e => {
+				let file = e.target.files[0];
+				if (!file) {
+					return;
+				}
+				let reader = new FileReader();
+				reader.onload = e => {
+					try {
+						let jsonData = JSON.parse(e.target.result);
+						replaceContent(processJsonData(jsonData));
+					} catch (error) {
+						console.error('Error parsing JSON file:', error);
+					}
+				};
+				reader.readAsText(file);
+			};
+			fileInput.click();
+		}
+
+		function promptForHomebrewery() {
+			document.getElementById('homebreweryModal').classList.remove('hidden');
+
+			if (navigator.clipboard?.readText) {
+				navigator.clipboard.readText().then(text => {
+					if (text) document.getElementById('homebreweryInput').value = text;
+				}).catch(() => {});
+			}
+		}
+
+		function closeHomebrewery() {
+			document.getElementById('homebreweryInput').innerHTML = '';
+			document.getElementById('homebreweryModal').classList.add('hidden');
+		}
+
+		function processFrontHomebreweryPage(page) {
+			const title = (page.match(/^#\s+(.+)$/m) || [, ''])[1].trim();
+			const bgUrl = (page.match(/!\[background image]\(([^)]+)\)/i) || [, ''])[1];
+			const styleMatch = page.match(/!\[background image]\([^)]+\)\{([^}]+)\}/i);
+			const styles = {};
+			if (styleMatch) {
+				styleMatch[1].split(',').forEach(s => {
+					const [k, v] = s.split(':').map(x => x.trim());
+					if (k && v) styles[k.toLowerCase()] = v;
+				});
+			}
+			const addUnit = v => /^\d+(\.\d+)?$/.test(v) ? v + '%' : v;
+			const width = addUnit(styles.width || 'auto');
+			const height = addUnit(styles.height || '100');
+			const posAttrs = ['left', 'top', 'right', 'bottom']
+				.filter(p => styles[p])
+				.map(p => `${p}=${addUnit(styles[p])}`);
+			const author = (page.match(/\{\{banner\s+([^}]+)}}/i) || [, ''])[1].trim();
+			if (!title || !bgUrl) return page;
+			const imgAttrs = ['class=attach', `width=${width}`, `height=${height}`, ...posAttrs].join(', ');
+			return [
+				`{{image ${bgUrl}[${imgAttrs}]}}`,
+				``,
+				`{{title ${title}[position=absolute, bottom=74%, width=100%, font-size=76px, line-height=100%]}}`,
+				``,
+				`{{image https://i.imgur.com/W3kGupe.png[width=50%, position=absolute, left=50%, top=79%, transform=translateX(-50%), class=attach, height=auto]}}`,
+				``,
+				`{{title By ${author}[position=absolute, bottom=0%, width=100%, font-size=40px]}}`
+			].join('\n\n');
+		}
+
+		function replaceFrames(page) {
+			let usedFrame = false;
+			return page.replace(/{{imageMaskEdge[\s\S]*?}}/g, (block) => {
+				const urlMatch = block.match(/\!\[.*?\]\(([^)]+)\)/);
+				const url = (urlMatch ? urlMatch[1] : '').trim();
+				if (url === '') {
+					usedFrame = true;
+				}
+				if (!usedFrame) {
+					usedFrame = true;
+					return `{{frame ${url}}}`;
+				}
+				return '';
+			});
+		}
+
+		function convertMarkdownTables(page) {
+			const lines = page.split(/\r?\n/);
+			const out = [];
+			for (let i = 0; i < lines.length; i++) {
+				const line = lines[i];
+				if (/^\|/.test(line)) {
+					const tbl = [];
+					while (i < lines.length && /^\|/.test(lines[i])) {
+						tbl.push(lines[i++]);
+					}
+					i--;
+					if (tbl.length >= 2 && /^\|\s*[-:]+/.test(tbl[1])) {
+						const header = tbl[0].split('|').slice(1, -1).map(c => c.trim());
+						const rows = tbl.slice(2).map(r => r.split('|').slice(1, -1).map(c => c.trim()));
+						out.push(
+							`{{table ${header.join(',')}`,
+							...rows.map(r => r.join(',')),
+							'}}'
+						);
+						continue;
+					}
+					out.push(...tbl);
+					continue;
+				}
+				out.push(line);
+			}
+			return out.join('\n');
+		}
+
+
+		function handleHomebrewery() {
+			let text = document.getElementById('homebreweryInput').value;
+			document.getElementById('homebreweryInput').innerHTML = '';
+			closeHomebrewery();
+			text = text.replace(/\\column/g, '{{columnbreak}}');
+			let pages = text.split('\\page');
+			pages[0] = processFrontHomebreweryPage(pages[0]);
+			pages = pages.map(replaceFrames);
+			pages = pages.map(convertMarkdownTables);
+			pages[pages.length - 1] = CREDITS_PAGE;
+			pages = pages.join('{{pagebreak}}');
+			pages = pages.replace(/(\r?\n\s*){3,}/g, '\n');
+			editor.setValue(pages);
+
+		}
+
+		function replacePlaceholders(placeholder, page, wrapper) {
+			// Remember that classes need to be in a list, even if only one element
+			const regex = /([a-zA-Z]+)(:*)([\s\S]*?)(?:\[(.*?)\])?$/g;
+			const elements = paragraphElements;
+			placeholder = placeholder.replace(regex, function (match, elementName, indentMarkers, content, attributes) {
+				let margin = indentMarkers.length;
+
+				let element = elements[elementName];
+				if (element === undefined) {
+					return match;
+				}
+
+				let newElement;
+				if (element["html"]) {
+					newElement = document.createElement(element["html"]);
+				}
+				if (element["src"] !== undefined) {
+					newElement.src = element["src"];
+				}
+				else if (element["html"] === "img") {
+					newElement.src = content.trim();
+				}
+				else if (elementName === "table") {
+					const rows = content.trim().split('\n');
+					const headers = rows[0].split(/,(?! )/).map(header => header.trim());
+
+					const tbody = document.createElement('tbody');
+					const thead = document.createElement('thead');
+					const headerRow = document.createElement('tr');
+
+					headers.forEach(header => {
+						const th = document.createElement('th');
+						th.innerHTML = header;
+						headerRow.appendChild(th);
+					});
+					thead.appendChild(headerRow);
+					newElement.appendChild(thead);
+
+					for (let i = 1; i < rows.length; i++) {
+						const row = document.createElement('tr');
+						rows[i].split(/,(?! )/).map(cell => cell.trim()).forEach(cellValue => {
+							const td = document.createElement('td');
+							td.innerHTML = cellValue;
+							row.appendChild(td);
+						});
+						tbody.appendChild(row);
+					}
+					newElement.appendChild(tbody);
+				}
+				else {
+					newElement.innerHTML = content.trim();
+				}
+
+				element["classes"]?.forEach(className => {
+					newElement.classList.add(className);
+				});
+
+				let shouldAttach = false;
+
+				if (newElement && attributes) {
+					const attrs = attributes.split(',').map(attr => attr.trim().split('='));
+					attrs.forEach(([key, value]) => {
+						if (key === "class" && value === "attach") {
+							shouldAttach = true
+						}
+						else if (key === "class" && value) {
+							newElement.classList.add(value);
+						}
+						else if (elementName === "table" && key === "headerBackground") {
+							newElement.style.setProperty('--header-bg-color', value);
+						}
+						else if (elementName === "table" && key === "headerColor") {
+							newElement.style.setProperty('--header-color', value);
+						}
+						else {
+							newElement.style[key] = value;
+						}
+
+						if (elementName === "image") {
+							shouldAttach = true
+						}
+					});
+				}
+
+				if (elementName === "frame") {
+					let pageElement = document.createElement(element["html"]);
+					pageElement.src = `../assets/page.png`
+					newElement.src = content.trim();
+					newElement.style.padding = 0;
+					newElement.classList.add(elementName);
+					page.appendChild(pageElement);
+					page.appendChild(newElement);
+					wrapper.style.margin = `${parseFloat(pageElement.style.padding) + 0.5}cm`;
+					let marginInMM = (parseFloat(pageElement.style.padding) + 0.5) * 10;
+					wrapper.style.width = `${(210 - 2 * marginInMM)}mm`;
+					wrapper.style.height = `${(297 - 2 * marginInMM)}mm`;
+					newElement = "";
+				}
+
+				if (elementName === "dc") {
+					newElement.innerHTML = 'DC ' + dcs[content.trim()];
+				}
+
+				if (/^:+$/g.test(content.trim())) {
+					const breaksCount = (content.match(/:/g) || []).length;
+					newElement.innerHTML = '';
+					newElement.classList = [];
+					for (let i = 0; i < breaksCount; i++) {
+						newElement.appendChild(document.createElement("br"));
+
+					}
+				}
+
+				if (margin > 0) {
+					newElement.style.marginLeft = `${margin}em`;
+				}
+
+				if (shouldAttach) {
+					page.appendChild(newElement);
+					newElement = null;
+				}
+
+				return newElement ? newElement.outerHTML : "";
+			});
+
+			return placeholder;
+		}
+
+		function replaceBrackets(text, page, wrapper) {
+			text = text.replace(/<\/?p>/g, "");
+			let index = 0;
+			function processSegment() {
+				let content = '';
+				while (index < text.length) {
+					if (text[index] === '{' && text[index + 1] === '{') {
+						index += 2;
+						content += processSegment();
+					} else if (text[index] === '}' && text[index + 1] === '}') {
+						index += 2;
+						return replacePlaceholders(content, page, wrapper);
+					} else {
+						content += text[index++];
+					}
+				}
+				return content;
+			}
+			text = processSegment()
+			let lines = text.split('\n');
+			let processedLines = lines.map(line => {
+				if (line.trim() === "" || (line.startsWith('<') && !line.startsWith('<strong') && !line.startsWith('<b') && !line.startsWith('<em') && !line.startsWith('<i'))) {
+					return line;
+				} else {
+					return replacePlaceholders("paragraph " + line, page, wrapper);
+				}
+			});
+			return processedLines.join('\n');
+		}
+
+		function applyClasses(content, selectors, className) {
+			selectors.forEach(selector => {
+				content.querySelectorAll(selector).forEach(element => {
+					element.classList.add(className);
+				});
+			});
+
+		}
+
+		function createElementWithClass(tagName, className) {
+			const element = document.createElement(tagName);
+			element.classList.add(className);
+			return element;
+		}
+
+		function displayChange() {
+			shadow.innerHTML = "";
+			let htmlContent = editor.getValue();
+			htmlContent = htmlContent.split("\{\{pagebreak\}\}");
+			for (let element of htmlContent) {
+				let page = createElementWithClass("div", "page");
+				let columnWrapper = createElementWithClass("div", "columnWrapper");
+				element = converter.makeHtml(element);
+				columnWrapper.innerHTML = replaceBrackets(element, page, columnWrapper);
+				applyClasses(columnWrapper, ["h1", "subtitle"], "wide");
+				columnWrapper.innerHTML = columnWrapper.innerHTML.replace(/<p><\/p>|}}/gm, "");
+				page.appendChild(columnWrapper);
+				shadow.appendChild(page);
+			}
+			shadow.appendChild(pageStyle);
+
+		}
+
+		function animateSaving() {
+			let saveButton = document.getElementById('save');
+			if (!saveButton.disabled) {
+				saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Saving...';
+				saveDocument();
+				setTimeout(() => {
+					saveButton.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Saved';
+					saveButton.disabled = true;
+				}, 500);
+			}
+		}
+
+		async function saveDocument() {
+			let content = editor.getValue();
+			const r = await fetch("/api/files/" + documentId, {
+						method: "PUT",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ content: content })
+					});
+		}
+
+		async function getDocument() {
+
+			let row = await fetch("/api/files/" + documentId, { headers: { Accept: "application/json" } });
+			row = await row.json();
+			editor.setValue(row.content);
+		}
+
+		function printDocument() {
+			saveDocument()
+			document.querySelectorAll('head link[rel="stylesheet"]').forEach((link) => {
+				if (!link.href.endsWith('/css/site.css')) {
+					shadow.appendChild(link.cloneNode());
+				}
+			});
+			let printStyle = document.createElement("style");
+			printStyle.textContent = `
+			html { margin: 0!important; }
+			body { margin: 0!important; }
+			.page { margin: 0!important; }
+		`;
+			let printWindow = window.open('', '_blank');
+			printWindow.document.head.appendChild(printStyle);
+			printWindow.document.body.innerHTML = shadow.innerHTML;;
+			printWindow.document.close();
+			printWindow.focus();
+			printWindow.print();
+		}
+
+		const config = { minColumnWidth: 200, resizerSelector: ".resizer", mainSectionSelector: "section" };
+		const state = { isResizing: false, initialX: null, initialWidths: null };
+		const elements = {
+			resizer: document.querySelector(config.resizerSelector),
+			main: document.querySelector(config.mainSectionSelector)
+		};
+
+		elements.resizer.addEventListener("mousedown", e => {
+			state.isResizing = true;
+			state.initialX = e.clientX;
+			state.initialWidths = getInitialWidths();
+			document.addEventListener("mousemove", onMouseMove);
+			document.addEventListener("mouseup", onMouseUp);
+		});
+
+		function getInitialWidths() {
+			const styles = getComputedStyle(elements.main);
+			const columns = styles.gridTemplateColumns.split(" ");
+			return [parseInt(columns[0]), parseInt(columns[2])];
+		}
+
+		function onMouseMove(e) {
+			if (!state.isResizing) return;
+			const deltaX = e.clientX - state.initialX;
+			const [newLeftWidth, newRightWidth] = updateWidths(deltaX);
+			elements.main.style.gridTemplateColumns = `${newLeftWidth}px 20px ${newRightWidth}px`;
+		}
+
+		function updateWidths(deltaX) {
+			let newLeftWidth = state.initialWidths[0] + deltaX;
+			let newRightWidth = state.initialWidths[1] - deltaX;
+			if (newLeftWidth < config.minColumnWidth) {
+				newLeftWidth = config.minColumnWidth;
+				newRightWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
+			} else if (newRightWidth < config.minColumnWidth) {
+				newRightWidth = config.minColumnWidth;
+				newLeftWidth = state.initialWidths[0] + state.initialWidths[1] - config.minColumnWidth;
+			}
+			return [newLeftWidth, newRightWidth];
+		}
+
+		function onMouseUp() {
+			state.isResizing = false;
+			document.removeEventListener("mousemove", onMouseMove);
+			document.removeEventListener("mouseup", onMouseUp);
+		}
+
+		function fillDropdownContent() {
+			const dropdownContainer = document.querySelector('.dropdownContainer');
+			for (const [key, value] of Object.entries(paragraphElements)) {
+				const button = document.createElement('button');
+				button.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+				button.onclick = () => applyElement(key);
+				dropdownContainer.appendChild(button);
+			}
+			const buttons = document.querySelectorAll(".dropdownButton");
+			const targets = document.querySelectorAll(".dropdownContainer");
+			buttons.forEach((button, index) => {
+				const target = targets[index];
+				button.addEventListener("click", function () {
+					target.classList.toggle("visible");
+					target.classList.toggle("hidden");
+				});
+			});
+		}
+
+		function applyElement(key) {
+			const selectedText = editor.getSelection();
+			const cursorPos = editor.getCursor();
+			if (paragraphElements[key].special) {
+				const newText = `{{${key}}}`;
+				editor.replaceRange(newText, {
+					line: cursorPos.line,
+					ch: 0
+				});
+				const newCursorPos = {
+					line: cursorPos.line,
+					ch: 0
+				};
+				editor.setCursor(newCursorPos);
+			}
+			else if (selectedText) {
+				const regex = /\{\{(.+?) (.+?)\}\}/g;
+				let newText;
+
+				if (regex.test(selectedText)) {
+					newText = selectedText.replace(regex, `{{${key} $2}}`);
+				} else {
+					newText = `{{${key} ${selectedText}}}`;
+				}
+
+				const startPos = editor.getCursor("from");
+				const endPos = editor.getCursor("to");
+
+				editor.replaceSelection(newText);
+
+				const newLines = newText.split('\n');
+				const newEndLine = startPos.line + newLines.length - 1;
+				const newEndCh = (newLines.length === 1) ?
+					startPos.ch + newText.length :
+					newLines[newLines.length - 1].length;
+
+				const newEndPos = {
+					line: newEndLine,
+					ch: newEndCh
+				};
+				editor.setSelection(startPos, newEndPos);
+			}
+		}
+
+		function scrollToPart(mode) {
+			const doc = editor.getDoc()
+			const pageBreaks = []
+			doc.eachLine(l => { if (l.text.includes("{{pagebreak}}")) pageBreaks.push(doc.getLineNumber(l)) })
+			const host = document.getElementById('displayAreaHolder')
+			const pages = host.shadowRoot.querySelectorAll('.page')
+			if (mode === 'editor') {
+				let idx = pages.length, closest = Number.MAX_VALUE
+				pages.forEach((p, i) => {
+					const ratio = Math.abs(p.getBoundingClientRect().top / p.clientHeight)
+					if (ratio < closest) { closest = ratio; idx = i }
+				})
+				if (idx === 0) { editor.scrollTo(null, 0); return }
+				idx--
+				if (idx < 0 || idx >= pageBreaks.length) return
+				const line = pageBreaks[idx]
+				const { top } = editor.charCoords({ line, ch: 0 }, 'local')
+				editor.scrollTo(null, top)
+			} else {
+				const top = editor.getScrollInfo().top
+				let idx = 0, dist = Number.MAX_VALUE
+				for (let i = 0; i < pageBreaks.length; i++) {
+					const line = pageBreaks[i];
+					const { top: lineTop } = editor.charCoords({ line, ch: 0 }, 'local');
+					if (i === 0 && top - lineTop < 0) {
+						idx = 0;
+						break;
+					}
+					const d = lineTop - top;
+					if (d > 0) {
+						dist = d;
+						idx = i;
+						break;
+					}
+					idx = pageBreaks.length;
+				}
+				if (idx < 0 || idx >= pages.length) return
+				pages[idx].scrollIntoView()
+			}
+		}
+
+
+		window.onload = (event) => {
+			localStorage.setItem("PathBinder-Scroll", 0);
+			fillDropdownContent()
+			getDocument();
+		};
+
+		document.addEventListener('keydown', function (event) {
+			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+				event.preventDefault();
+				animateSaving();
+			}
+		});
 </script>
