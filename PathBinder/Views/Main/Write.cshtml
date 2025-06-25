@@ -575,8 +575,8 @@
 		function formatSpellcasting(creatureData) {
 			const spellcastingEntries = creatureData.items.filter(item => item.type === 'spellcastingEntry');
 			return spellcastingEntries.map(entry => {
-				let spells = creatureData.items.filter(item => item.type === 'spell');
-				let maxLevel = Math.max(...spells.map(spell => spell.system.location.heightenedLevel || 0));
+				let spells = creatureData.items.filter(item => item.type === 'spell').sort((a, b) => a.name.localeCompare(b.name));
+				let maxLevel = Math.max(...spells.map(spell => spell.system.level.value || 0));
 				let groupedSpells = {};
 				spells.forEach(spell => {
 					let level = spell.system.traits.value.includes('cantrip') ? (maxLevel + 1) : spell.system.location.heightenedLevel || spell.system.level.value;
