@@ -700,9 +700,10 @@
         htmlString = htmlString.replace(/<\/?[^>]+>/g, "");
 
         // Replace @@Damage[ ] with formatted string
-        htmlString = htmlString.replace(/@@Damage\[([^)]+?)]\]/, (match, p1) => {
-            return `${p1.replace('[', ' ').replace(']', '')}`;
-        });
+        htmlString = htmlString.replace(
+            /@@Damage\[\s*\(?\s*([^\s\[\]()]+)\s*\)?\s*\[?([a-zA-Z]+)\]?\s*\]/,
+            '$1 $2'
+        );
 
         // Replace @@Check with formatted string
         htmlString = htmlString.replace(new RegExp("@@Check\\[(\\w+)\\|dc:(\\d{2})(\\|basic)?\\]\\s*(save)?", "gi"), function (match, type, dc, basic) {
