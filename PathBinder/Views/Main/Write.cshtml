@@ -442,8 +442,18 @@
     }
 
     function formatPerception(creatureData) {
-        const senses = creatureData.system.perception.senses.map(sense => sense.type).join(', ');
-        return `{{line **Perception**  +${creatureData.system.perception.mod}; ${senses}}}`;
+        const senses = creatureData.system.perception.senses.map(sense => {
+            let formattedSense = sense.type;
+            if (sense.acuity) {
+                formattedSense += ` (${sense.acuity})`;
+            }
+            if (sense.range) {
+                formattedSense += ` ${sense.range} feet`;
+            }
+            return formattedSense;
+        }).join(', ');
+
+        return `{{line **Perception** +${creatureData.system.perception.mod}; ${senses}}}`;
     }
 
     function formatLanguages(creatureData) {
