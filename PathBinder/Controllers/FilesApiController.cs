@@ -51,8 +51,8 @@ public class FilesApiController : ControllerBase
 
         query = (sortKey.ToLower(), sortOrder.ToLower()) switch
         {
-            ("name", "asc") => query.OrderBy(f => f.Name),
-            ("name", "desc") => query.OrderByDescending(f => f.Name),
+            ("name", "asc") => query.OrderBy(f => f.Name.ToLower()),
+            ("name", "desc") => query.OrderByDescending(f => f.Name.ToLower()),
             ("lastmodified", "asc") => query.OrderBy(f => f.LastModified),
             _ => query.OrderByDescending(f => f.LastModified)
         };
@@ -89,6 +89,7 @@ public class FilesApiController : ControllerBase
             return StatusCode(500, "Template file missing or misconfigured.");
 
         var templateContent = await System.IO.File.ReadAllTextAsync(templatePath);
+        templateContent = templateContent.Replace("\\n", Environment.NewLine).Replace("\\\"", "\"");
 
         var regex = new Regex(@"{{image\s+(https?:\/\/[^\s\[]+)", RegexOptions.IgnoreCase);
 
