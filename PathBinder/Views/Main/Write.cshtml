@@ -405,8 +405,8 @@
 			};
 
 			addOutput(formatCreatureLabel(creatureData));
-			addOutput(formatTraits(creatureData, alignmentTags));
 			addOutput(formatSize(creatureData, sizeMappings));
+			addOutput(formatTraits(creatureData, alignmentTags));
 			addOutput(formatPerception(creatureData));
 			addOutput(formatLanguages(creatureData));
 			addOutput(formatSkills(creatureData));
@@ -438,7 +438,7 @@
 
 		function formatSize(creatureData, sizeMappings) {
 			const sizeValue = creatureData.system.traits.size.value;
-			return sizeValue ? `{{tag ${sizeMappings[sizeValue]}}}` : '';
+			return sizeValue ? `{{tag ${sizeMappings[sizeValue]}[class=size]}}` : '';
 		}
 
 		function formatPerception(creatureData) {

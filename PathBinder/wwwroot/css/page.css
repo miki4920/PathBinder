@@ -324,3 +324,7 @@
 .page .table tr:nth-child(odd) {
     background-color: #F5EFE0;
 }
+
+.page .size {
+    background-color:#478c42;
+}
