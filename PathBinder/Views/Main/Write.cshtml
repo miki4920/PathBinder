@@ -82,7 +82,8 @@
 			"label": { "html": "div", "classes": ["label"] },
 			"artist": { "html": "div", "classes": ["artist"] },
 			"table": { "html": "table", "classes": ["table"] },
-			"dc": {"html": "span"}
+			"dc": {"html": "span"},
+			"mask": {"html": "div"}
 		}
 		const dcs = {
 			0: 14, 1: 15, 2: 16, 3: 18, 4: 19, 5: 20, 6: 22, 7: 23, 8: 24, 9: 26,
@@ -95,6 +96,13 @@
 			master: 30,
 			legendary: 40
 		};
+
+		const MM_TO_PX   = 96 / 25.4;     
+		const PAGE_W_MM  = 210;            
+		const PAGE_H_MM  = 297;
+
+		const PAGE_W_PX  = PAGE_W_MM * MM_TO_PX;  
+		const PAGE_H_PX  = PAGE_H_MM * MM_TO_PX;
 
 		const documentId = window.location.pathname.split('/').filter(Boolean).pop();
 
@@ -910,6 +918,13 @@
 				else if (element["html"] === "img") {
 					newElement.src = content.trim();
 				}
+				else if (elementName === "mask") {
+					const imageElement = document.createElement('img');
+					imageElement.classList.add('image');
+					imageElement.src = content.trim();
+					newElement.appendChild(imageElement);
+					newElement.classList.add('center');
+				}
 				else if (elementName === "table") {
 					const rows = content.trim().split('\n');
 					const headers = rows[0].split(/,(?! )/).map(header => header.trim());
@@ -946,6 +961,10 @@
 				});
 
 				let shouldAttach = false;
+				let maskX = 0;
+				let maskY = 0;
+				let sizeX = 100;
+				let sizeY = 100;
 
 				if (newElement && attributes) {
 					const attrs = attributes.split(',').map(attr => attr.trim().split('='));
@@ -962,14 +981,54 @@
 						else if (elementName === "table" && key === "headerColor") {
 							newElement.style.setProperty('--header-color', value);
 						}
+						else if (key === "mask-x" && value) {
+							value = value.replace('%', '');            
+							maskX = value;
+						}
+						else if (key === "mask-y" && value) {
+							value = value.replace('%', '');
+							maskY = value;
+						}
+						else if (key === "mask-size-x" && value) {
+							value = value.replace('%', '');
+							sizeX = value;
+						}
+						else if (key === "mask-size-y" && value) {
+							value = value.replace('%', '');
+							sizeY = value;
+						}
 						else {
-							newElement.style[key] = value;
+							if (elementName === "mask") {
+								newElement.firstElementChild.style[key] = value;
+							}
+							else {
+								newElement.style[key] = value;
+							}
+							
 						}
 
-						if (elementName === "image") {
+						if (elementName === "image" || elementName === "mask") {
 							shouldAttach = true
 						}
 					});
+				}
+
+				if (elementName === "mask") {
+				  maskX = parseFloat(maskX);
+				  maskY = parseFloat(maskY);
+				  sizeX = parseFloat(sizeX);
+				  sizeY = parseFloat(sizeY);
+
+				  maskX = ((maskX + ((100-sizeX)/2)) / 100) * PAGE_W_PX;
+				  maskY = ((maskY + ((100-sizeY)/2)) / 100) * PAGE_H_PX;
+
+				  sizeX = sizeX/100 * PAGE_W_PX;
+				  sizeY = sizeY/100 * PAGE_H_PX;
+				  newElement.style.setProperty(
+					"mask-position",
+					`${maskX}px ${maskY}px`
+				  );
+				  newElement.style.setProperty("mask-size", `${sizeX}px ${sizeY}px`)
 				}
 
 				if (elementName === "frame") {
