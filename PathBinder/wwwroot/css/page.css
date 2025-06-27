@@ -22,7 +22,7 @@
     mask-size: cover;
     mask-repeat: no-repeat;
     mask-position: center;
-    z-index: 2!important;
+    z-index: 100!important;
     mask-image: url('../assets/frame.png');
 }
 
@@ -65,23 +65,28 @@
     height: 100%;
 }
 
-.center {
-    mask-image: url('../assets/center.webp');
+.mask-base {
     mask-repeat: no-repeat;
     mask-size: 100%;
     mask-position: 50% 50%;
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 1;
+    z-index: 10;
 }
 
-.edge {
-    mask-image: url('../assets/edge.webp');
-    mask-repeat: no-repeat;
-    mask-size: cover;
-    mask-position: 50% 50%;
+.mask-center {
+    mask-image: url('../assets/center.webp');
 }
+
+.mask-edge {
+    mask-image: url('../assets/edge.webp');
+}
+
+.mask-center-round {
+    mask-image: url('../assets/center-round.png');
+}
+
 
 .edge-90 {
     mask-image: url('../assets/edge-90.webp');

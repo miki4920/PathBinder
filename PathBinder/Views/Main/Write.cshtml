@@ -83,7 +83,8 @@
 			"artist": { "html": "div", "classes": ["artist"] },
 			"table": { "html": "table", "classes": ["table"] },
 			"dc": {"html": "span"},
-			"mask": {"html": "div"}
+			"mask": {"html": "div"},
+			"shape": {"html": "div"}
 		}
 		const dcs = {
 			0: 14, 1: 15, 2: 16, 3: 18, 4: 19, 5: 20, 6: 22, 7: 23, 8: 24, 9: 26,
@@ -924,7 +925,7 @@
 					imageElement.classList.add('image');
 					imageElement.src = content.trim();
 					newElement.appendChild(imageElement);
-					newElement.classList.add('center');
+					newElement.classList.add('mask-base');
 					shouldAttach = true;
 				}
 				else if (elementName === "table") {
@@ -983,7 +984,7 @@
 				};
 
 				if (newElement && attributes) {
-					const attrs = attributes.split(',').map(attr => attr.trim().split('='));
+					const attrs = attributes.split(/,(?![^()]*\))/).map(attr => attr.trim().split('='));
 					attrs.forEach(([key, value]) => {
 						if (key === "class" && value === "attach") {
 							shouldAttach = true
