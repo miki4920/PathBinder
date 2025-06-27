@@ -22,7 +22,7 @@
     mask-size: cover;
     mask-repeat: no-repeat;
     mask-position: center;
-    z-index: 100 !important;
+    z-index: 2!important;
     mask-image: url('../assets/frame.png');
 }
 
@@ -73,6 +73,7 @@
     width: 100%;
     height: 100%;
     position: absolute;
+    z-index: 1;
 }
 
 .edge {
