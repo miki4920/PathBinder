@@ -909,6 +909,7 @@
 				}
 
 				let newElement;
+				let shouldAttach = false;
 				if (element["html"]) {
 					newElement = document.createElement(element["html"]);
 				}
@@ -924,6 +925,7 @@
 					imageElement.src = content.trim();
 					newElement.appendChild(imageElement);
 					newElement.classList.add('center');
+					shouldAttach = true;
 				}
 				else if (elementName === "table") {
 					const rows = content.trim().split('\n');
@@ -960,11 +962,25 @@
 					newElement.classList.add(className);
 				});
 
-				let shouldAttach = false;
 				let maskX = 0;
-				let maskY = 0;
-				let sizeX = 100;
-				let sizeY = 100;
+				let maskY = 0; 
+				let maskWidth = 100; 
+				let maskHeight = 100;
+				let imageX = 0; 
+				let imageY = 0; 
+				let imageWidth = 100;
+				let imageHeight = 100;
+
+				const assignMap = {
+				  'mask-x': val => maskX = val,
+				  'mask-y': val => maskY = val,
+				  'mask-width': val => maskWidth = val,
+				  'mask-height': val => maskHeight = val,
+				  'image-x': val => imageX = val,
+				  'image-y': val => imageY = val,
+				  'image-width': val => imageWidth = val,
+				  'image-height': val => imageHeight = val
+				};
 
 				if (newElement && attributes) {
 					const attrs = attributes.split(',').map(attr => attr.trim().split('='));
@@ -981,25 +997,20 @@
 						else if (elementName === "table" && key === "headerColor") {
 							newElement.style.setProperty('--header-color', value);
 						}
-						else if (key === "mask-x" && value) {
-							value = value.replace('%', '');            
-							maskX = value;
-						}
-						else if (key === "mask-y" && value) {
-							value = value.replace('%', '');
-							maskY = value;
-						}
-						else if (key === "mask-size-x" && value) {
-							value = value.replace('%', '');
-							sizeX = value;
-						}
-						else if (key === "mask-size-y" && value) {
-							value = value.replace('%', '');
-							sizeY = value;
+						else if (key in assignMap) {
+							if (value != null) {
+								value = value.replace('%', '');
+								assignMap[key](value);
+							}
 						}
 						else {
 							if (elementName === "mask") {
-								newElement.firstElementChild.style[key] = value;
+								if (key === "z-index") {
+									newElement.style[key] = value;
+								}
+								else {
+									newElement.firstElementChild.style[key] = value;
+								}
 							}
 							else {
 								newElement.style[key] = value;
@@ -1014,21 +1025,40 @@
 				}
 
 				if (elementName === "mask") {
-				  maskX = parseFloat(maskX);
-				  maskY = parseFloat(maskY);
-				  sizeX = parseFloat(sizeX);
-				  sizeY = parseFloat(sizeY);
+					maskX = parseFloat(maskX);
+					maskY = parseFloat(maskY);
+					maskWidth = parseFloat(maskWidth);
+					maskHeight = parseFloat(maskHeight);
 
-				  maskX = ((maskX + ((100-sizeX)/2)) / 100) * PAGE_W_PX;
-				  maskY = ((maskY + ((100-sizeY)/2)) / 100) * PAGE_H_PX;
+					maskX = ((maskX + ((100-maskWidth)/2)) / 100) * PAGE_W_PX;
+					maskY = ((maskY + ((100-maskHeight)/2)) / 100) * PAGE_H_PX;
 
-				  sizeX = sizeX/100 * PAGE_W_PX;
-				  sizeY = sizeY/100 * PAGE_H_PX;
-				  newElement.style.setProperty(
+					maskWidth = maskWidth/100 * PAGE_W_PX;
+					maskHeight = maskHeight/100 * PAGE_H_PX;
+					newElement.style.setProperty(
 					"mask-position",
 					`${maskX}px ${maskY}px`
-				  );
-				  newElement.style.setProperty("mask-size", `${sizeX}px ${sizeY}px`)
+					);
+					newElement.style.setProperty("mask-size", `${maskWidth}px ${maskHeight}px`)
+					const imageElement = newElement.firstElementChild;
+					if (imageElement) {
+						imageX = parseFloat(imageX);
+						imageY = parseFloat(imageY);
+						imageWidth = parseFloat(imageWidth);
+						imageHeight = parseFloat(imageHeight);
+
+						imageX = ((imageX + ((100-imageWidth)/2)) / 100) * PAGE_W_PX;
+						imageY = ((imageY + ((100-imageHeight)/2)) / 100) * PAGE_H_PX;
+
+						imageWidth = imageWidth/100 * PAGE_W_PX;
+						imageHeight = imageHeight/100 * PAGE_H_PX;
+
+						imageElement.style.position  = 'absolute';
+						imageElement.style.left      = `${imageX}px`;
+						imageElement.style.top       = `${imageY}px`;
+						imageElement.style.width     = `${imageWidth}px`;
+						imageElement.style.height    = `${imageHeight}px`;
+					}
 				}
 
 				if (elementName === "frame") {
