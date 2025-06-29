@@ -1,4 +1,4 @@
-﻿* {
+* {
     box-sizing: border-box;
 }
 
@@ -85,6 +85,10 @@
 
 .mask-center-round {
     mask-image: url('../assets/center-round.png');
+}
+
+.mask-center-square {
+    mask-image: url('../assets/center-square.png');
 }
 
 
