@@ -998,6 +998,9 @@
 						else if (elementName === "table" && key === "headerColor") {
 							newElement.style.setProperty('--header-color', value);
 						}
+						else if (elementName === "title" && key === "text-shadow") {
+							newElement.style.setProperty("text-shadow", `-3px -3px 0 ${value}, 0px -3px 0 ${value}, 3px -3px 0 ${value}, -3px 0px 0 ${value}, 3px 0px 0 ${value}, -3px 3px 0 ${value}, 0px 3px 0 ${value}, 3px 3px 0 ${value}, -2px -2px 0 ${value}, 2px -2px 0 ${value}, -2px 2px 0 ${value}, 2px 2px 0 ${value}`);
+						}
 						else if (key in assignMap) {
 							if (value != null) {
 								value = value.replace('%', '');
