@@ -2,6 +2,14 @@
     box-sizing: border-box;
 }
 
+@font-face {
+    font-family: 'Franko';
+    src: url('/fonts/Franko-Medium.woff2') format('woff2'), url('/fonts/Franko-Medium.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
 .page {
     position: relative;
     width: 210mm;
@@ -208,16 +216,16 @@
 
 .page .label {
     float: right;
-    font-size: .458cm;
+    font-size: 0.4cm;
+    text-transform: uppercase;
 }
 
 .page .tag {
     margin: 0;
-    margin-right: -4px;
+    margin-right: -3px;
     display: inline-block;
-    font-family: 'Roboto Condensed', sans-serif;
-    border: 2px solid #DAC68A;
-    border-radius: 2px;
+    font-family: 'Franko', sans-serif;
+    border: 1px solid #DAC68A;
     background-color: #58180D;
     color: white;
     text-align: center;
@@ -268,13 +276,13 @@
 }
 
 .page h4 {
-    font-family: 'Tauri', sans-serif;
-    margin-bottom: 0;
+    font-family: 'Franko', sans-serif;
+    margin-bottom: 2px;
     border-bottom: 1px solid;
-    font-size: .458cm;
+    font-size: 0.4cm;
     font-weight: normal;
     -webkit-text-stroke-width: 0.5px;
-    color: #000000;
+    text-transform: uppercase;
 }
 
 .page h5 {
@@ -325,10 +333,10 @@
     padding: 4px;
 }
 
-    .page .table th {
-        background-color: var(--header-bg-color, #02256E);
-        color: var(--header-color, white);
-    }
+.page .table th {
+    background-color: var(--header-bg-color, #02256E);
+    color: var(--header-color, white);
+}
 
 .page .table tr:nth-child(even) {
     background-color: #EEE3C8;
@@ -339,5 +347,5 @@
 }
 
 .page .size {
-    background-color:#478c42;
+    background-color: #3B7B59;
 }
