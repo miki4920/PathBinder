@@ -1062,20 +1062,27 @@
 					}
 				}
 
-				if (elementName === "frame") {
-					let pageElement = document.createElement(element["html"]);
-					pageElement.src = `../assets/page.png`
-					wrapper.style.margin = `${parseFloat(newElement.style.padding) + 0.5}cm`;
-					let marginInMM = (parseFloat(newElement.style.padding) + 0.5) * 10;
-					newElement.src = content.trim();
-					newElement.style.padding = 0;
-					newElement.classList.add(elementName);
-					page.appendChild(pageElement);
-					page.appendChild(newElement);
-					wrapper.style.width = `${(210 - 2 * marginInMM)}mm`;
-					wrapper.style.height = `${(297 - 2 * marginInMM)}mm`;
-					newElement = "";
-				}
+					if (elementName === "frame") {
+						const [imgSrc, pageName = "page"] = content.trim().split(",").map(s => s.trim());
+
+						const pageElement = document.createElement(element.html);
+						pageElement.src = `../assets/${pageName}.png`;
+
+						wrapper.style.margin = `${parseFloat(newElement.style.padding) + 0.5}cm`;
+						const marginInMM = (parseFloat(newElement.style.padding) + 0.5) * 10;
+						newElement.src = imgSrc;
+						newElement.style.padding = 0;
+						newElement.classList.add(elementName);
+
+						page.appendChild(pageElement);
+						page.appendChild(newElement);
+
+						wrapper.style.width = `${210 - 2 * marginInMM}mm`;
+						wrapper.style.height = `${297 - 2 * marginInMM}mm`;
+
+						newElement = '';
+					}
+
 
 				if (elementName === "dc") {
 					newElement.innerHTML = 'DC ' + dcs[content.trim()];
